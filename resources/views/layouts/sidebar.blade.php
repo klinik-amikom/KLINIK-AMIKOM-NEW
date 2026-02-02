@@ -48,7 +48,7 @@
                 : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}
             ">
             <i class="fas fa-tachometer-alt mr-3 text-gray-400 group-hover:text-gray-500"></i>
-            <span>Dashboard</span>
+            <span>Dashboard XXXX</span>
         </a>
 
         <!-- User Management -->
@@ -58,7 +58,7 @@
                 ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 border-r-2 border-purple-500'
                 : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
             <i class="fas fa-user-tie mr-3 text-gray-400 group-hover:text-gray-500"></i>
-            <span>Admin</span>
+            <span>Admin XXXX</span>
         </a>
         <a href="{{ route('admin.dokter.index') }}"
             class="nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200
@@ -66,7 +66,7 @@
                 ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 border-r-2 border-purple-500'
                 : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
             <i class="fas fa-user-doctor mr-3 text-gray-400 group-hover:text-gray-500"></i>
-            <span>Dokter</span>
+            <span>Dokter XXXX</span>
         </a>
 
         <!-- Manage Outlet -->
