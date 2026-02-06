@@ -56,8 +56,9 @@ class User extends Authenticatable
      */
     public function position()
     {
-        return $this->belongsTo(Position::class);
+        return $this->belongsTo(Position::class, 'position_id');
     }
+
 
     /**
      * Get the master identity of the user.

@@ -9,6 +9,7 @@ use App\Http\Controllers\RekamMedisController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ApotekerController; // Controller baru sudah di-import
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ManageUserController;
 
 // --- 1. Public Routes ---
 Route::get('/', function () { return view("index"); });
@@ -25,6 +26,17 @@ Route::middleware(['auth'])->group(function () {
 
     // --- SHARED SERVICES (RESET PASSWORD) ---
     Route::post('user/{id}/reset-password', [UserController::class, 'resetPassword'])->name('user.reset-password');
+
+
+
+Route::middleware(['auth', 'role:admin'])->group(function () {
+
+    Route::get('/users', [ManageUserController::class, 'index'])
+        ->name('users.index');
+
+    Route::delete('/users/{id}', [ManageUserController::class, 'destroy'])
+        ->name('users.destroy');
+});
 
 // GROUP ADMIN
 Route::prefix('admin')->name('admin.')->middleware('role:admin')->group(function () {

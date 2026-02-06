@@ -34,11 +34,11 @@
             </span>
         </div>
         <h3 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
-            Total Dokter Aktif
+            Total Pasien
         </h3>
         <p class="text-xs text-green-600 flex items-center">
             <i class="fas fa-arrow-up mr-1"></i>
-            +{{ $dokterBaruBulanIni }} dokter baru bulan ini {{-- Menggunakan variabel dari controller --}}
+            +{{ $dokterBaruBulanIni }} pasien baru bulan ini {{-- Menggunakan variabel dari controller --}}
         </p>
     </div>
 
@@ -53,10 +53,10 @@
             </span>
         </div>
         <h3 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
-            Total Admin {{-- Mengubah teks judul --}}
+            Jumlah Kunjungan Pasien Hari Ini {{-- Mengubah teks judul --}}
         </h3>
         <p class="text-xs text-gray-500 dark:text-gray-400">
-            Pengelola Sistem
+            Pasien hari ini
         </p>
     </div>
 
@@ -71,7 +71,7 @@
             </span>
         </div>
         <h3 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
-            Total Jenis Obat
+            Menunggu Konsultasi
         </h3>
         <p class="text-xs text-green-600 flex items-center">
             <i class="fas fa-arrow-up mr-1"></i>
@@ -90,11 +90,11 @@
             </span>
         </div>
         <h3 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
-            Jumlah Kunjungan Pasien Hari Ini
+            Stok Obat
         </h3>
         <p class="text-xs text-green-600 flex items-center">
             <i class="fas fa-clock mr-1"></i>
-            2 pasien sedang dilayani
+            Perlu restok
         </p>
     </div>
 </div>

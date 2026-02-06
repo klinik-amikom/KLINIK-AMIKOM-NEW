@@ -48,25 +48,7 @@
                 : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}
             ">
             <i class="fas fa-tachometer-alt mr-3 text-gray-400 group-hover:text-gray-500"></i>
-            <span>Dashboard XXXX</span>
-        </a>
-
-        <!-- User Management -->
-        <a href="{{ route('admin.index') }}"
-            class="nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200
-            {{ Request::routeIs('admin.index')
-                ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 border-r-2 border-purple-500'
-                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
-            <i class="fas fa-user-tie mr-3 text-gray-400 group-hover:text-gray-500"></i>
-            <span>Admin XXXX</span>
-        </a>
-        <a href="{{ route('admin.dokter.index') }}"
-            class="nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200
-            {{ Request::routeIs('admin.dokter.index')
-                ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 border-r-2 border-purple-500'
-                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
-            <i class="fas fa-user-doctor mr-3 text-gray-400 group-hover:text-gray-500"></i>
-            <span>Dokter XXXX</span>
+            <span>Dashboard</span>
         </a>
 
         <!-- Manage Outlet -->
@@ -76,26 +58,18 @@
                 ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 border-r-2 border-purple-500'
                 : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
             <i class="fas fa-bed mr-3 text-gray-400 group-hover:text-gray-500"></i>
-            <span>Pasien</span>
+            <span>Data Pasien</span>
         </a>
 
-        <!-- Menu Management -->
-        <a href="{{ route('admin.apoteker.index') }}"
-            class="nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200
-            {{ Request::routeIs('admin.apoteker.index')
-                ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 border-r-2 border-purple-500'
-                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
-            <i class="fas fa-mortar-pestle mr-3 text-gray-400 group-hover:text-gray-500"></i>
-            <span>Apoteker </span>
-        </a>
         <a href="{{ route('admin.obat.index') }}"
             class="nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200
             {{ Request::routeIs('admin.obat.index')
                 ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 border-r-2 border-purple-500'
                 : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
             <i class="fas fa- fa-capsules mr-3 text-gray-400 group-hover:text-gray-500"></i>
-            <span>Obat </span>
+            <span>Data Obat</span>
         </a>
+
         <!-- Menu Management -->
         <a href="{{ route('admin.rekammedis.index') }}"
             class="nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200
@@ -103,7 +77,17 @@
                 ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 border-r-2 border-purple-500'
                 : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
             <i class="fas fa-file-waveform mr-3 text-gray-400 group-hover:text-gray-500"></i>
-            <span>Rekam Medis</span>
+            <span>Laporan Rekam Medis</span>
+        </a>
+
+        <!-- User Management -->
+        <a href="{{ route('users.index') }}"
+            class="nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200
+            {{ Request::routeIs('users.index')
+                ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 border-r-2 border-purple-500'
+                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
+            <i class="fas fa-user-tie mr-3 text-gray-400 group-hover:text-gray-500"></i>
+            <span>Kelola User</span>
         </a>
 
         <!-- Divider -->
