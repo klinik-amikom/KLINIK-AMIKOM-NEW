@@ -128,31 +128,35 @@ class PasienController extends Controller
         }
     }
 
+    // PasienController.php - Bagian Update
     public function update(Request $request, $id)
     {
         $pasien = Pasien::findOrFail($id);
 
         $request->validate([
-            'nama_pasien' => 'required|string|max:100',
-            'gender'      => 'required|in:L,P',
-            'alamat'      => 'required|string',
-            'poli'        => 'required|in:Poli Umum,Poli Gigi',
+            'nama_pasien'   => 'required|string|max:100',
+            'identity_type' => 'required|in:mahasiswa,dosen,karyawan',
+            'gender'        => 'required|in:L,P',
+            'alamat'        => 'required|string',
+            'poli'          => 'required|in:Poli Umum,Poli Gigi',
+            'status'        => 'required|in:menunggu_konfirmasi,terdaftar,selesai',
         ]);
 
         try {
             DB::beginTransaction();
 
-            // Update data di Master Identity melalui relasi
+            // 1. Update data Identitas (Master Data)
             $pasien->identity->update([
-                'name'    => $request->nama_pasien,
-                'gender'  => $request->gender,
-                'address' => $request->alamat,
+                'name'          => $request->nama_pasien,
+                'identity_type' => $request->identity_type,
+                'gender'        => $request->gender,
+                'address'       => $request->alamat,
             ]);
 
-            // Update data di tabel Pasien
+            // 2. Update data Pasien (Transaksi/Pendaftaran)
             $pasien->update([
                 'poli'   => $request->poli,
-                'status' => $request->status ?? $pasien->status,
+                'status' => $request->status,
             ]);
 
             DB::commit();

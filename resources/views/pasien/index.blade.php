@@ -207,18 +207,94 @@
         </div>
     </div>
 </div>
+<div id="edit-pasien-modal" class="fixed inset-0 bg-black/50 z-50 hidden backdrop-blur-sm">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-lg overflow-hidden">
+            <div class="p-6 border-b dark:border-gray-700 flex justify-between items-center">
+                <h3 class="text-lg font-bold dark:text-white">Edit Data Pasien</h3>
+                <button onclick="closeEditPasienModal()"><i class="fas fa-times text-gray-400"></i></button>
+            </div>
 
+            <form id="edit-pasien-form" method="POST" class="p-6 space-y-4">
+                @csrf
+                @method('PUT')
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="sm:col-span-2">
+                        <label class="block text-sm font-medium text-gray-500">No. Identitas (Tidak dapat diubah)</label>
+                        <input type="text" id="edit-identity-number" disabled class="w-full px-3 py-2 border rounded-lg bg-gray-100 dark:bg-gray-600 dark:text-gray-300 cursor-not-allowed">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium dark:text-gray-300">Kategori</label>
+                        <select name="identity_type" id="edit-identity-type" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white">
+                            <option value="mahasiswa">Mahasiswa</option>
+                            <option value="dosen">Dosen</option>
+                            <option value="karyawan">Karyawan</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium dark:text-gray-300">Jenis Kelamin</label>
+                        <select name="gender" id="edit-gender" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white">
+                            <option value="L">Laki-laki</option>
+                            <option value="P">Perempuan</option>
+                        </select>
+                    </div>
+
+                    <div class="sm:col-span-2">
+                        <label class="block text-sm font-medium dark:text-gray-300">Nama Lengkap</label>
+                        <input type="text" name="nama_pasien" id="edit-name" required class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium dark:text-gray-300">Pilih Poli</label>
+                        <select name="poli" id="edit-poli" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white">
+                            <option value="Poli Umum">Poli Umum</option>
+                            <option value="Poli Gigi">Poli Gigi</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium dark:text-gray-300">Status</label>
+                        <select name="status" id="edit-status" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white">
+                            <option value="menunggu_konfirmasi">Menunggu</option>
+                            <option value="terdaftar">Terdaftar</option>
+                            <option value="selesai">Selesai</option>
+                        </select>
+                    </div>
+
+                    <div class="sm:col-span-2">
+                        <label class="block text-sm font-medium dark:text-gray-300">Alamat</label>
+                        <textarea name="alamat" id="edit-address" rows="2" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white"></textarea>
+                    </div>
+                </div>
+
+                <div class="flex justify-end space-x-3 mt-6">
+                    <button type="button" onclick="closeEditPasienModal()" class="px-4 py-2 text-gray-600">Batal</button>
+                    <button type="submit" class="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">Simpan Perubahan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 @endsection
 
 @push('scripts')
 <script>
-    // Logic Modal
+    // --- Logic Modal Create ---
     function openCreatePasienModal() {
         document.getElementById('create-pasien-modal').classList.remove('hidden');
     }
-
     function closeCreatePasienModal() {
         document.getElementById('create-pasien-modal').classList.add('hidden');
+    }
+
+    // --- Logic Modal Edit ---
+    function openEditPasienModal() {
+        document.getElementById('edit-pasien-modal').classList.remove('hidden');
+    }
+    function closeEditPasienModal() {
+        document.getElementById('edit-pasien-modal').classList.add('hidden');
     }
 
     // AJAX Lookup Identity
@@ -251,12 +327,23 @@
         }, 500);
     }
 
-    // Edit Functionality (Tinggal menyesuaikan field ID yang ada di modal edit Anda)
     function editPasien(id, data) {
-        // Tampilkan modal edit dan isi fieldnya
-        // Contoh: document.getElementById('edit-name').value = data.name;
-        // ... (Logika sama seperti create namun arahkan ke form edit)
-        alert('Fungsi edit untuk ID ' + id + ' siap diimplementasikan dengan data: ' + data.name);
+        // 1. Set Action Form (Sesuaikan role-nya)
+        const role = "{{ auth()->user()->role ?? auth()->user()->level }}";
+        const form = document.getElementById('edit-pasien-form');
+        form.action = `/${role}/pasien/${id}`;
+
+        // 2. Isi data ke dalam field modal edit
+        document.getElementById('edit-identity-number').value = data.identity_number;
+        document.getElementById('edit-name').value = data.name;
+        document.getElementById('edit-identity-type').value = data.identity_type;
+        document.getElementById('edit-gender').value = data.gender;
+        document.getElementById('edit-address').value = data.address;
+        document.getElementById('edit-poli').value = data.poli;
+        document.getElementById('edit-status').value = data.status;
+
+        // 3. Tampilkan Modal
+        openEditPasienModal();
     }
 </script>
 @endpush
