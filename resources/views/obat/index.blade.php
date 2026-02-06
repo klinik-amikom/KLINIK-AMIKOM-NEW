@@ -20,1025 +20,211 @@
 </div>
 @endif
 
-@if(session('error'))
-<div class="alert-auto-hide mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative dark:bg-red-900/30 dark:border-red-600 dark:text-red-300" role="alert">
-    <strong class="font-bold">Error!</strong>
-    <span class="block sm:inline">{{ session('error') }}</span>
-    <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
-        <svg onclick="this.parentElement.parentElement.remove()" class="fill-current h-6 w-6 text-red-500 cursor-pointer" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-            <title>Close</title>
-            <path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/>
-        </svg>
-    </span>
-</div>
-@endif
-
-@if($errors->any())
-<div class="alert-auto-hide mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative dark:bg-red-900/30 dark:border-red-600 dark:text-red-300" role="alert">
-    <strong class="font-bold">Validasi Error!</strong>
-    <ul class="mt-2 list-disc list-inside">
-        @foreach($errors->all() as $error)
-            <li>{{ $error }}</li>
-        @endforeach
-    </ul>
-    <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
-        <svg onclick="this.parentElement.parentElement.remove()" class="fill-current h-6 w-6 text-red-500 cursor-pointer" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-            <title>Close</title>
-            <path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/>
-        </svg>
-    </span>
-</div>
-@endif
-
-<!-- Page Header -->
 <div class="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0 mb-6 sm:mb-8">
     <div>
-        <h2 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-1 sm:mb-2">
-            Kelola Obat
-        </h2>
-        <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400">
-            Kelola data Obat dalam sistem
-        </p>
+        <h2 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-1 sm:mb-2">Kelola Obat</h2>
+        <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400">Manajemen stok, deskripsi, dan masa berlaku obat.</p>
     </div>
     <div class="w-full sm:w-auto">
-        <button onclick="openCreateObatModal()"
-            class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition-colors duration-200">
-            <i class="fas fa-plus mr-2"></i>
-            Tambah Obat
+        <button onclick="openCreateObatModal()" class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg shadow-sm transition-colors duration-200">
+            <i class="fas fa-plus mr-2"></i> Tambah Obat
         </button>
     </div>
 </div>
 
-<!-- Filters and Search -->
-<div class="flex flex-col sm:flex-row sm:items-end sm:space-x-4 space-y-4 sm:space-y-0 justify-between">
-    <!-- Search -->
-    <div class="sm:w-2/4">
-        <div class="relative">
-            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <i class="fas fa-search text-gray-400"></i>
-            </div>
-            <input type="text" id="obat-search" placeholder="Cari nama, obatname, atau kode..."
-                class="block w-full pl-10 pr-3 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-lg leading-5 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors duration-200 text-sm sm:text-base">
-        </div>
+<div class="mb-6">
+    <div class="relative max-w-md">
+        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+            <i class="fas fa-search"></i>
+        </span>
+        <input type="text" id="obat-search" placeholder="Cari kode, nama, atau deskripsi..."
+            class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 transition-all text-sm">
     </div>
 </div>
 
-<!-- obats Table -->
 <div class="bg-white dark:bg-gray-800 shadow-sm rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
     <div class="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
-            <h3 class="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
-                Daftar Obat
-            </h3>
-        </div>
+        <h3 class="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">Daftar Stok Obat</h3>
     </div>
 
-    <!-- Table View -->
-    <div id="table-view" class="table-container overflow-x-auto">
-        <table class="w-full text-left min-w-full">
+    <div class="hidden md:block overflow-x-auto">
+        <table class="w-full text-left border-collapse">
             <thead>
-                <tr class="bg-gray-50 dark:bg-gray-700">
-                    <th class="px-3 sm:px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider sticky left-0 bg-gray-50 dark:bg-gray-700 z-10 sm:static">
-                        #
-                    </th>
-                    <th class="px-3 sm:px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider sticky left-8 bg-gray-50 dark:bg-gray-700 z-10 sm:static min-w-[200px]">
-                        Kode Obat
-                    </th>
-                    <th class="px-3 sm:px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider hidden sm:table-cell min-w-[200px]">
-                        Nama Obat
-                    </th>
-                    <th class="px-3 sm:px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider hidden lg:table-cell min-w-[150px]">
-                        Stok
-                    </th>
-                    <th class="px-3 sm:px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider min-w-[100px]">
-                        Tanggal Kadaluarsa
-                    </th>
-                    <th class="px-3 sm:px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider hidden md:table-cell min-w-[100px]">
-                        Deskripsi
-                    </th>
-                    <th class="px-3 sm:px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider text-right sticky right-0 bg-gray-50 dark:bg-gray-700 z-10 sm:static min-w-[100px]">
-                        Aksi
-                    </th>
+                <tr class="bg-gray-50 dark:bg-gray-700 text-xs uppercase text-gray-500 dark:text-gray-300 font-medium">
+                    <th class="px-6 py-4">Kode</th>
+                    <th class="px-6 py-4">Nama Obat</th>
+                    <th class="px-6 py-4">Stok</th>
+                    <th class="px-6 py-4">Deskripsi</th>
+                    <th class="px-6 py-4">Kadaluarsa</th>
+                    <th class="px-6 py-4 text-right">Aksi</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-gray-200 dark:divide-gray-700" id="obats-table-body">
+            <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                 @forelse ($dataObat as $obat)
-                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-200 obat-row">
-                    <td class="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-900 dark:text-white font-medium sticky left-0 bg-white dark:bg-gray-800 z-10 sm:static">
-                        {{ $loop->iteration }}
+                <tr class="obat-row hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                    <td class="px-6 py-4 text-sm font-mono text-purple-600 dark:text-purple-400 font-bold">{{ $obat->kode_obat }}</td>
+                    <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">{{ $obat->nama_obat }}</td>
+                    <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">{{ $obat->stok }}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400 italic max-w-xs truncate">
+                        {{ $obat->deskripsi ?? '-' }}
                     </td>
-                    <td class="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap hidden sm:table-cell">
-                        <div class="text-xs sm:text-sm text-gray-900 dark:text-white">{{ $obat->kode_obat }}</div>
+                    <td class="px-6 py-4 text-sm">
+                        <span class="px-2 py-1 rounded text-xs {{ \Carbon\Carbon::parse($obat->tanggal_kadaluarsa)->isPast() ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700' }}">
+                            {{ \Carbon\Carbon::parse($obat->tanggal_kadaluarsa)->format('d/m/Y') }}
+                        </span>
                     </td>
-                    <td class="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap sticky left-8 bg-white dark:bg-gray-800 z-10 sm:static">
-                        <div class="flex items-center">
-                        <div class="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold text-xs sm:text-sm flex-shrink-0">
-                                {{ strtoupper(substr($obat->nama_obat  ?? 'U', 0, 1)) }}
-                            </div>
-                            <div class="ml-2 sm:ml-4 min-w-0">
-                                <div class="text-xs sm:text-sm font-medium text-gray-900 dark:text-white truncate">{{ $obat->nama_obat }}</div>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap hidden lg:table-cell">
-                        <div class="text-xs sm:text-sm text-gray-900 dark:text-white">{{ $obat->stok }}</div>
-                    </td>
-                    <td class="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap hidden lg:table-cell">
-                        <div class="text-xs sm:text-sm text-gray-900 dark:text-white">{{ $obat->tanggal_kadaluarsa ? \Carbon\Carbon::parse($obat->tanggal_kadaluarsa)->format('d-m-Y') : '-' }}</div>
-                    </td>
-                    <td class="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
-                        <div class="text-xs sm:text-sm text-gray-900 dark:text-white">{{ $obat->deskripsi ?? '-' }}</div>
-                    </td>
-                    <td class="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-right text-xs sm:text-sm font-medium sticky right-0 bg-white dark:bg-gray-800 z-10 sm:static">
-                        <div class="flex items-center justify-end space-x-1">
-                            <button onclick="editObat({{ $obat->id }}, {
-                                nama_obat: '{{ addslashes($obat->nama_obat) }}',
-                                kode_obat: '{{ addslashes($obat->kode_obat) }}',
-                                stok: '{{ addslashes($obat->stok) }}',
-                                tanggal_kadaluarsa: '{{ addslashes($obat->tanggal_kadaluarsa) }}',
-                                deskripsi: '{{ addslashes($obat->deskripsi) }}'
-                            })"
-                                class="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 p-1.5 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-colors duration-200"
-                                title="Edit">
-                                <i class="fas fa-edit text-xs sm:text-sm"></i>
-                            </button>
-                            <button onclick="deleteobat({{ $obat->id }}, '{{ addslashes($obat->nama_obat) }}')"
-                                class="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-200"
-                                title="Delete">
-                                <i class="fas fa-trash text-xs sm:text-sm"></i>
-                            </button>
-                        </div>
+                    <td class="px-6 py-4 text-right space-x-3">
+                        <button onclick="editObat({{ json_encode($obat) }})" class="text-purple-600 hover:text-purple-900"><i class="fas fa-edit"></i></button>
+                        <form action="{{ route('admin.obat.destroy', $obat->id) }}" method="POST" class="inline shadow-none m-0" onsubmit="return confirm('Hapus data obat ini?')">
+                            @csrf @method('DELETE')
+                            <button type="submit" class="text-red-600 hover:text-red-900"><i class="fas fa-trash"></i></button>
+                        </form>
                     </td>
                 </tr>
                 @empty
-                    <tr>
-                        <td colspan="7" class="text-center py-8">
-                            <div class="text-gray-500 dark:text-gray-400">
-                                <i class="fas fa-obats text-4xl mb-4"></i>
-                                <p class="text-lg font-medium">Data obat tidak tersedia</p>
-                                <p class="text-sm">Belum ada obat yang terdaftar dalam sistem</p>
-                            </div>
-                        </td>
-                    </tr>
+                <tr><td colspan="6" class="px-6 py-10 text-center text-gray-500">Data obat masih kosong.</td></tr>
                 @endforelse
             </tbody>
         </table>
     </div>
 
-    <!-- Card View (Mobile Alternative) -->
-    <div id="card-view" class="hidden">
-        <div class="p-4 space-y-4" id="obats-card-body">
-        @forelse ($dataObat as $obat)
-            <div class="obat-card bg-gray-50 dark:bg-gray-700 rounded-lg p-4 border border-gray-200 dark:border-gray-600">
-                <div class="flex items-start justify-between mb-3">
-                    <div class="flex items-center space-x-3">
-                        <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold">
-                                {{ strtoupper(substr($obat->nama_obat ?? 'U', 0, 1)) }}
-                        </div>
-                        <div>
-                            <h4 class="text-sm font-medium text-gray-900 dark:text-white">{{ $obat->nama_obat }}</h4>
-                        </div>
-                    </div>
-                    <div class="flex items-center space-x-1">
-                        <button onclick="editObat({{ $obat->id }}, {
-                                nama_obat: '{{ addslashes($obat->nama_obat) }}',
-                                kode_obat: '{{ addslashes($obat->kode_obat) }}',
-                                stok: '{{ addslashes($obat->stok) }}',
-                                tanggal_kadaluarsa: '{{ addslashes($obat->tanggal_kadaluarsa) }}',
-                                deskripsi: '{{ addslashes($obat->deskripsi) }}'
-                        })"
-                            class="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 p-2 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-colors duration-200">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button onclick="deleteobat({{ $obat->id }}, '{{ addslashes($obat->nama_obat) }}')"
-                            class="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-200">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
+    <div class="md:hidden divide-y divide-gray-200 dark:divide-gray-700">
+        @foreach ($dataObat as $obat)
+        <div class="obat-card p-4">
+            <div class="flex justify-between items-start mb-2">
+                <div>
+                    <span class="text-[10px] font-mono text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded">{{ $obat->kode_obat }}</span>
+                    <h4 class="font-bold text-gray-900 dark:text-white mt-1">{{ $obat->nama_obat }}</h4>
                 </div>
-                <div class="space-y-2 text-sm">
-                    <div class="flex justify-between">
-                        <span class="text-gray-500 dark:text-gray-400">Nama Obat:</span>
-                        <span class="text-gray-900 dark:text-white">{{ $obat->nama_obat }}</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-gray-500 dark:text-gray-400">Stok:</span>
-                        <span class="text-gray-900 dark:text-white">{{ $obat->stok }}</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-gray-500 dark:text-gray-400">Deskripsi:</span>
-                        <span class="text-gray-900 dark:text-white">{{ $obat->deskripsi }}</span>
-                    </div>
+                <div class="flex space-x-2">
+                    <button onclick="editObat({{ json_encode($obat) }})" class="p-2 text-purple-600"><i class="fas fa-edit"></i></button>
+                    <form action="{{ route('admin.obat.destroy', $obat->id) }}" method="POST" class="inline shadow-none">
+                        @csrf @method('DELETE')
+                        <button type="submit" class="p-2 text-red-600"><i class="fas fa-trash"></i></button>
+                    </form>
                 </div>
             </div>
-            @empty
-            <div class="text-center py-8">
-                <div class="text-gray-500 dark:text-gray-400">
-                    <i class="fas fa-obats text-4xl mb-4"></i>
-                    <h4 class="text-lg font-medium">Data Obat Tidak Tersedia</h4>
-                    <p class="text-sm">Belum ada obat yang terdaftar dalam sistem</p>
-                </div>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mb-3 line-clamp-2 italic">"{{ $obat->deskripsi ?? 'Tidak ada deskripsi' }}"</p>
+            <div class="flex justify-between items-center text-xs">
+                <span class="text-gray-600 dark:text-gray-300">Stok: <strong>{{ $obat->stok }}</strong></span>
+                <span class="text-gray-600 dark:text-gray-300">Exp: <strong>{{ \Carbon\Carbon::parse($obat->tanggal_kadaluarsa)->format('d/m/Y') }}</strong></span>
             </div>
-            @endforelse
         </div>
+        @endforeach
     </div>
 </div>
 
-<!-- Create obat Modal -->
-<div id="create-obat-modal" class="fixed inset-0 bg-black/50 dark:bg-black/70 z-50 hidden backdrop-blur-sm transition-all duration-300">
-    <div class="flex items-center justify-center min-h-screen p-2 sm:p-4">
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 w-full max-w-sm sm:max-w-md transform transition-all duration-300 scale-95 max-h-[90vh] overflow-y-auto">
-            <div class="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700 sticky top-0 bg-white dark:bg-gray-800 z-10">
-                <div class="flex items-center justify-between">
-                    <h3 class="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
-                        Tambah Obat Baru
-                    </h3>
-                    <button onclick="closeCreateObatModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 p-1">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            </div>
-
-            <form action="{{ route('admin.obat.store') }}" method="POST" class="p-4 sm:p-6">
-                @csrf
-                <div class="space-y-3 sm:space-y-4">
-                    <!-- Nama -->
-                    <div>
-                        <label for="create-nama_obat" class="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            Nama Obat <span class="text-red-500">*</span>
-                        </label>
-                        <input type="text" id="create-name" name="name" required value="{{ old('name') }}"
-                            class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:text-white transition-colors duration-200"
-                            placeholder="Masukkan nama obat">
-                    </div>
-
-
-                    <!-- No Telepon -->
-                    <div>
-                        <label for="create-stok" class="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                           Stok <span class="text-red-500">*</span>
-                        </label>
-                        <input type="varchar" id="create-stok" name="stok" required value="{{ old('stok') }}"
-                            class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:text-white transition-colors duration-200"
-                            placeholder="Jumlah stok saat ini">
-                    </div>
-
-                    <!-- Alamat -->
-                    <div>
-                        <label for="create-tanggal_kadaluarsa" class="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            Tanggal Kadaluarsa <span class="text-red-500">*</span>
-                        </label>
-                        <input type="date" id="create-tanggal_kadaluarsa" name="tanggal_kadaluarsa" required value="{{ old('tanggal_kadaluarsa') }}"
-                            class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:text-white transition-colors duration-200"
-                            placeholder="Masukkan ttanggal kadaluarsa">
-                    </div>
-
-                    <!-- Password -->
-                    <div>
-                        <label for="create-deskripsi" class="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            Deskripsi <span class="text-red-500">*</span>
-                        </label>
-                        <textarea id="create-deskripsi" name="deskripsi" rows="2"
-                            class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:text-white transition-colors duration-200"
-                            placeholder="Masukkan deskripsi obat">{{ old('deskripsi') }}</textarea>
-                    </div>
-                </div>
-
-            <div class="px-4 sm:px-6 py-3 sm:py-4 bg-gray-50 dark:bg-gray-700/50 border-t border-gray-200 dark:border-gray-700 rounded-b-xl">
-                <div class="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-3">
-                    <button type="button" onclick="closeCreateObatModal()"
-                        class="w-full sm:w-auto px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors duration-200">
-                        Batal
-                    </button>
-                    <button type="submit"
-                        class="w-full sm:w-auto px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 transition-colors duration-200">
-                        Simpan
-                    </button>
-                </div>
-            </div>
-            </form>
-
+<div id="create-obat-modal" class="fixed inset-0 bg-black/50 z-50 hidden backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-md">
+        <div class="p-4 border-b dark:border-gray-700 flex justify-between items-center">
+            <h3 class="font-bold text-gray-900 dark:text-white">Tambah Obat Baru</h3>
+            <button onclick="closeCreateObatModal()" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button>
         </div>
+        <form action="{{ route('admin.obat.store') }}" method="POST" class="p-6 space-y-4">
+            @csrf
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Kode Obat *</label>
+                    <input type="text" name="kode_obat" required maxlength="10" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white text-sm focus:ring-purple-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Stok *</label>
+                    <input type="number" name="stok" required min="0" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white text-sm focus:ring-purple-500">
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Nama Obat *</label>
+                <input type="text" name="nama_obat" required maxlength="100" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white text-sm focus:ring-purple-500">
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Tanggal Kadaluarsa *</label>
+                <input type="date" name="tanggal_kadaluarsa" required class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white text-sm focus:ring-purple-500">
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Deskripsi</label>
+                <textarea name="deskripsi" rows="3" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white text-sm focus:ring-purple-500" placeholder="Ketik keterangan obat di sini..."></textarea>
+            </div>
+            <div class="flex justify-end space-x-3 pt-4">
+                <button type="button" onclick="closeCreateObatModal()" class="px-4 py-2 text-sm text-gray-600 border rounded-lg">Batal</button>
+                <button type="submit" class="px-4 py-2 text-sm bg-purple-600 text-white rounded-lg hover:bg-purple-700">Simpan Obat</button>
+            </div>
+        </form>
     </div>
 </div>
 
-<!-- Edit obat Modal -->
-<div id="edit-obat-modal" class="fixed inset-0 bg-black/50 dark:bg-black/70 z-50 hidden backdrop-blur-sm transition-all duration-300">
-    <div class="flex items-center justify-center min-h-screen p-2 sm:p-4">
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 w-full max-w-sm sm:max-w-md transform transition-all duration-300 scale-95 max-h-[90vh] overflow-y-auto">
-            <div class="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700 sticky top-0 bg-white dark:bg-gray-800 z-10">
-                <div class="flex items-center justify-between">
-                    <h3 class="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
-                        Edit Obat
-                    </h3>
-                    <button onclick="closeEditObatModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 p-1">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            </div>
-
-            <form id="edit-obat-form" class="p-4 sm:p-6">
-                @csrf
-                <input type="hidden" id="edit-obat-id" name="obat_id">
-                <div class="space-y-3 sm:space-y-4">
-                    <!-- Nama -->
-                    <div>
-                        <label for="edit-name" class="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            Nama Lengkap <span class="text-red-500">*</span>
-                        </label>
-                        <input type="text" id="edit-name" name="name" required
-                            class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:text-white transition-colors duration-200">
-                    </div>
-
-
-                    <!-- No Telepon -->
-                    <div>
-                        <label for="edit-phone" class="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            No. Telepon <span class="text-red-500">*</span>
-                        </label>
-                        <input type="tel" id="edit-phone" name="phone" required
-                            class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:text-white transition-colors duration-200">
-                    </div>
-
-                    <!-- obatname -->
-                    <div>
-                        <label for="edit-obatname" class="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            obatname
-                        </label>
-                        <input type="text" id="edit-obatname" name="obatname"
-                            class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:text-white transition-colors duration-200">
-                    </div>
-
-                    <!-- Kode -->
-                    <div>
-                        <label for="edit-kode" class="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            Kode
-                        </label>
-                        <input type="text" id="edit-kode" name="kode"
-                            class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:text-white transition-colors duration-200">
-                    </div>
-
-                    <!-- Alamat -->
-                    <div>
-                        <label for="edit-alamat" class="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            Alamat
-                        </label>
-                        <textarea id="edit-alamat" name="alamat" rows="2"
-                            class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:text-white transition-colors duration-200"></textarea>
-                    </div>
-
-                    <!-- Change Password -->
-                    <div class="pt-2 sm:pt-4 border-t border-gray-200 dark:border-gray-600">
-                        <label class="flex items-center">
-                            <input type="checkbox" id="change-password-checkbox"
-                                class="rounded border-gray-300 text-purple-600 focus:ring-purple-500">
-                            <span class="ml-2 text-xs sm:text-sm text-gray-700 dark:text-gray-300">Ubah Password</span>
-                        </label>
-                    </div>
-
-                    <!-- New Password (Hidden by default) -->
-                    <div id="password-fields" class="space-y-3 sm:space-y-4 hidden">
-                        <div>
-                            <label for="edit-password" class="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Password Baru
-                            </label>
-                            <input type="password" id="edit-password" name="password"
-                                class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:text-white transition-colors duration-200"
-                                placeholder="Minimal 8 karakter">
-                        </div>
-
-                        <div>
-                            <label for="edit-password-confirm" class="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Konfirmasi Password Baru
-                            </label>
-                            <input type="password" id="edit-password-confirm" name="password_confirmation"
-                                class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:text-white transition-colors duration-200"
-                                placeholder="Konfirmasi password baru">
-                        </div>
-                    </div>
-                </div>
-            </form>
-
-            <div class="px-4 sm:px-6 py-3 sm:py-4 bg-gray-50 dark:bg-gray-700/50 border-t border-gray-200 dark:border-gray-700 rounded-b-xl">
-                <div class="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-3">
-                    <button type="button" onclick="closeEditObatModal()"
-                        class="w-full sm:w-auto px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors duration-200">
-                        Batal
-                    </button>
-                    <button type="button" onclick="updateobat()"
-                        class="w-full sm:w-auto px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 transition-colors duration-200">
-                        Update
-                    </button>
-                </div>
-            </div>
+<div id="edit-obat-modal" class="fixed inset-0 bg-black/50 z-50 hidden backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-md">
+        <div class="p-4 border-b dark:border-gray-700 flex justify-between items-center">
+            <h3 class="font-bold text-gray-900 dark:text-white">Edit Data Obat</h3>
+            <button onclick="closeEditObatModal()" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button>
         </div>
+        <form id="edit-obat-form" method="POST" class="p-6 space-y-4">
+            @csrf @method('PUT')
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Kode Obat</label>
+                    <input type="text" name="kode_obat" id="edit-kode_obat" required class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Stok</label>
+                    <input type="number" name="stok" id="edit-stok" required class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white text-sm">
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Nama Obat</label>
+                <input type="text" name="nama_obat" id="edit-nama_obat" required class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white text-sm">
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Tanggal Kadaluarsa</label>
+                <input type="date" name="tanggal_kadaluarsa" id="edit-tanggal_kadaluarsa" required class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white text-sm">
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Deskripsi</label>
+                <textarea name="deskripsi" id="edit-deskripsi" rows="3" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white text-sm"></textarea>
+            </div>
+            <div class="flex justify-end space-x-3 pt-4">
+                <button type="button" onclick="closeEditObatModal()" class="px-4 py-2 text-sm text-gray-600 border rounded-lg">Batal</button>
+                <button type="submit" class="px-4 py-2 text-sm bg-purple-600 text-white rounded-lg hover:bg-purple-700">Update Data</button>
+            </div>
+        </form>
     </div>
 </div>
+
 @endsection
 
-
-@push('styles')
-<style>
-    /* Loading spinner */
-    .loading-spinner {
-        display: inline-block;
-        width: 16px;
-        height: 16px;
-        border: 2px solid currentColor;
-        border-radius: 50%;
-        border-right-color: transparent;
-        animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-        to {
-            transform: rotate(360deg);
-        }
-    }
-
-    /* View toggle button styles */
-    .view-toggle {
-        transition: all 0.2s ease;
-    }
-    
-    .view-toggle.active {
-        transform: scale(1.05);
-    }
-    
-    /* Responsive table improvements */
-    @media (max-width: 640px) {
-        /* Hide table view on mobile by default */
-        #table-view {
-            display: none;
-        }
-        
-        /* Show card view on mobile by default */
-        #card-view {
-            display: block !important;
-        }
-        
-        /* Improve table scroll on very small screens */
-        .table-container {
-            -webkit-overflow-scrolling: touch;
-        }
-        
-        /* Better mobile table styling */
-        table {
-            min-width: 700px;
-        }
-        
-        th, td {
-            white-space: nowrap;
-        }
-        
-        /* Sticky columns for mobile */
-        .sticky {
-            position: sticky;
-            z-index: 10;
-        }
-    }
-    
-    @media (min-width: 641px) {
-        /* Hide view toggle buttons on desktop */
-        .view-toggle {
-            display: none;
-        }
-        
-        /* Show table view on desktop by default */
-        #table-view {
-            display: block;
-        }
-        
-        /* Hide card view on desktop by default */
-        #card-view {
-            display: none !important;
-        }
-        
-        /* Remove sticky positioning on desktop */
-        .sticky {
-            position: static;
-        }
-    }
-    
-    /* Card hover effects */
-    .obat-card {
-        transition: all 0.3s ease;
-    }
-    
-    .obat-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-    
-    .dark .obat-card:hover {
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    }
-    
-    /* Smooth transitions for view switching */
-    #table-view, #card-view {
-        transition: opacity 0.3s ease;
-    }
-    
-    /* Better mobile form styling */
-    @media (max-width: 640px) {
-        .modal-content {
-            margin: 1rem;
-            max-height: calc(100vh - 2rem);
-        }
-    }
-    
-    /* Loading states */
-    .loading {
-        opacity: 0.6;
-        pointer-events: none;
-        position: relative;
-    }
-    
-    .loading::after {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 20px;
-        height: 20px;
-        margin: -10px 0 0 -10px;
-        border: 2px solid #22c55e;
-        border-top-color: transparent;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-    }
-    
-    /* Better focus states for accessibility */
-    .obat-card:focus-within {
-        ring: 2px;
-        ring-color: #22c55e;
-        ring-opacity: 0.5;
-    }
-    
-    /* Responsive text sizing */
-    @media (max-width: 480px) {
-        .obat-card h4 {
-            font-size: 0.875rem;
-        }
-        
-        .obat-card .text-sm {
-            font-size: 0.75rem;
-        }
-    }
-    
-    /* Form validation states */
-    .border-red-300 {
-        border-color: #fca5a5 !important;
-    }
-    
-    .ring-red-200 {
-        ring-color: #fecaca !important;
-        ring-width: 2px !important;
-    }
-    
-    /* Improved button states */
-    button:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-    }
-    
-    /* Better mobile pagination */
-    @media (max-width: 640px) {
-        .pagination-text {
-            font-size: 0.75rem;
-        }
-        
-        .pagination-button {
-            min-width: 32px;
-            height: 32px;
-            padding: 0.25rem;
-        }
-    }
-    
-    /* Tooltip styling */
-    [title] {
-        position: relative;
-    }
-    
-    /* Improved table scroll shadow */
-    .table-container {
-        background: 
-            /* Shadow covers */ 
-            linear-gradient(90deg, rgba(255,255,255,1) 30%, rgba(255,255,255,0)) left,
-            linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,1) 70%) right;
-        background-repeat: no-repeat;
-        background-color: white;
-        background-size: 40px 100%, 40px 100%;
-        background-attachment: local, local;
-    }
-    
-    .dark .table-container {
-        background: 
-            linear-gradient(90deg, rgba(31,41,55,1) 30%, rgba(31,41,55,0)) left,
-            linear-gradient(90deg, rgba(31,41,55,0), rgba(31,41,55,1) 70%) right;
-        background-repeat: no-repeat;
-        background-color: rgb(31 41 55);
-        background-size: 40px 100%, 40px 100%;
-        background-attachment: local, local;
-    }
-</style>
-@endpush
 @push('scripts')
-    <script>
+<script>
+    function openCreateObatModal() { document.getElementById('create-obat-modal').classList.remove('hidden'); }
+    function closeCreateObatModal() { document.getElementById('create-obat-modal').classList.add('hidden'); }
+    function openEditObatModal() { document.getElementById('edit-obat-modal').classList.remove('hidden'); }
+    function closeEditObatModal() { document.getElementById('edit-obat-modal').classList.add('hidden'); }
 
-        // Search functionality with support for both table and card views
-document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.getElementById('obat-search');
+    function editObat(data) {
+        const form = document.getElementById('edit-obat-form');
+        form.action = `/admin/obat/${data.id}`;
+        
+        document.getElementById('edit-kode_obat').value = data.kode_obat;
+        document.getElementById('edit-nama_obat').value = data.nama_obat;
+        document.getElementById('edit-stok').value = data.stok;
+        document.getElementById('edit-tanggal_kadaluarsa').value = data.tanggal_kadaluarsa;
+        document.getElementById('edit-deskripsi').value = data.deskripsi || '';
+        
+        openEditObatModal();
+    }
 
-    function filterobats() {
-        const searchTerm = searchInput.value.toLowerCase();
-
-        // Filter table rows
-        const rows = document.querySelectorAll('.obat-row');
-        // Filter card views
-        const cards = document.querySelectorAll('.obat-card');
-
-        [...rows, ...cards].forEach(item => {
-            let name, obatname, kode, phone, alamat;
-
-            if (item.classList.contains('obat-row')) {
-                // Table row filtering
-                const cells = item.querySelectorAll('td');
-                name = cells[1].textContent.toLowerCase();
-                obatname = cells[2] ? cells[2].textContent.toLowerCase() : '';
-                kode = cells[3] ? cells[3].textContent.toLowerCase() : '';
-                phone = cells[4] ? cells[4].textContent.toLowerCase() : '';
-                alamat = cells[5] ? cells[5].textContent.toLowerCase() : '';
-            } else {
-                // Card filtering
-                name = item.querySelector('h4').textContent.toLowerCase();
-                const spans = item.querySelectorAll('.text-gray-900');
-                obatname = spans[1] ? spans[1].textContent.toLowerCase() : '';
-                phone = spans[2] ? spans[2].textContent.toLowerCase() : '';
-                alamat = spans[3] ? spans[3].textContent.toLowerCase() : '';
-            }
-
-            const matchesSearch = name.includes(searchTerm) ||
-                                obatname.includes(searchTerm) ||
-                                kode.includes(searchTerm) ||
-                                phone.includes(searchTerm) ||
-                                alamat.includes(searchTerm);
-
-            if (matchesSearch) {
-                item.style.display = '';
-            } else {
-                item.style.display = 'none';
-            }
+    // Search Logic (Table & Card)
+    document.getElementById('obat-search').addEventListener('input', function(e) {
+        const query = e.target.value.toLowerCase();
+        
+        // Search in desktop table
+        document.querySelectorAll('.obat-row').forEach(row => {
+            row.style.display = row.innerText.toLowerCase().includes(query) ? '' : 'none';
         });
-    }
 
-    if (searchInput) {
-        searchInput.addEventListener('input', filterobats);
-    }
-
-    // Change password checkbox toggle
-    const changePasswordCheckbox = document.getElementById('change-password-checkbox');
-    const passwordFields = document.getElementById('password-fields');
-
-    if (changePasswordCheckbox && passwordFields) {
-        changePasswordCheckbox.addEventListener('change', function() {
-            if (this.checked) {
-                passwordFields.classList.remove('hidden');
-                document.getElementById('edit-password').required = true;
-                document.getElementById('edit-password-confirm').required = true;
-            } else {
-                passwordFields.classList.add('hidden');
-                document.getElementById('edit-password').required = false;
-                document.getElementById('edit-password-confirm').required = false;
-                document.getElementById('edit-password').value = '';
-                document.getElementById('edit-password-confirm').value = '';
-            }
+        // Search in mobile cards
+        document.querySelectorAll('.obat-card').forEach(card => {
+            card.style.display = card.innerText.toLowerCase().includes(query) ? '' : 'none';
         });
-    }
-
-    // Auto switch to card view on mobile
-    function checkViewMode() {
-        const tableView = document.getElementById('table-view');
-        const cardView = document.getElementById('card-view');
-
-        if (window.innerWidth < 640) {
-            if (tableView && cardView) {
-                tableView.style.display = 'none';
-                cardView.style.display = 'block';
-            }
-        } else {
-            if (tableView && cardView) {
-                cardView.style.display = 'none';
-                tableView.style.display = 'block';
-            }
-        }
-    }
-
-    // Initial check
-    checkViewMode();
-
-    // Check on resize
-    window.addEventListener('resize', checkViewMode);
-});
-
-// View switching function
-function switchView(viewType) {
-    const tableView = document.getElementById('table-view');
-    const cardView = document.getElementById('card-view');
-
-    if (viewType === 'table') {
-        tableView.classList.remove('hidden');
-        cardView.classList.add('hidden');
-    } else {
-        cardView.classList.remove('hidden');
-        tableView.classList.add('hidden');
-    }
-}
-
-// Modal Functions
-function openCreateObatModal() {
-    const modal = document.getElementById('create-obat-modal');
-    modal.classList.remove('hidden');
-    setTimeout(() => {
-        const transform = modal.querySelector('.transform');
-        if (transform) {
-            transform.classList.remove('scale-95');
-            transform.classList.add('scale-100');
-        }
-    }, 10);
-}
-
-function closeCreateObatModal() {
-    const modal = document.getElementById('create-obat-modal');
-    const transform = modal.querySelector('.transform');
-    if (transform) {
-        transform.classList.add('scale-95');
-        transform.classList.remove('scale-100');
-    }
-    setTimeout(() => {
-        modal.classList.add('hidden');
-        document.getElementById('create-obat-form').reset();
-    }, 300);
-}
-
-function openEditObatModal() {
-    const modal = document.getElementById('edit-obat-modal');
-    modal.classList.remove('hidden');
-    setTimeout(() => {
-        const transform = modal.querySelector('.transform');
-        if (transform) {
-            transform.classList.remove('scale-95');
-            transform.classList.add('scale-100');
-        }
-    }, 10);
-}
-
-function closeEditObatModal() {
-    const modal = document.getElementById('edit-obat-modal');
-    const transform = modal.querySelector('.transform');
-    if (transform) {
-        transform.classList.add('scale-95');
-        transform.classList.remove('scale-100');
-    }
-    setTimeout(() => {
-        modal.classList.add('hidden');
-        document.getElementById('edit-obat-form').reset();
-        const checkbox = document.getElementById('change-password-checkbox');
-        const passwordFields = document.getElementById('password-fields');
-        if (checkbox) checkbox.checked = false;
-        if (passwordFields) passwordFields.classList.add('hidden');
-    }, 300);
-}
-
-// obat Management Functions - Using Form Submission
-function saveObat() {
-    const form = document.getElementById('create-obat-form');
-    const saveButton = document.querySelector('#create-obat-modal button[onclick="saveObat()"]');
-
-    // Basic client-side validation
-    const name = form.querySelector('[name="name"]').value;
-    const phone = form.querySelector('[name="phone"]').value;
-    const password = form.querySelector('[name="password"]').value;
-    const passwordConfirm = form.querySelector('[name="password_confirmation"]').value;
-
-    if (!name || !phone || !password) {
-        alert('Semua field wajib diisi!');
-        return;
-    }
-
-    if (password !== passwordConfirm) {
-        alert('Password dan konfirmasi password tidak cocok!');
-        return;
-    }
-
-    if (password.length < 8) {
-        alert('Password minimal 8 karakter!');
-        return;
-    }
-
-    // Add loading state
-    const originalText = saveButton.innerHTML;
-    saveButton.innerHTML = '<span class="loading-spinner mr-2"></span>Menyimpan...';
-    saveButton.disabled = true;
-
-    // Set form action and method
-    form.action = '/admin/obat';
-    form.method = 'POST';
-
-    // Submit form
-    form.submit();
-}
-
-function editobat(obatId, obatData) {
-    // Populate form fields with passed data
-    document.getElementById('edit-obat-id').value = obatId;
-    document.getElementById('edit-name').value = obatData.name || '';
-    document.getElementById('edit-phone').value = obatData.no_telp || '';
-
-    // Additional fields
-    const editobatnameField = document.getElementById('edit-obatname');
-    const editKodeField = document.getElementById('edit-kode');
-    const editAlamatField = document.getElementById('edit-alamat');
-
-    if (editobatnameField) editobatnameField.value = obatData.obatname || '';
-    if (editKodeField) editKodeField.value = obatData.kode || '';
-    if (editAlamatField) editAlamatField.value = obatData.alamat || '';
-
-    // Open modal
-    openEditObatModal();
-}
-
-function updateobat() {
-    const form = document.getElementById('edit-obat-form');
-    const changePassword = document.getElementById('change-password-checkbox').checked;
-    const updateButton = document.querySelector('#edit-obat-modal button[onclick="updateobat()"]');
-    const obatId = document.getElementById('edit-obat-id').value;
-
-    // Basic validation
-    const name = form.querySelector('[name="name"]').value;
-    const phone = form.querySelector('[name="phone"]').value;
-
-    if (!name || !phone) {
-        alert('Nama dan telepon wajib diisi!');
-        return;
-    }
-
-    if (changePassword) {
-        const password = form.querySelector('[name="password"]').value;
-        const passwordConfirm = form.querySelector('[name="password_confirmation"]').value;
-
-        if (!password || !passwordConfirm) {
-            alert('Password dan konfirmasi password wajib diisi!');
-            return;
-        }
-
-        if (password !== passwordConfirm) {
-            alert('Password dan konfirmasi password tidak cocok!');
-            return;
-        }
-
-        if (password.length < 8) {
-            alert('Password minimal 8 karakter!');
-            return;
-        }
-    }
-
-    // Add loading state
-    const originalText = updateButton.innerHTML;
-    updateButton.innerHTML = '<span class="loading-spinner mr-2"></span>Memperbarui...';
-    updateButton.disabled = true;
-
-    // Set form action and method
-    form.action = `/admin/obat/${obatId}`;
-    form.method = 'POST';
-
-    // Add method spoofing for PUT
-    let methodInput = form.querySelector('input[name="_method"]');
-    if (!methodInput) {
-        methodInput = document.createElement('input');
-        methodInput.type = 'hidden';
-        methodInput.name = '_method';
-        methodInput.value = 'PUT';
-        form.appendChild(methodInput);
-    }
-
-    // Submit form
-    form.submit();
-}
-
-function deleteobat(obatId, obatName) {
-    // Show confirmation dialog
-    if (!confirm(`Apakah Anda yakin ingin menghapus Obat "${obatName}"? Data yang dihapus tidak dapat dikembalikan!`)) {
-        return;
-    }
-
-    // Create and submit delete form
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = `/admin/obat/${obatId}`;
-
-    // Add CSRF token
-    const csrfInput = document.createElement('input');
-    csrfInput.type = 'hidden';
-    csrfInput.name = '_token';
-    csrfInput.value = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-    form.appendChild(csrfInput);
-
-    // Add method spoofing for DELETE
-    const methodInput = document.createElement('input');
-    methodInput.type = 'hidden';
-    methodInput.name = '_method';
-    methodInput.value = 'DELETE';
-    form.appendChild(methodInput);
-
-    // Append form to body and submit
-    document.body.appendChild(form);
-    form.submit();
-}
-
-// Enhanced form validation with visual feedback
-function validateForm(formId) {
-    const form = document.getElementById(formId);
-    const inputs = form.querySelectorAll('input[required], select[required]');
-    let isValid = true;
-
-    inputs.forEach(input => {
-        if (!input.value.trim()) {
-            input.classList.add('border-red-500', 'ring-red-500');
-            isValid = false;
-        } else {
-            input.classList.remove('border-red-500', 'ring-red-500');
-        }
     });
-
-    return isValid;
-}
-
-// Real-time validation feedback
-document.addEventListener('DOMContentLoaded', function() {
-    const forms = ['create-obat-form', 'edit-obat-form'];
-
-    forms.forEach(formId => {
-        const form = document.getElementById(formId);
-        if (form) {
-            const inputs = form.querySelectorAll('input, select');
-            inputs.forEach(input => {
-                input.addEventListener('blur', function() {
-                    if (this.required && !this.value.trim()) {
-                        this.classList.add('border-red-300', 'ring-red-200');
-                    } else {
-                        this.classList.remove('border-red-300', 'ring-red-200');
-                    }
-                });
-
-                input.addEventListener('input', function() {
-                    if (this.classList.contains('border-red-300')) {
-                        this.classList.remove('border-red-300', 'ring-red-200');
-                    }
-                });
-            });
-        }
-    });
-});
-
-// Close modals with Escape key
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        closeCreateObatModal();
-        closeEditObatModal();
-    }
-});
-
-// Handle form submission with Enter key
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') {
-        const createModal = document.getElementById('create-obat-modal');
-        const editModal = document.getElementById('edit-obat-modal');
-
-        if (!createModal.classList.contains('hidden')) {
-            e.preventDefault();
-            saveObat();
-        } else if (!editModal.classList.contains('hidden')) {
-            e.preventDefault();
-            updateobat();
-        }
-    }
-});
-
-// Auto-hide alerts after 5 seconds
-document.addEventListener('DOMContentLoaded', function() {
-    const alerts = document.querySelectorAll('.alert-auto-hide');
-    alerts.forEach(alert => {
-        setTimeout(() => {
-            alert.style.opacity = '0';
-            setTimeout(() => {
-                if (alert.parentNode) {
-                    alert.remove();
-                }
-            }, 300);
-        }, 5000);
-    });
-});
-
-    </script>
+</script>
 @endpush

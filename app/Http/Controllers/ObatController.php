@@ -16,8 +16,8 @@ class ObatController extends Controller
      */
     private function getViewPath($viewName)
     {
-        $role = auth()->user()->level; 
-        return '.obat.' . $viewName;
+        $role = auth()->user()->level; // Pastikan 'level' sesuai dengan kolom di tabel users Anda
+        return $role . '.obat.' . $viewName;
     }
 
     /**
@@ -44,20 +44,22 @@ class ObatController extends Controller
     {
         try {
             $validatedData = $request->validate([
-                'name'               => 'required|string|max:30|min:2',
+                'kode_obat'          => 'required|string|max:10|unique:obat,kode_obat',
+                'nama_obat'          => 'required|string|max:100|min:2', // Sesuai dengan name di blade
                 'stok'               => 'required|integer|min:0',
-                'tanggal_kadaluarsa' => 'nullable|date',
+                'tanggal_kadaluarsa' => 'required|date',
                 'deskripsi'          => 'nullable|string',
             ]);
 
             DB::beginTransaction();
 
             Obat::create([
-                'kode_obat'          => $this->generateKodeObat(),
-                'nama_obat'          => $validatedData['name'],
+                // Jika user mengosongkan kode_obat di view, gunakan generate otomatis
+                'kode_obat'          => $request->kode_obat ?? $this->generateKodeObat(),
+                'nama_obat'          => $validatedData['nama_obat'],
                 'stok'               => $validatedData['stok'],
-                'tanggal_kadaluarsa' => $validatedData['tanggal_kadaluarsa'] ?? null,
-                'deskripsi'          => $validatedData['deskripsi'] ?? null,
+                'tanggal_kadaluarsa' => $validatedData['tanggal_kadaluarsa'],
+                'deskripsi'          => $validatedData['deskripsi'],
             ]);
 
             DB::commit();
@@ -69,7 +71,7 @@ class ObatController extends Controller
             return redirect()->back()
                 ->withErrors($e->errors())
                 ->withInput()
-                ->with('error', 'Validasi gagal, silakan periksa kembali data yang dimasukkan.');
+                ->with('error', 'Validasi gagal, silakan periksa kembali data.');
         } catch (Exception $e) {
             DB::rollBack();
             return redirect()->back()
@@ -84,10 +86,10 @@ class ObatController extends Controller
             $obat = Obat::findOrFail($id);
 
             $validatedData = $request->validate([
-                'kode_obat'          => ['required', 'string', 'max:5', 'min:3', Rule::unique('obat')->ignore($obat->id)],
-                'nama_obat'          => 'required|string|max:30|min:2',
+                'kode_obat'          => ['required', 'string', 'max:10', Rule::unique('obat')->ignore($obat->id)],
+                'nama_obat'          => 'required|string|max:100|min:2',
                 'stok'               => 'required|integer|min:0',
-                'tanggal_kadaluarsa' => 'nullable|date',
+                'tanggal_kadaluarsa' => 'required|date',
                 'deskripsi'          => 'nullable|string',
             ]);
 
@@ -97,8 +99,8 @@ class ObatController extends Controller
                 'kode_obat'          => $validatedData['kode_obat'],
                 'nama_obat'          => $validatedData['nama_obat'],
                 'stok'               => $validatedData['stok'],
-                'tanggal_kadaluarsa' => $validatedData['tanggal_kadaluarsa'] ?? null,
-                'deskripsi'          => $validatedData['deskripsi'] ?? null,
+                'tanggal_kadaluarsa' => $validatedData['tanggal_kadaluarsa'],
+                'deskripsi'          => $validatedData['deskripsi'],
             ]);
 
             DB::commit();
@@ -111,18 +113,6 @@ class ObatController extends Controller
         } catch (Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
-        }
-    }
-
-    public function show($id)
-    {
-        try {
-            $obat = Obat::findOrFail($id);
-            // Jika view show menggunakan folder global, arahkan ke 'obat.show'
-            // Jika mengikuti folder role, gunakan $this->getViewPath('show')
-            return view('obat.show', compact('obat'));
-        } catch (Exception $e) {
-            return redirect()->back()->with('error', 'Obat tidak ditemukan');
         }
     }
 
@@ -139,7 +129,7 @@ class ObatController extends Controller
 
         } catch (Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal menghapus data: ' . $e->getMessage());
         }
     }
 

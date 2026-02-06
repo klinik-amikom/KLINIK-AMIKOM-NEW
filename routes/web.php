@@ -7,9 +7,9 @@ use App\Http\Controllers\PasienController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RekamMedisController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\ApotekerController; // Controller baru sudah di-import
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ApotekerController;
 use App\Http\Controllers\ManageUserController;
+use Illuminate\Support\Facades\Route;
 
 // --- 1. Public Routes ---
 Route::get('/', function () { return view("index"); });
@@ -24,42 +24,32 @@ Route::get('/pasien/download-pdf/{id}', [PasienController::class, 'downloadPDF']
 // --- 2. Authenticated Routes ---
 Route::middleware(['auth'])->group(function () {
 
-    // --- SHARED SERVICES (RESET PASSWORD) ---
+    // --- SHARED SERVICES ---
     Route::post('user/{id}/reset-password', [UserController::class, 'resetPassword'])->name('user.reset-password');
 
+    // --- ROLE: ADMIN ---
+    Route::middleware(['role:admin'])->group(function () {
+        Route::get('/users', [ManageUserController::class, 'index'])->name('users.index');
+        Route::delete('/users/{id}', [ManageUserController::class, 'destroy'])->name('users.destroy');
+    });
 
+    // GROUP ADMIN
+    Route::prefix('admin')->name('admin.')->middleware('role:admin')->group(function () {
+        Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-Route::middleware(['auth', 'role:admin'])->group(function () {
+        // Manajemen Akun User
+        Route::resource('admin', UserController::class)->parameters(['admin' => 'id'])->names(['index' => 'index']);
+        Route::resource('dokter', UserController::class)->parameters(['dokter' => 'id']);
+        Route::resource('apoteker', UserController::class)->parameters(['apoteker' => 'id']);
 
-    Route::get('/users', [ManageUserController::class, 'index'])
-        ->name('users.index');
-
-    Route::delete('/users/{id}', [ManageUserController::class, 'destroy'])
-        ->name('users.destroy');
-});
-
-// GROUP ADMIN
-Route::prefix('admin')->name('admin.')->middleware('role:admin')->group(function () {
-    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
-    // Manajemen Akun User (PENTING: Perhatikan penamaan .names)
-    // Mengarahkan route('admin.index') ke UserController untuk role admin
-    Route::resource('admin', UserController::class)
-          ->parameters(['admin' => 'id'])
-          ->names([
-              'index' => 'index', // Ini akan menjadi admin.index
-          ]);
-          
-    Route::resource('dokter', UserController::class)->parameters(['dokter' => 'id']);
-    
-    // Perbaikan: Tambahkan names agar sidebar apoteker admin.apoteker.index jalan
-    Route::resource('apoteker', UserController::class)->parameters(['apoteker' => 'id']);
-
-    // Manajemen Data Medis
-    Route::resource('pasien', PasienController::class);
-    Route::resource('obat', ObatController::class);
-    Route::resource('rekammedis', RekamMedisController::class)->except(['edit', 'create']);
-    
+        // Manajemen Data Medis
+        // PENTING: Route Identity Lookup diletakkan sebelum resource pasien
+        Route::get('pasien/identity/{number}', [PasienController::class, 'getIdentity'])->name('pasien.getIdentity');
+        Route::resource('pasien', PasienController::class);
+        
+        Route::resource('obat', ObatController::class);
+        Route::resource('rekammedis', RekamMedisController::class)->except(['edit', 'create']);
+        
         // Fitur Export
         Route::get('/rekam-medis/export/pdf', [RekamMedisController::class, 'exportPDF'])->name('rekam-medis.export.pdf');
         Route::get('/rekam-medis/export/excel', [RekamMedisController::class, 'exportExcel'])->name('rekam-medis.export.excel');
@@ -68,7 +58,9 @@ Route::prefix('admin')->name('admin.')->middleware('role:admin')->group(function
     // GROUP DOKTER
     Route::prefix('dokter')->name('dokter.')->middleware('role:dokter')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
+        
+        // Tambahkan lookup identity juga di role dokter jika diperlukan
+        Route::get('pasien/identity/{number}', [PasienController::class, 'getIdentity'])->name('pasien.getIdentity');
         Route::resource('pasien', PasienController::class);
         Route::resource('obat', ObatController::class);
         Route::resource('rekammedis', RekamMedisController::class)->except(['edit', 'create']);
@@ -79,7 +71,6 @@ Route::prefix('admin')->name('admin.')->middleware('role:admin')->group(function
 
     // GROUP APOTEKER
     Route::prefix('apoteker')->name('apoteker.')->middleware('role:apoteker')->group(function () {
-        // PERBAIKAN: Menggunakan ApotekerController dan memberikan alias 'index'
         Route::get('/dashboard', [ApotekerController::class, 'index'])->name('dashboard');
         Route::get('/', [ApotekerController::class, 'index'])->name('index'); 
 
@@ -87,9 +78,7 @@ Route::prefix('admin')->name('admin.')->middleware('role:admin')->group(function
         Route::resource('obat', ObatController::class);
         Route::resource('rekammedis', RekamMedisController::class)->names('rekam_medis')->except(['edit', 'create']);
         
-        // Fitur Khusus: Validasi Resep oleh Apoteker
         Route::patch('/rekam-medis/{id}/validasi', [RekamMedisController::class, 'validasi'])->name('rekam-medis.validasi');
-
         Route::get('/rekam-medis/export/pdf', [RekamMedisController::class, 'exportPDF'])->name('rekam-medis.export.pdf');
         Route::get('/rekam-medis/export/excel', [RekamMedisController::class, 'exportExcel'])->name('rekam-medis.export.excel');
     });
