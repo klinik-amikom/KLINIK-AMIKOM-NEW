@@ -444,7 +444,6 @@
     </div>
 
 @endsection
-
 @push('scripts')
     <script>
         // Data rekam medis untuk edit
@@ -452,36 +451,17 @@
 
         function openCreateRekamMedisModal() {
             document.getElementById('create-rekammedis-modal').classList.remove('hidden');
-            setTimeout(() => {
-                const transform = document.querySelector('#create-rekammedis-modal .transform');
-                if (transform) {
-                    transform.classList.remove('scale-95');
-                    transform.classList.add('scale-100');
-                }
-            }, 10);
         }
 
         function closeCreateRekamMedisModal() {
-            const modal = document.getElementById('create-rekammedis-modal');
-            const transform = modal.querySelector('.transform');
-            if (transform) {
-                transform.classList.add('scale-95');
-                transform.classList.remove('scale-100');
-            }
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                document.getElementById('create-rekammedis-form').reset();
-            }, 300);
+            document.getElementById('create-rekammedis-modal').classList.add('hidden');
+            document.getElementById('create-rekammedis-form').reset();
         }
 
         function editRekamMedis(id) {
             const rekam = rekamMedisData.find(item => item.id === id);
             if (!rekam) return;
-
-            // Set form action
             document.getElementById('edit-rekammedis-form').action = `/admin/rekammedis/${id}`;
-
-            // Populate form fields
             document.getElementById('edit_tanggal_periksa').value = rekam.tanggal_periksa;
             document.getElementById('edit_pasien_id').value = rekam.pasien_id;
             document.getElementById('edit_dokter_id').value = rekam.user_id;
@@ -490,81 +470,34 @@
             document.getElementById('edit_resep').value = rekam.resep || '';
             document.getElementById('edit_tgl_ambil_obat').value = rekam.tanggal_pengambilan || '';
             document.getElementById('edit_jumlah_obat').value = rekam.jumlah_obat || '';
-
-            // Open modal
-            openEditRekamMedisModal();
-        }
-
-        function openEditRekamMedisModal() {
             document.getElementById('edit-rekammedis-modal').classList.remove('hidden');
-            setTimeout(() => {
-                const transform = document.querySelector('#edit-rekammedis-modal .transform');
-                if (transform) {
-                    transform.classList.remove('scale-95');
-                    transform.classList.add('scale-100');
-                }
-            }, 10);
         }
 
         function closeEditRekamMedisModal() {
-            const modal = document.getElementById('edit-rekammedis-modal');
-            const transform = modal.querySelector('.transform');
-            if (transform) {
-                transform.classList.add('scale-95');
-                transform.classList.remove('scale-100');
-            }
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                document.getElementById('edit-rekammedis-form').reset();
-            }, 300);
+            document.getElementById('edit-rekammedis-modal').classList.add('hidden');
+            document.getElementById('edit-rekammedis-form').reset();
         }
 
         // Search functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            const searchInput = document.getElementById('rekam-search');
-
-            function filterRekamMedis() {
-                const searchTerm = searchInput.value.toLowerCase();
-                const rows = document.querySelectorAll('.rekam-row');
-
-                rows.forEach(row => {
-                    const cells = row.querySelectorAll('td');
-                    let found = false;
-
-                    cells.forEach(cell => {
-                        if (cell.textContent.toLowerCase().includes(searchTerm)) {
-                            found = true;
-                        }
-                    });
-
-                    row.style.display = found ? '' : 'none';
-                });
-            }
-
-            if (searchInput) {
-                searchInput.addEventListener('input', filterRekamMedis);
-            }
-
-            // Auto hide alerts
-            const alerts = document.querySelectorAll('.alert-auto-hide');
-            alerts.forEach(alert => {
-                setTimeout(() => {
-                    alert.style.opacity = '0';
-                    setTimeout(() => {
-                        if (alert.parentNode) {
-                            alert.remove();
-                        }
-                    }, 300);
-                }, 5000);
+        document.getElementById('rekam-search')?.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            document.querySelectorAll('.rekam-row').forEach(row => {
+                row.style.display = [...row.querySelectorAll('td')]
+                    .some(td => td.textContent.toLowerCase().includes(searchTerm)) ? '' : 'none';
             });
+        });
 
-            // Close modal on Escape key
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') {
-                    closeCreateRekamMedisModal();
-                    closeEditRekamMedisModal();
-                }
-            });
+        // Auto-hide alerts
+        document.querySelectorAll('.alert-auto-hide').forEach(alert => {
+            setTimeout(() => alert.remove(), 5000);
+        });
+
+        // Close modal on Escape
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') {
+                closeCreateRekamMedisModal();
+                closeEditRekamMedisModal();
+            }
         });
     </script>
 @endpush
