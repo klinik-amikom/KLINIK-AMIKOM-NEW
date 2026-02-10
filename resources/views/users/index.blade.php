@@ -32,6 +32,11 @@
                 Kelola data pengguna dalam sistem
             </p>
         </div>
+        <div class="w-full sm:w-auto">
+            <button class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg shadow-sm transition-colors duration-200">
+                <i class="fas fa-plus mr-2"></i> Tambah User
+            </button>
+        </div>
     </div>
 
     <div class="mb-6">
@@ -45,81 +50,83 @@
     </div>
 
     <!-- Users Table -->
-    <div class="bg-white dark:bg-gray-800 shadow-sm rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+    <div class="bg-white dark:bg-gray-800 shadow-sm rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden mb-10">
         <div class="p-6 border-b border-gray-200 dark:border-gray-700">
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                Daftar User
+                Daftar User Aktif
             </h3>
+            @if(isset($hasTrashedUser) && $hasTrashedUser)
+                <form action="{{ route('users.restore-all', $role) }}" method="POST">
+                    @csrf
+                    <button type="submit"
+                            class="inline-flex items-center gap-2
+                                px-4 py-2 rounded-lg
+                                bg-green-600 hover:bg-green-700
+                                text-white text-sm font-semibold
+                                shadow transition">
+                        <i class="fa-solid fa-rotate-left"></i>
+                        Restore
+                    </button>
+                </form>
+            @endif
         </div>
 
         <div class="overflow-x-auto">
             <table class="w-full text-left">
                 <thead class="bg-gray-50 dark:bg-gray-700">
                     <tr>
-                        <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">#</th>
-                        {{-- <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Identity ID</th> --}}
-                        <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Nama</th>
-                        <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Username</th>
-                        <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Email</th>
-                        <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Position</th>
-                        <th class="px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-300 uppercase text-right">Aksi
-                        </th>
+                        <th class="px-6 py-3 text-xs font-medium uppercase">#</th>
+                        <th class="px-6 py-3 text-xs font-medium uppercase">Nama</th>
+                        <th class="px-6 py-3 text-xs font-medium uppercase">Username</th>
+                        <th class="px-6 py-3 text-xs font-medium uppercase">Email</th>
+                        <th class="px-6 py-3 text-xs font-medium uppercase">Position</th>
+                        <th class="px-6 py-3 text-xs font-medium uppercase text-right">Aksi</th>
                     </tr>
                 </thead>
 
-                <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                <tbody class="divide-y">
                     @forelse($users as $user)
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
-                            <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">
-                                {{ $loop->iteration }}
-                            </td>
-                            {{-- <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">
-                        {{ $user->identity_id }}
-                    </td> --}}
-                            <td class="px-6 py-4">
-                                <div class="flex items-center">
-                                    <div
-                                        class="w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center text-white font-semibold">
-                                        {{ strtoupper(substr($user->name, 0, 1)) }}
-                                    </div>
-                                    <div class="ml-3">
-                                        <div class="text-sm font-medium text-gray-900 dark:text-white">
-                                            {{ $user->name }}
-                                        </div>
-                                    </div>
+                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                        <td class="px-6 py-4">{{ $loop->iteration }}</td>
+
+                        <td class="px-6 py-4">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center text-white font-semibold">
+                                    {{ strtoupper(substr($user->name, 0, 1)) }}
                                 </div>
-                            </td>
+                                <div class="ml-3">{{ $user->name }}</div>
+                            </div>
+                        </td>
 
-                            <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">
-                                {{ $user->username }}
-                            </td>
+                        <td class="px-6 py-4">{{ $user->username }}</td>
+                        <td class="px-6 py-4">{{ $user->email }}</td>
+                        <td class="px-6 py-4">{{ $user->position->position ?? '-' }}</td>
 
-                            <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">
-                                {{ $user->email }}
-                            </td>
+                        <td class="px-6 py-4 text-right">
+                            <div class="flex justify-end space-x-3">
+                                <a href="{{ route('admin.admin.edit', $user->id) }}"
+                                class="text-purple-600 hover:text-purple-800">
+                                    <i class="fas fa-edit"></i>
+                                </a>
 
-                            <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">
-                                {{ $user->position->position ?? '-' }}
-                            </td>
-
-                            <td class="px-6 py-4 text-right">
-                                <div class="flex justify-end space-x-2">
-                                    <button class="text-purple-600 hover:text-purple-800" title="Edit">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="text-red-600 hover:text-red-800" title="Hapus">
+                                <form action="{{ route('users.destroy', $user->id) }}"
+                                    method="POST"
+                                    onsubmit="return confirm('Yakin ingin menghapus user ini?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="text-red-600 hover:text-red-800">
                                         <i class="fas fa-trash"></i>
                                     </button>
-                                </div>
-                            </td>
-                        </tr>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
                     @empty
-                        <tr>
-                            <td colspan="7" class="text-center py-10 text-gray-500 dark:text-gray-400">
-                                <i class="fas fa-users text-4xl mb-3"></i>
-                                <p class="text-lg font-medium">Data user belum tersedia</p>
-                            </td>
-                        </tr>
+                    <tr>
+                        <td colspan="6" class="text-center py-10 text-gray-500">
+                            Data user belum tersedia
+                        </td>
+                    </tr>
                     @endforelse
                 </tbody>
             </table>

@@ -188,6 +188,21 @@ class UserController extends Controller
         }
     }
 
+    public function edit($id)
+    {
+        $user = User::findOrFail($id);
+        $role = $user->role;
+
+        $positions = Position::all();
+        $identities = MasterIdentity::all();
+
+        return view('users.edit', compact(
+            'user',
+            'positions',
+            'identities'
+        ));
+    }
+    
     /**
      * Custom validation messages.
      */
