@@ -41,6 +41,21 @@ class UserController extends Controller
         }
     }
 
+    public function create(Request $request)
+    {
+        $role = $request->segment(2); // admin / dokter / apoteker
+
+        $positions = Position::all();
+        $identities = MasterIdentity::all();
+
+        return view('users.create', compact(
+            'role',
+            'positions',
+            'identities'
+        ));
+    }
+
+
     /**
      * Store new user.
      */
@@ -137,18 +152,23 @@ class UserController extends Controller
             $user = User::findOrFail($id);
             $role = $user->role;
 
+            // Cegah admin hapus akun sendiri
             if (auth()->id() === $user->id) {
                 return redirect()->back()->with('error', 'Anda tidak dapat menghapus akun sendiri!');
             }
 
-            DB::beginTransaction();
-            $userName = $user->name;
-            $user->delete(); // Soft delete
-            DB::commit();
+            \DB::beginTransaction();
 
-            return redirect()->route("admin.{$role}.index")->with('success', "{$role} {$userName} berhasil dihapus!");
-        } catch (Exception $e) {
-            DB::rollBack();
+            $userName = $user->name;
+
+            $user->delete(); // Hard delete, permanen
+
+            \DB::commit();
+
+            return redirect()->route("admin.{$role}.index")
+                ->with('success', "{$role} {$userName} berhasil dihapus permanen!");
+        } catch (\Exception $e) {
+            \DB::rollBack();
             return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
@@ -202,7 +222,7 @@ class UserController extends Controller
             'identities'
         ));
     }
-    
+
     /**
      * Custom validation messages.
      */

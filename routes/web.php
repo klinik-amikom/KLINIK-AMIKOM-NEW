@@ -37,6 +37,24 @@ Route::get('/pasien/download-pdf/{id}', [PasienController::class, 'downloadPDF']
 // ==================================================
 // 2. AUTHENTICATED ROUTES (WAJIB LOGIN)
 // ==================================================
+// Group khusus admin (opsional)
+Route::prefix('users')->name('users.')->group(function () {
+
+    // Index
+    Route::get('/', [ManageUserController::class, 'index'])->name('index');
+
+    // Create & Store
+    Route::get('/create', [ManageUserController::class, 'create'])->name('create');
+    Route::post('/', [ManageUserController::class, 'store'])->name('store');
+
+    // Edit & Update
+    Route::get('/{id}/edit', [ManageUserController::class, 'edit'])->name('edit');
+    Route::put('/{id}', [ManageUserController::class, 'update'])->name('update');
+
+    // Delete
+    Route::delete('/{id}', [ManageUserController::class, 'destroy'])->name('destroy');
+});
+
 Route::middleware(['auth'])->group(function () {
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
@@ -47,8 +65,12 @@ Route::middleware(['auth'])->group(function () {
 
     // ================= ADMIN =================
     Route::middleware(['role:admin'])->group(function () {
-        Route::get('/users', [ManageUserController::class, 'index'])->name('users.index');
-        Route::delete('/users/{id}', [ManageUserController::class, 'destroy'])->name('users.destroy');
+        Route::get('/admin/users', [UserController::class, 'index'])->name('admin.admin.index');
+        Route::get('/admin/users/create', [UserController::class, 'create'])->name('admin.admin.create');
+        Route::post('/admin/users', [UserController::class, 'store'])->name('admin.admin.store');
+        Route::get('/admin/users/{id}/edit', [UserController::class, 'edit'])->name('admin.admin.edit');
+        Route::put('/admin/users/{id}', [UserController::class, 'update'])->name('admin.admin.update');
+        Route::delete('/admin/users/{id}', [UserController::class, 'destroy'])->name('admin.admin.destroy');
     });
 
     Route::prefix('admin')->name('admin.')->middleware('role:admin')->group(function () {
