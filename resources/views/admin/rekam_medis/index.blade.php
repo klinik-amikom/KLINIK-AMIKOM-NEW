@@ -14,8 +14,8 @@
             <span class="block sm:inline">{{ session('success') }}</span>
             <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
                 <svg onclick="this.parentElement.parentElement.remove()"
-                    class="fill-current h-6 w-6 text-purple-500 cursor-pointer" role="button" xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20">
+                    class="fill-current h-6 w-6 text-purple-500 cursor-pointer" role="button"
+                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                     <title>Close</title>
                     <path
                         d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" />
@@ -31,8 +31,8 @@
             <span class="block sm:inline">{{ session('error') }}</span>
             <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
                 <svg onclick="this.parentElement.parentElement.remove()"
-                    class="fill-current h-6 w-6 text-red-500 cursor-pointer" role="button" xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20">
+                    class="fill-current h-6 w-6 text-red-500 cursor-pointer" role="button"
+                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                     <title>Close</title>
                     <path
                         d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" />
@@ -59,16 +59,17 @@
         </div>
     </div>
 
-    <div class="flex flex-col sm:flex-row sm:items-end sm:space-x-4 space-y-4 sm:space-y-0 justify-between mb-4">
-        <!-- Search Rekam Medis -->
-        <div class="sm:w-2/4">
-            <div class="relative">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <i class="fas fa-search text-gray-400"></i>
-                </div>
-                <input type="text" id="rekam-search" placeholder="Cari kode rekam medis, diagnosis, atau tanggal..."
-                    class="block w-full pl-10 pr-3 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-lg leading-5 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors duration-200 text-sm sm:text-base">
-            </div>
+    <div class="mb-6">
+        <div class="relative max-w-md">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fas fa-search text-gray-400"></i>
+            </span>
+            <input type="text" id="rekam-search" placeholder="Cari kode rekam medis, diagnosis, atau tanggal..."
+                class="block w-full pl-10 pr-3 py-2 border border-gray-300
+                   dark:border-gray-600 rounded-lg
+                   bg-white dark:bg-gray-700
+                   text-gray-900 dark:text-white
+                   focus:ring-purple-500 focus:border-purple-500 text-sm">
         </div>
     </div>
 
@@ -149,16 +150,19 @@
         </div>
     </div>
 
-    <div class="flex justify-end mt-4">
+    <div class="flex justify-end mt-3">
         <a href="{{ route('admin.rekam-medis.export.pdf') }}"
-            class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 mr-2">
+            class="bg-red-600 text-white px-3 py-1.5 text-sm rounded-md
+               hover:bg-red-700 mr-2">
             Export PDF
         </a>
         <a href="{{ route('admin.rekam-medis.export.excel') }}"
-            class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+            class="bg-green-600 text-white px-3 py-1.5 text-sm rounded-md
+               hover:bg-green-700">
             Export Excel
         </a>
     </div>
+
 
     <!-- Create Rekam Medis Modal -->
     <div id="create-rekammedis-modal"
@@ -196,7 +200,8 @@
 
                         <!-- Pasien -->
                         <div>
-                            <label for="pasien_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            <label for="pasien_id"
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                 Pasien <span class="text-red-500">*</span>
                             </label>
                             <select id="pasien_id" name="pasien_id" required
@@ -210,7 +215,8 @@
 
                         <!-- Dokter -->
                         <div>
-                            <label for="dokter_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            <label for="dokter_id"
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                 Dokter <span class="text-red-500">*</span>
                             </label>
                             <select id="dokter_id" name="dokter_id" required
@@ -238,7 +244,8 @@
 
                         <!-- Diagnosis -->
                         <div>
-                            <label for="diagnosis" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            <label for="diagnosis"
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                 Diagnosis
                             </label>
                             <textarea id="diagnosis" name="diagnosis" rows="2"
@@ -386,7 +393,8 @@
 
                         <!-- Resep -->
                         <div>
-                            <label for="edit_resep" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            <label for="edit_resep"
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                 Resep
                             </label>
                             <textarea id="edit_resep" name="resep" rows="2"
@@ -510,7 +518,7 @@
         }
 
         // Search functionality
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const searchInput = document.getElementById('rekam-search');
 
             function filterRekamMedis() {
@@ -549,7 +557,7 @@
             });
 
             // Close modal on Escape key
-            document.addEventListener('keydown', function (e) {
+            document.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape') {
                     closeCreateRekamMedisModal();
                     closeEditRekamMedisModal();

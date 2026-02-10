@@ -59,16 +59,17 @@
         </div>
     </div>
 
-    <div class="flex flex-col sm:flex-row sm:items-end sm:space-x-4 space-y-4 sm:space-y-0 justify-between mb-4">
-        <!-- Search Rekam Medis -->
-        <div class="sm:w-2/4">
-            <div class="relative">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <i class="fas fa-search text-gray-400"></i>
-                </div>
-                <input type="text" id="rekam-search" placeholder="Cari kode rekam medis, diagnosis, atau tanggal..."
-                    class="block w-full pl-10 pr-3 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-lg leading-5 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors duration-200 text-sm sm:text-base">
-            </div>
+    <div class="mb-6">
+        <div class="relative max-w-md">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fas fa-search text-gray-400"></i>
+            </span>
+            <input type="text" id="rekam-search" placeholder="Cari kode rekam medis, diagnosis, atau tanggal..."
+                class="block w-full pl-10 pr-3 py-2 border border-gray-300
+                   dark:border-gray-600 rounded-lg
+                   bg-white dark:bg-gray-700
+                   text-gray-900 dark:text-white
+                   focus:ring-purple-500 focus:border-purple-500 text-sm">
         </div>
     </div>
 
@@ -171,13 +172,15 @@
         </div>
     </div>
 
-    <div class="flex justify-end mt-4">
-        <a href="{{ route('apoteker.rekam-medis.export.pdf') }}"
-            class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 mr-2">
+    <div class="flex justify-end mt-3">
+        <a href="{{ route('admin.rekam-medis.export.pdf') }}"
+            class="bg-red-600 text-white px-3 py-1.5 text-sm rounded-md
+               hover:bg-red-700 mr-2">
             Export PDF
         </a>
-        <a href="{{ route('apoteker.rekam-medis.export.excel') }}"
-            class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+        <a href="{{ route('admin.rekam-medis.export.excel') }}"
+            class="bg-green-600 text-white px-3 py-1.5 text-sm rounded-md
+               hover:bg-green-700">
             Export Excel
         </a>
     </div>
@@ -465,16 +468,14 @@
 
 @push('scripts')
     <script>
-
-        
-    function confirmValidasi(event) {
-        const confirmed = confirm("Apakah pasien sudah diberikan obat?");
-        if (!confirmed) {
-            event.preventDefault(); // Batal submit
-            return false;
+        function confirmValidasi(event) {
+            const confirmed = confirm("Apakah pasien sudah diberikan obat?");
+            if (!confirmed) {
+                event.preventDefault(); // Batal submit
+                return false;
+            }
+            return true;
         }
-        return true;
-    }
 
         // Data rekam medis untuk edit
         const rekamMedisData = @json($dataRekamMedis);
