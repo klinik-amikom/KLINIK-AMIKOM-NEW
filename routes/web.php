@@ -28,6 +28,10 @@ Route::get('/profile/basic-details', [ProfileController::class, 'showBasicDetail
 Route::post('/profile/basic-details', [ProfileController::class, 'storeBasicDetails'])
     ->name('profile.basic-details.store');
 
+// AUTO FILL IDENTITAS BERDASARKAN NIK (PUBLIC)
+Route::get('/cek-nik/{nik}', [ProfileController::class, 'cekNik'])
+    ->name('cek.nik');
+
 // Registrasi Pasien Umum
 Route::post('/pasien', [PasienController::class, 'store'])->name('pasien.store');
 Route::get('/pasien/download-pdf/{id}', [PasienController::class, 'downloadPDF'])

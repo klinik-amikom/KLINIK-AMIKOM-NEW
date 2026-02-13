@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MasterIdentity;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth; // If you're associating with a logged-in user
 
@@ -75,5 +76,21 @@ class ProfileController extends Controller
         return redirect()->route('index')->with('success', 'Detail dasar Anda berhasil disimpan!');
         // Or redirect to the next step of the signup process
         // return redirect()->route('profile.review-submit');
+    }
+
+    public function cekNik($nik)
+    {
+        $identity = MasterIdentity::where('identity_number', $nik)->first();
+
+        if ($identity) {
+            return response()->json([
+                'status' => true,
+                'data' => $identity
+            ]);
+        }
+
+        return response()->json([
+            'status' => false
+        ]);
     }
 }
