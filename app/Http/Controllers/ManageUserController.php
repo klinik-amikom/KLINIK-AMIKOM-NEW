@@ -118,22 +118,22 @@ class ManageUserController extends Controller
         try {
             $user = User::findOrFail($id);
 
-            // ❌ Cegah admin hapus akun sendiri
+            // cegah admin hapus akun sendiri
             if (auth()->id() === $user->id) {
                 return redirect()
                     ->route('users.index')
                     ->with('error', 'Anda tidak dapat menghapus akun sendiri');
             }
 
-            $user->delete();
+            $user->delete(); // Hard delete, permanen
 
             return redirect()
                 ->route('users.index')
-                ->with('success', 'User berhasil dihapus');
+                ->with('success', 'User berhasil dihapus permanen');
         } catch (\Exception $e) {
             return redirect()
                 ->route('users.index')
-                ->with('error', 'Gagal menghapus user');
+                ->with('error', 'Gagal menghapus user: ' . $e->getMessage());
         }
     }
 }
