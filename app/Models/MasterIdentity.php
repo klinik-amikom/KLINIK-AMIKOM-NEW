@@ -20,4 +20,10 @@ class MasterIdentity extends Model
         'gender',
         'address',
     ];
+
+    public function pasien()
+    {
+        return $this->hasOne(Pasien::class, 'identity_id');
+    }
+
 }

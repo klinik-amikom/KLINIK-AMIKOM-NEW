@@ -47,12 +47,14 @@
 
                     <h3 class="text-lg font-semibold mb-2">Detail Pendaftaran:</h3>
                     <ul class="space-y-1 text-gray-700">
-                        <li><strong>Nama:</strong> {{ $pasien->nama_pasien }}</li>
-                        <li><strong>Tanggal Lahir:</strong> {{ $pasien->tanggal_lahir }}</li>
-                        <li><strong>Jenis Kelamin:</strong> {{ $pasien->jenis_kel }}</li>
-                        <li><strong>Alamat:</strong> {{ $pasien->alamat }}</li>
-                        <li><strong>No Telepon:</strong> {{ $pasien->no_telp }}</li>
-                        <li><strong>Kategori:</strong> {{ $pasien->kategori }}</li>
+                        <li><strong>Nama:</strong> {{ $pasien->identity->name }}</li>
+                        <li><strong>Tanggal Lahir:</strong> {{ $pasien->identity->birth_date }}</li>
+                        <li><strong>Jenis Kelamin:</strong> 
+                            {{ $pasien->identity->gender == 'L' ? 'Laki-laki' : 'Perempuan' }}
+                        </li>
+                        <li><strong>Alamat:</strong> {{ $pasien->identity->address }}</li>
+                        <li><strong>No Telepon:</strong> {{ $pasien->identity->no_telp }}</li>
+                        <li><strong>Kategori:</strong> {{ ucfirst($pasien->identity->identity_type) }}</li>
                         <li><strong>Poli:</strong> {{ $pasien->poli }}</li>
                     </ul>
                 </div>
@@ -98,7 +100,7 @@
                     <div>
                         <label for="no_telp" class="block mb-1 font-medium">Nomor Telepon</label>
                         <div class="flex">
-                            <input type="tel" id="no_telp" name="no_telp" placeholder="081234567890"
+                            <input type="tel" id="no_telp" name="no_telp"
                                 class="w-full border rounded-r-md px-3 py-2" style="background-color:#e5e7eb; cursor:not-allowed;" readonly>
                         </div>
                     </div>
@@ -150,34 +152,34 @@
 </body>
 </html>
 <script>
-                document.getElementById('nik').addEventListener('keyup', function () {
-                    const nik = this.value;
+    document.getElementById('nik').addEventListener('keyup', function () {
+        const nik = this.value;
 
-                    if (nik.length === 16) {
-                        fetch(`/cek-nik/${nik}`)
-                            .then(res => res.json())
-                            .then(res => {
-                                if (res.status) {
-                                    document.getElementById('nama_pasien').value = res.data.name;
-                                    document.getElementById('tanggal_lahir').value = res.data.birth_date;
-                                    document.getElementById('alamat').value = res.data.address;
-                                    document.getElementById('no_telp').value = res.data.no_telp;
+        if (nik.length === 16) {
+            fetch(`/cek-nik/${nik}`)
+            .then(res => res.json())
+            .then(res => {
+                if (res.status) {
+                    document.getElementById('nama_pasien').value = res.data.name;
+                    document.getElementById('tanggal_lahir').value = res.data.birth_date;
+                    document.getElementById('alamat').value = res.data.address;
+                    document.getElementById('no_telp').value = res.data.no_telp;
 
-                                    // Gender mapping L/P → Laki-laki/Perempuan
-                                    document.getElementById('jenis_kel').value =
-                                        res.data.gender === 'L' ? 'Laki-laki' : 'Perempuan';
+                    // Gender mapping L/P → Laki-laki/Perempuan
+                    document.getElementById('jenis_kel').value =
+                        res.data.gender === 'L' ? 'Laki-laki' : 'Perempuan';
 
-                                    // Kategori
-                                    document.getElementById('kategori').value =
-                                        res.data.identity_type.charAt(0).toUpperCase() +
-                                        res.data.identity_type.slice(1);
-                                } else {
-                                    console.log('Data tidak ditemukan');
-                                }
-                            })
-                            .catch(() => {
-                                alert('Terjadi kesalahan saat mengambil data');
-                            });
-                    }
+                    // Kategori
+                    document.getElementById('kategori').value =
+                        res.data.identity_type.charAt(0).toUpperCase() +
+                        res.data.identity_type.slice(1);
+                } else {
+                        console.log('Data tidak ditemukan');
+                        }
+                })
+                .catch(() => {
+                    alert('Terjadi kesalahan saat mengambil data');
                 });
+        }
+    });
 </script>

@@ -16,27 +16,27 @@
     <table>
         <tr>
             <th>Nama</th>
-            <td>{{ $pasien->nama_pasien }}</td>
+            <td>{{ $pasien->identity->name }}</td>
         </tr>
         <tr>
             <th>Tanggal Lahir</th>
-            <td>{{ $pasien->tanggal_lahir }}</td>
+            <td>{{ $pasien->identity->birth_date }}</td>
         </tr>
         <tr>
             <th>Jenis Kelamin</th>
-            <td>{{ $pasien->jenis_kel }}</td>
+            <td>{{ $pasien->identity->gender }}</td>
         </tr>
         <tr>
             <th>Alamat</th>
-            <td>{{ $pasien->alamat }}</td>
+            <td>{{ $pasien->identity->address }}</td>
         </tr>
         <tr>
             <th>No Telepon</th>
-            <td>{{ $pasien->no_telp }}</td>
+            <td>{{ $pasien->identity->no_telp }}</td>
         </tr>
         <tr>
             <th>Kategori</th>
-            <td>{{ $pasien->kategori }}</td>
+            <td>{{ $pasien->identity->identity_type }}</td>
         </tr>
         <tr>
             <th>Poli</th>
