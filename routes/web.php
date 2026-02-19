@@ -28,10 +28,29 @@ Route::get('/profile/basic-details', [ProfileController::class, 'showBasicDetail
 Route::post('/profile/basic-details', [ProfileController::class, 'storeBasicDetails'])
     ->name('profile.basic-details.store');
 
+// AUTO FILL IDENTITAS BERDASARKAN NIK (PUBLIC)
+Route::get('/cek-nik/{nik}', [ProfileController::class, 'cekNik'])
+    ->name('cek.nik');
+
 // Registrasi Pasien Umum
 Route::post('/pasien', [PasienController::class, 'store'])->name('pasien.store');
 Route::get('/pasien/download-pdf/{id}', [PasienController::class, 'downloadPDF'])
     ->name('pasien.download.pdf');
+Route::get('/pasien', function () {
+    $pasien = null;
+    $linkWA = null;
+
+    if (session()->has('pasien_id')) {
+        $pasien = \App\Models\Pasien::with('identity')
+            ->find(session('pasien_id'));
+
+        if ($pasien) {
+            $linkWA = 'https://wa.me/62xxxx?text=Nomor%20Antrian%20' . $pasien->kode_pasien;
+        }
+    }
+
+    return view('profile.basic-details', compact('pasien', 'linkWA'));
+})->name('pasien.form');
 
 
 // ==================================================
