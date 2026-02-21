@@ -59,19 +59,16 @@ Route::get('/pasien', function () {
 // Group khusus admin (opsional)
 Route::prefix('users')->name('users.')->group(function () {
 
-    // Index
     Route::get('/', [ManageUserController::class, 'index'])->name('index');
 
-    // Create & Store
     Route::get('/create', [ManageUserController::class, 'create'])->name('create');
     Route::post('/', [ManageUserController::class, 'store'])->name('store');
 
-    // Edit & Update
     Route::get('/{id}/edit', [ManageUserController::class, 'edit'])->name('edit');
     Route::put('/{id}', [ManageUserController::class, 'update'])->name('update');
 
-    // Delete
-    Route::delete('/{id}', [ManageUserController::class, 'destroy'])->name('destroy');
+    Route::delete('/{id}', [ManageUserController::class, 'destroy'])
+        ->name('destroy');
 });
 
 Route::middleware(['auth'])->group(function () {

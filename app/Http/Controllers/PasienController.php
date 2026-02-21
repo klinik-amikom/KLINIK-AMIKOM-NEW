@@ -9,6 +9,14 @@ use Illuminate\Http\Request;
 
 class PasienController extends Controller
 {
+
+    public function index()
+    {
+        $data = Pasien::with('identity')->get();
+
+        return view('pasien.index', compact('data'));
+    }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -52,7 +60,6 @@ class PasienController extends Controller
             ->route('pasien.form')
             ->with('success', 'Berhasil mendaftar')
             ->with('pasien_id', $pasien->id);
-
     }
 
     // 🔍 API cek NIK
@@ -79,7 +86,7 @@ class PasienController extends Controller
         $pdf = Pdf::loadView('profile.bukti-pendaftaran-pdf', compact('pasien'));
 
         return $pdf->download(
-            'bukti-pendaftaran-' . $pasien->kode_pasien . '.pdf');
+            'bukti-pendaftaran-' . $pasien->kode_pasien . '.pdf'
+        );
     }
-
 }

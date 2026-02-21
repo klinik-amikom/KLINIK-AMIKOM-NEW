@@ -105,8 +105,7 @@
 
                             <td class="px-6 py-4">{{ $user->username }}</td>
                             <td class="px-6 py-4">{{ $user->email }}</td>
-                            <td>{{ $user->position?->position ?? '-' }}</td>
-
+                            <td>{{ $user->identity?->identity_type ?? '-' }}</td>
                             <td class="px-6 py-4 text-right">
                                 <div class="flex justify-end space-x-3">
                                     <a href="{{ route('admin.admin.edit', $user->id) }}"

@@ -4,13 +4,14 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\MasterIdentity;
+use App\Models\Position;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, SoftDeletes;
+    use HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -51,21 +52,14 @@ class User extends Authenticatable
         ];
     }
 
-    /**
-     * Get the position/role of the user.
-     */
-    public function position()
-    {
-        return $this->belongsTo(Position::class, 'position_id');
-    }
-
-
-    /**
-     * Get the master identity of the user.
-     */
     public function identity()
     {
         return $this->belongsTo(MasterIdentity::class, 'identity_id');
+    }
+
+    public function position()
+    {
+        return $this->belongsTo(Position::class, 'position_id');
     }
 
     /**
@@ -100,4 +94,3 @@ class User extends Authenticatable
         return $this->position ? strtolower($this->position->position) : 'unknown';
     }
 }
-
