@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\Pasien;
 use App\Models\MasterIdentity;
+use App\Mail\NotifikasiAntrian;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 
 class PasienController extends Controller
@@ -24,7 +28,7 @@ class PasienController extends Controller
         }
 
         // 🔢 Generate kode pasien otomatis
-        $lastPasien = Pasien::withTrashed()
+        $lastPasien = Pasien::with('identity')
             ->orderBy('id', 'desc')
             ->first();
 
@@ -37,13 +41,27 @@ class PasienController extends Controller
 
         $kodePasien = 'P' . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
 
+        // Tentukan prefix berdasarkan poli
+        $prefix = $request->poli === 'Poli Umum' ? 'PU' : 'PG';
+
+        // Hitung jumlah pasien hari ini berdasarkan poli
+        $jumlahHariIni = Pasien::whereDate('created_at', today())
+            ->where('poli', $request->poli)
+            ->count() + 1;
+
+        // Format nomor antrian (3 digit)
+        $noAntrian = $prefix . '-' . str_pad($jumlahHariIni, 3, '0', STR_PAD_LEFT);
+
         // 💾 Simpan ke database
         $pasien = Pasien::create([
             'identity_id' => $identity->id,
             'kode_pasien' => $kodePasien,
             'poli'        => $request->poli,
+            'queue_number' => $noAntrian,
             'status'      => 'menunggu_konfirmasi',
         ]);
+
+        Mail::to($identity->email)->send(new NotifikasiAntrian($pasien));
 
         // Untuk ditampilkan di blade
         $pasien->load('identity');
@@ -80,6 +98,19 @@ class PasienController extends Controller
 
         return $pdf->download(
             'bukti-pendaftaran-' . $pasien->kode_pasien . '.pdf');
+    }
+
+    public function form()
+    {
+        $pasien = session('pasien_id')
+            ? \App\Models\Pasien::with('identity')->find(session('pasien_id'))
+            : null;
+
+        $linkWA = $pasien
+            ? 'https://wa.me/62xxxx?text=Nomor%20Antrian%20' . $pasien->kode_pasien
+            : null;
+
+        return view('profile.basic-details', compact('pasien', 'linkWA'));
     }
 
 }
