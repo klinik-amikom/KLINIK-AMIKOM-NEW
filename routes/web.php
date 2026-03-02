@@ -1,14 +1,14 @@
 <?php
 
+use App\Http\Controllers\ApotekerController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ManageUserController;
 use App\Http\Controllers\ObatController;
 use App\Http\Controllers\PasienController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RekamMedisController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\ApotekerController;
-use App\Http\Controllers\ManageUserController;
 use Illuminate\Support\Facades\Route;
 
 // ==================================================
@@ -52,10 +52,13 @@ Route::get('/pasien', function () {
     return view('profile.basic-details', compact('pasien', 'linkWA'));
 })->name('pasien.form');
 
-
 // ==================================================
 // 2. AUTHENTICATED ROUTES (WAJIB LOGIN)
 // ==================================================
+
+
+Route::middleware(['auth'])->group(function () {
+
 // Group khusus admin (opsional)
 Route::prefix('users')->name('users.')->group(function () {
 
@@ -70,9 +73,6 @@ Route::prefix('users')->name('users.')->group(function () {
     Route::delete('/{id}', [ManageUserController::class, 'destroy'])
         ->name('destroy');
 });
-
-Route::middleware(['auth'])->group(function () {
-
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     // --- SHARED SERVICES ---
@@ -135,7 +135,6 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('pasien', PasienController::class);
         Route::resource('obat', ObatController::class);
         Route::resource('rekammedis', RekamMedisController::class)
-            ->names('rekam_medis')
             ->except(['edit', 'create']);
 
         Route::patch('/rekam-medis/{id}/validasi', [RekamMedisController::class, 'validasi'])

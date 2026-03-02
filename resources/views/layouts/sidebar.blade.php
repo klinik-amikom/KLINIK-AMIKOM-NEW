@@ -1,4 +1,7 @@
 <!-- Admin Dashboard Sidebar -->
+@php
+    $prefix = auth()->user()->role; 
+@endphp
 <div id="sidebar"
     class="fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-800 shadow-lg transform lg:translate-x-0 -translate-x-full lg:block transition-transform duration-300 ease-in-out flex flex-col border-r border-gray-200 dark:border-gray-700">
 
@@ -41,9 +44,9 @@
     <!-- Navigation Menu -->
     <nav class="flex-1 mt-4 px-4 space-y-1 overflow-y-auto scrollbar-hide">
         <!-- Dashboard -->
-        <a href="{{ route('admin.dashboard') }}"
+        <a href="{{ route($prefix.'.dashboard') }}"
             class="nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200
-            {{ Request::routeIs('admin.dashboard')
+            {{ Request::routeIs($prefix.'.dashboard') ? 'ACTIVE CLASS' : 'NORMAL CLASS' }}
                 ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 border-r-2 border-purple-500'
                 : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}
             ">
@@ -52,18 +55,18 @@
         </a>
 
         <!-- Manage Outlet -->
-        <a href="{{ route('admin.pasien.index') }}"
+        <a href="{{ route($prefix.'.pasien.index') }}"
             class="nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200
-            {{ Request::routeIs('admin.pasien.index')
+            {{ Request::routeIs($prefix.'.pasien.*')
                 ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 border-r-2 border-purple-500'
                 : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
             <i class="fas fa-bed mr-3 text-gray-400 group-hover:text-gray-500"></i>
             <span>Data Pasien</span>
         </a>
 
-        <a href="{{ route('admin.obat.index') }}"
+        <a href="{{ route($prefix.'.obat.index') }}"
             class="nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200
-            {{ Request::routeIs('admin.obat.index')
+            {{ Request::routeIs($prefix.'.obat.*')
                 ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 border-r-2 border-purple-500'
                 : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
             <i class="fas fa- fa-capsules mr-3 text-gray-400 group-hover:text-gray-500"></i>
@@ -71,24 +74,28 @@
         </a>
 
         <!-- Menu Management -->
-        <a href="{{ route('admin.rekammedis.index') }}"
+        <a href="{{ route($prefix.'.rekammedis.index') }}"
             class="nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200
-            {{ Request::routeIs('admin.rekammedis.index')
+            {{ Request::routeIs($prefix.'rekammedis.*')
                 ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 border-r-2 border-purple-500'
                 : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
             <i class="fas fa-file-waveform mr-3 text-gray-400 group-hover:text-gray-500"></i>
+            
             <span>Laporan Rekam Medis</span>
         </a>
 
-        <!-- User Management -->
-        <a href="{{ route('users.index') }}"
-            class="nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200
-            {{ Request::routeIs('users.index')
-                ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 border-r-2 border-purple-500'
-                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
-            <i class="fas fa-user-tie mr-3 text-gray-400 group-hover:text-gray-500"></i>
-            <span>Kelola User</span>
-        </a>
+        @if (auth()->user()->position_id == 1)
+            <!-- User Management -->
+            <a href="{{ route('users.index') }}"
+                class="nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200
+                {{ Request::routeIs('users.index')
+                    ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 border-r-2 border-purple-500'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
+                <i class="fas fa-user-tie mr-3 text-gray-400 group-hover:text-gray-500"></i>
+                <span>Kelola User</span>
+            </a>
+        @endif
+
 
         <!-- Divider -->
         <div class="border-t border-gray-200 dark:border-gray-700 my-4"></div>

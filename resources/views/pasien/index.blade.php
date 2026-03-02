@@ -93,8 +93,14 @@
                 <thead>
                     <tr class="bg-gray-50 dark:bg-gray-700 text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
                         <th class="px-6 py-3">#</th>
-                        <th class="px-6 py-3">Kode / ID</th>
-                        <th class="px-6 py-3">Nama Pasien</th>
+                        <th class="px-6 py-3">Kode Pasien</th>
+                        <th class="px-6 py-3">No Identitas</th>
+                        <th class="px-6 py-3">Nama</th>
+                        <th class="px-6 py-3">Kategori</th>
+                        <th class="px-6 py-3">TTL</th>
+                        <th class="px-6 py-3">Gender</th>
+                        <th class="px-6 py-3">No Telp</th>
+                        <th class="px-6 py-3">Alamat</th>
                         <th class="px-6 py-3">Poli</th>
                         <th class="px-6 py-3">Status</th>
                         <th class="px-6 py-3 text-right">Aksi</th>
@@ -103,43 +109,64 @@
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                     @forelse ($data as $pasien)
                         <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                            <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">{{ $loop->iteration }}</td>
-                            <td class="px-6 py-4">
-                                <div class="text-sm font-bold text-purple-600 dark:text-purple-400">
-                                    {{ $pasien->kode_pasien }}</div>
-                                <div class="text-xs text-gray-500">{{ $pasien->identity->identity_number }}</div>
+                            <td class="px-6 py-4 text-sm">{{ $loop->iteration }}</td>
+
+                            <td class="px-6 py-4 font-bold text-purple-600">
+                                {{ $pasien->kode_pasien }}
                             </td>
-                            <td class="px-6 py-4">
-                                <div class="flex items-center">
-                                    <div
-                                        class="w-8 h-8 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center font-bold mr-3">
-                                        {{ strtoupper(substr($pasien->identity->name, 0, 1)) }}
-                                    </div>
-                                    <div>
-                                        <div class="text-sm font-medium text-gray-900 dark:text-white">
-                                            {{ $pasien->identity->name }}</div>
-                                        <div class="text-xs text-gray-500">{{ $pasien->identity->identity_type }}</div>
-                                    </div>
-                                </div>
+
+                            <td class="px-6 py-4 text-sm">
+                                {{ $pasien->identity->identity_number ?? '-' }}
                             </td>
-                            <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">{{ $pasien->poli }}</td>
+
+                            <td class="px-6 py-4 text-sm font-medium">
+                                {{ $pasien->identity->name ?? '-' }}
+                            </td>
+
+                            <td class="px-6 py-4 text-sm">
+                                {{ ucfirst($pasien->identity->identity_type ?? '-') }}
+                            </td>
+
+                            <td class="px-6 py-4 text-sm">
+                                {{ $pasien->identity->birth_date ?? '-' }}
+                            </td>
+
+                            <td class="px-6 py-4 text-sm">
+                                {{ $pasien->identity->gender == 'L' ? 'Laki-laki' : 'Perempuan' }}
+                            </td>
+
+                            <td class="px-6 py-4 text-sm">
+                                {{ $pasien->identity->no_telp ?? '-' }}
+                            </td>
+
+                            <td class="px-6 py-4 text-sm max-w-xs truncate">
+                                {{ $pasien->identity->address ?? '-' }}
+                            </td>
+
+                            <td class="px-6 py-4 text-sm">
+                                {{ $pasien->poli }}
+                            </td>
+
                             <td class="px-6 py-4">
                                 <span
-                                    class="px-2 py-1 text-xs rounded-full {{ $pasien->status == 'terdaftar' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700' }}">
+                                    class="px-2 py-1 text-xs rounded-full
+            {{ $pasien->status == 'terdaftar' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700' }}">
                                     {{ ucfirst($pasien->status) }}
                                 </span>
                             </td>
                             <td class="px-6 py-4 text-right space-x-2">
                                 <button
                                     onclick="editPasien({{ $pasien->id }}, {
-                            identity_number: '{{ $pasien->identity->identity_number }}',
-                            name: '{{ addslashes($pasien->identity->name) }}',
-                            identity_type: '{{ $pasien->identity->identity_type }}',
-                            gender: '{{ $pasien->identity->gender }}',
-                            address: '{{ addslashes($pasien->identity->address) }}',
-                            poli: '{{ $pasien->poli }}',
-                            status: '{{ $pasien->status }}'
-                        })"
+                                        identity_number: '{{ $pasien->identity->identity_number }}',
+                                        name: '{{ addslashes($pasien->identity->name) }}',
+                                        birth_date: '{{ $pasien->identity->birth_date }}',
+                                        no_telp: '{{ $pasien->identity->no_telp }}',
+                                        identity_type: '{{ $pasien->identity->identity_type }}',
+                                        gender: '{{ $pasien->identity->gender }}',
+                                        address: '{{ addslashes($pasien->identity->address) }}',
+                                        poli: '{{ $pasien->poli }}',
+                                        status: '{{ $pasien->status }}'
+                                    })"
                                     class="text-purple-600 hover:text-purple-900"><i class="fas fa-edit"></i></button>
 
                                 <a href="{{ route('admin.pasien.show', $pasien->id) }}"
@@ -174,26 +201,34 @@
                 <form id="create-pasien-form" action="{{ route('admin.pasien.store') }}" method="POST"
                     class="p-6 space-y-4">
                     @csrf
+
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
                         <div class="sm:col-span-2">
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">No. Identitas
-                                (NIM/NIDN/NIP) <span class="text-red-500">*</span></label>
-                            <div class="relative mt-1">
-                                <input type="text" id="create-identity-number" name="identity_number" required
-                                    class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white focus:ring-purple-500 border-purple-300"
-                                    placeholder="Ketik nomor identitas..." onkeyup="lookupIdentity(this.value)">
-                                <div id="lookup-loader" class="absolute right-3 top-2.5 hidden">
-                                    <i class="fas fa-spinner fa-spin text-purple-600"></i>
-                                </div>
-                            </div>
-                            <p class="text-[10px] mt-1 text-gray-500 italic">*Jika sudah pernah terdaftar, data akan
-                                otomatis terisi.</p>
+                            <label class="block text-sm font-medium">No Identitas *</label>
+                            <input type="text" name="identity_number" required
+                                class="w-full px-3 py-2 border rounded-lg">
+                        </div>
+
+                        <div class="sm:col-span-2">
+                            <label class="block text-sm font-medium">Nama Lengkap *</label>
+                            <input type="text" name="nama_pasien" required class="w-full px-3 py-2 border rounded-lg">
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium dark:text-gray-300">Kategori</label>
-                            <select name="identity_type" id="create-identity-type"
-                                class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white">
+                            <label class="block text-sm font-medium">Tanggal Lahir *</label>
+                            <input type="date" name="tanggal_lahir" required
+                                class="w-full px-3 py-2 border rounded-lg">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium">No Telepon *</label>
+                            <input type="text" name="no_telp" required class="w-full px-3 py-2 border rounded-lg">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium">Kategori *</label>
+                            <select name="identity_type" required class="w-full px-3 py-2 border rounded-lg">
                                 <option value="mahasiswa">Mahasiswa</option>
                                 <option value="dosen">Dosen</option>
                                 <option value="karyawan">Karyawan</option>
@@ -201,42 +236,32 @@
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium dark:text-gray-300">Jenis Kelamin</label>
-                            <select name="gender" id="create-gender"
-                                class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white">
+                            <label class="block text-sm font-medium">Jenis Kelamin *</label>
+                            <select name="gender" required class="w-full px-3 py-2 border rounded-lg">
                                 <option value="L">Laki-laki</option>
                                 <option value="P">Perempuan</option>
                             </select>
                         </div>
 
                         <div class="sm:col-span-2">
-                            <label class="block text-sm font-medium dark:text-gray-300">Nama Lengkap</label>
-                            <input type="text" name="nama_pasien" id="create-name" required
-                                class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white">
+                            <label class="block text-sm font-medium">Alamat *</label>
+                            <textarea name="alamat" rows="2" required class="w-full px-3 py-2 border rounded-lg"></textarea>
                         </div>
 
                         <div class="sm:col-span-2">
-                            <label class="block text-sm font-medium dark:text-gray-300">Pilih Poli</label>
-                            <select name="poli"
-                                class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white">
+                            <label class="block text-sm font-medium">Poli *</label>
+                            <select name="poli" required class="w-full px-3 py-2 border rounded-lg">
                                 <option value="Poli Umum">Poli Umum</option>
                                 <option value="Poli Gigi">Poli Gigi</option>
                             </select>
                         </div>
 
-                        <div class="sm:col-span-2">
-                            <label class="block text-sm font-medium dark:text-gray-300">Alamat</label>
-                            <textarea name="alamat" id="create-address" rows="2"
-                                class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white"></textarea>
-                        </div>
                     </div>
 
                     <div class="flex justify-end space-x-3 mt-6">
                         <button type="button" onclick="closeCreatePasienModal()"
                             class="px-4 py-2 text-gray-600">Batal</button>
-                        <button type="submit"
-                            class="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">Simpan
-                            Pendaftaran</button>
+                        <button type="submit" class="px-6 py-2 bg-purple-600 text-white rounded-lg">Simpan</button>
                     </div>
                 </form>
             </div>
@@ -253,18 +278,41 @@
                 <form id="edit-pasien-form" method="POST" class="p-6 space-y-4">
                     @csrf
                     @method('PUT')
+
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+<div class="sm:col-span-2">
+    <label class="block text-sm font-medium text-gray-500">
+        No Identitas
+    </label>
+    <input type="text"
+        name="identity_number"
+        id="edit-identity-number"
+        class="w-full px-3 py-2 border rounded-lg">
+</div>
+
                         <div class="sm:col-span-2">
-                            <label class="block text-sm font-medium text-gray-500">No. Identitas (Tidak dapat
-                                diubah)</label>
-                            <input type="text" id="edit-identity-number" disabled
-                                class="w-full px-3 py-2 border rounded-lg bg-gray-100 dark:bg-gray-600 dark:text-gray-300 cursor-not-allowed">
+                            <label class="block text-sm font-medium">Nama Lengkap *</label>
+                            <input type="text" name="nama_pasien" id="edit-name" required
+                                class="w-full px-3 py-2 border rounded-lg">
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium dark:text-gray-300">Kategori</label>
-                            <select name="identity_type" id="edit-identity-type"
-                                class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white">
+                            <label class="block text-sm font-medium">Tanggal Lahir *</label>
+                            <input type="date" name="tanggal_lahir" id="edit-birth-date" required
+                                class="w-full px-3 py-2 border rounded-lg">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium">No Telepon *</label>
+                            <input type="text" name="no_telp" id="edit-no-telp" required
+                                class="w-full px-3 py-2 border rounded-lg">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium">Kategori *</label>
+                            <select name="identity_type" id="edit-identity-type" required
+                                class="w-full px-3 py-2 border rounded-lg">
                                 <option value="mahasiswa">Mahasiswa</option>
                                 <option value="dosen">Dosen</option>
                                 <option value="karyawan">Karyawan</option>
@@ -272,174 +320,102 @@
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium dark:text-gray-300">Jenis Kelamin</label>
-                            <select name="gender" id="edit-gender"
-                                class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white">
+                            <label class="block text-sm font-medium">Jenis Kelamin *</label>
+                            <select name="gender" id="edit-gender" required class="w-full px-3 py-2 border rounded-lg">
                                 <option value="L">Laki-laki</option>
                                 <option value="P">Perempuan</option>
                             </select>
                         </div>
 
                         <div class="sm:col-span-2">
-                            <label class="block text-sm font-medium dark:text-gray-300">Nama Lengkap</label>
-                            <input type="text" name="nama_pasien" id="edit-name" required
-                                class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white">
+                            <label class="block text-sm font-medium">Alamat *</label>
+                            <textarea name="alamat" id="edit-address" rows="2" required class="w-full px-3 py-2 border rounded-lg"></textarea>
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium dark:text-gray-300">Pilih Poli</label>
-                            <select name="poli" id="edit-poli"
-                                class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white">
+                            <label class="block text-sm font-medium">Poli *</label>
+                            <select name="poli" id="edit-poli" required class="w-full px-3 py-2 border rounded-lg">
                                 <option value="Poli Umum">Poli Umum</option>
                                 <option value="Poli Gigi">Poli Gigi</option>
                             </select>
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium dark:text-gray-300">Status</label>
-                            <select name="status" id="edit-status"
-                                class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white">
+                            <label class="block text-sm font-medium">Status *</label>
+                            <select name="status" id="edit-status" required class="w-full px-3 py-2 border rounded-lg">
                                 <option value="menunggu_konfirmasi">Menunggu</option>
                                 <option value="terdaftar">Terdaftar</option>
                                 <option value="selesai">Selesai</option>
                             </select>
                         </div>
 
-                        <div class="sm:col-span-2">
-                            <label class="block text-sm font-medium dark:text-gray-300">Alamat</label>
-                            <textarea name="alamat" id="edit-address" rows="2"
-                                class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white"></textarea>
-                        </div>
                     </div>
 
                     <div class="flex justify-end space-x-3 mt-6">
                         <button type="button" onclick="closeEditPasienModal()"
                             class="px-4 py-2 text-gray-600">Batal</button>
-                        <button type="submit"
-                            class="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">Simpan
+                        <button type="submit" class="px-6 py-2 bg-purple-600 text-white rounded-lg">Simpan
                             Perubahan</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-@endsection
 
-@push('scripts')
     <script>
-        // --- Logic Modal Create ---
+        document.querySelector('input[name="identity_number"]').addEventListener('blur', function() {
+            let nik = this.value;
+
+            if (nik.length === 16) {
+                fetch(`/admin/pasien/identity/${nik}`)
+                    .then(res => res.json())
+                    .then(res => {
+
+                        if (res.status) {
+                            let data = res.data;
+
+                            document.querySelector('input[name="nama_pasien"]').value = data.name ?? '';
+                            document.querySelector('input[name="tanggal_lahir"]').value = data.birth_date ?? '';
+                            document.querySelector('input[name="no_telp"]').value = data.no_telp ?? '';
+                            document.querySelector('select[name="identity_type"]').value = data.identity_type ??
+                                '';
+                            document.querySelector('select[name="gender"]').value = data.gender ?? '';
+                            document.querySelector('textarea[name="alamat"]').value = data.address ?? '';
+                        }
+                    });
+            }
+        });
+
         function openCreatePasienModal() {
             document.getElementById('create-pasien-modal').classList.remove('hidden');
         }
 
         function closeCreatePasienModal() {
             document.getElementById('create-pasien-modal').classList.add('hidden');
-        }
-
-        // --- Logic Modal Edit ---
-        function openEditPasienModal() {
-            document.getElementById('edit-pasien-modal').classList.remove('hidden');
+            document.getElementById('create-pasien-form').reset();
         }
 
         function closeEditPasienModal() {
             document.getElementById('edit-pasien-modal').classList.add('hidden');
         }
 
-        // AJAX Lookup Identity
-        let timeout = null;
-
-        function lookupIdentity(val) {
-            clearTimeout(timeout);
-            const loader = document.getElementById('lookup-loader');
-
-            if (val.length < 3) return;
-
-            timeout = setTimeout(() => {
-                loader.classList.remove('hidden');
-                fetch(`/admin/pasien/identity/${val}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        loader.classList.add('hidden');
-                        if (data) {
-                            // Fill Form jika data ditemukan
-                            document.getElementById('create-name').value = data.name;
-                            document.getElementById('create-identity-type').value = data.identity_type;
-                            document.getElementById('create-gender').value = data.gender;
-                            document.getElementById('create-address').value = data.address;
-
-                            // Beri efek highlight hijau sebentar
-                            document.getElementById('create-name').classList.add('bg-green-50');
-                            setTimeout(() => document.getElementById('create-name').classList.remove(
-                                'bg-green-50'), 1000);
-                        }
-                    })
-                    .catch(err => loader.classList.add('hidden'));
-            }, 500);
-        }
-
         function editPasien(id, data) {
-            // 1. Set Action Form (Sesuaikan role-nya)
-            const role = "{{ auth()->user()->role ?? auth()->user()->level }}";
-            const form = document.getElementById('edit-pasien-form');
-            form.action = `/${role}/pasien/${id}`;
 
-            // 2. Isi data ke dalam field modal edit
-            document.getElementById('edit-identity-number').value = data.identity_number;
-            document.getElementById('edit-name').value = data.name;
-            document.getElementById('edit-identity-type').value = data.identity_type;
-            document.getElementById('edit-gender').value = data.gender;
-            document.getElementById('edit-address').value = data.address;
-            document.getElementById('edit-poli').value = data.poli;
-            document.getElementById('edit-status').value = data.status;
+            document.getElementById('edit-pasien-form')
+                .action = `/admin/pasien/${id}`;
 
-            // 3. Tampilkan Modal
-            openEditPasienModal();
+            document.getElementById('edit-identity-number').value = data.identity_number ?? '';
+            document.getElementById('edit-name').value = data.name ?? '';
+            document.getElementById('edit-birth-date').value = data.birth_date ?? '';
+            document.getElementById('edit-no-telp').value = data.no_telp ?? '';
+            document.getElementById('edit-identity-type').value = data.identity_type ?? '';
+            document.getElementById('edit-gender').value = data.gender ?? '';
+            document.getElementById('edit-address').value = data.address ?? '';
+            document.getElementById('edit-poli').value = data.poli ?? '';
+            document.getElementById('edit-status').value = data.status ?? '';
+
+            document.getElementById('edit-pasien-modal')
+                .classList.remove('hidden');
         }
     </script>
-
-    <script>
-        document.getElementById('pasien-search').addEventListener('keyup', function() {
-            const keyword = this.value.toLowerCase();
-            const rows = document.querySelectorAll('tbody tr');
-
-            rows.forEach(row => {
-                // Ambil semua teks dalam 1 baris
-                const rowText = row.innerText.toLowerCase();
-
-                // Cocokkan keyword ke:
-                // - Kode pasien
-                // - Nama pasien
-                // - No identitas
-                if (rowText.includes(keyword)) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-        });
-    </script>
-
-    <script>
-        document.getElementById('pasien-search').addEventListener('input', function() {
-            const keyword = this.value.toLowerCase().trim();
-            const rows = document.querySelectorAll('tbody tr');
-
-            rows.forEach(row => {
-                const text = row.innerText.toLowerCase();
-
-                // Kalau input kosong → tampilkan semua baris DATA
-                if (keyword === '') {
-                    row.style.display = '';
-                    return;
-                }
-
-                // Saat search aktif
-                if (text.includes(keyword)) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-        });
-    </script>
-@endpush
+@endsection

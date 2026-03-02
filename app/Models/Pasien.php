@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -23,10 +22,13 @@ class Pasien extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'identity_id',
-        'kode_pasien',
-        'poli',
-        'status',
+        'identity_number',
+        'name',
+        'birth_date',
+        'no_telp',
+        'identity_type',
+        'gender',
+        'address',
     ];
 
     /**
