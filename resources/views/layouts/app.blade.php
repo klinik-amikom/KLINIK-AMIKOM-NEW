@@ -905,7 +905,8 @@
                 text: 'Apakah Anda yakin ingin keluar?',
                 icon: 'question',
                 confirmButtonText: 'Ya, Keluar',
-                cancelButtonText: 'Batal'
+                cancelButtonText: 'Batal',
+                confirmButtonColor: '#d33'
             }).then((result) => {
                 if (result.isConfirmed) {
                     const form = document.createElement('form');

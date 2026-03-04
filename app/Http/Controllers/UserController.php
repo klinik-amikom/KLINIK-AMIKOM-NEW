@@ -28,17 +28,25 @@ class UserController extends Controller
             $positionCode = ['admin' => 'ADM', 'dokter' => 'DOK', 'apoteker' => 'APT'][$role];
 
             // Get users with this position
-            $users = User::whereHas('position', function ($q) use ($positionCode) {
-                $q->where('code', $positionCode);
+            $users = User::whereHas('identity', function ($q) use ($role) {
+                $q->where('name', ucfirst($role));
             })
-                ->with(['position', 'identity'])
+                ->with('identity')
                 ->orderBy('created_at', 'desc')
                 ->get();
+
 
             return view("{$role}.index", compact('users', 'role'));
         } catch (Exception $e) {
             return redirect()->back()->with('error', "Gagal memuat data {$role}: " . $e->getMessage());
         }
+    }
+
+    public function create()
+    {
+        $identities = MasterIdentity::all();
+
+        return view('users.create', compact('identities'));
     }
 
     /**
@@ -50,7 +58,7 @@ class UserController extends Controller
 
         try {
             $rules = [
-                'identity_id' => 'required|exists:master_identity,id',
+                'identity_id' => 'required|exists:master_identities,id',
                 'name' => 'required|string|max:255|min:2',
                 'username' => 'required|string|unique:users,username|max:255|min:3',
                 'email' => 'required|email|unique:users,email|max:255',
@@ -88,21 +96,30 @@ class UserController extends Controller
     {
         try {
             $user = User::findOrFail($id);
-            $role = $user->role; // Uses getRoleAttribute()
 
             $rules = [
-                'identity_id' => 'required|exists:master_identity,id',
+                'identity_id' => 'required|exists:master_identities,id',
                 'name' => 'required|string|max:255|min:2',
-                'username' => ['required', 'string', 'max:255', 'min:3', Rule::unique('users')->ignore($user->id)],
-                'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
-                'position_id' => 'required|exists:positions,id',
+                'username' => [
+                    'required',
+                    'string',
+                    'max:255',
+                    'min:3',
+                    Rule::unique('users')->ignore($user->id)
+                ],
+                'email' => [
+                    'required',
+                    'email',
+                    'max:255',
+                    Rule::unique('users')->ignore($user->id)
+                ],
             ];
 
             if ($request->filled('password')) {
                 $rules['password'] = 'required|string|min:8|confirmed';
             }
 
-            $validatedData = $request->validate($rules, $this->customMessages());
+            $validatedData = $request->validate($rules);
 
             DB::beginTransaction();
 
@@ -111,7 +128,6 @@ class UserController extends Controller
                 'name' => $validatedData['name'],
                 'username' => $validatedData['username'],
                 'email' => $validatedData['email'],
-                'position_id' => $validatedData['position_id'],
             ];
 
             if ($request->filled('password')) {
@@ -119,14 +135,19 @@ class UserController extends Controller
             }
 
             $user->update($updateData);
+
             DB::commit();
 
-            return redirect()->route("admin.{$role}.index")->with('success', "Data {$role} berhasil diperbarui!");
+            return redirect()->route('admin.admin.index')
+                ->with('success', 'User berhasil diperbarui!');
         } catch (Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage())->withInput();
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage())
+                ->withInput();
         }
     }
+
 
     /**
      * Delete user.
@@ -137,18 +158,23 @@ class UserController extends Controller
             $user = User::findOrFail($id);
             $role = $user->role;
 
+            // Cegah admin hapus akun sendiri
             if (auth()->id() === $user->id) {
                 return redirect()->back()->with('error', 'Anda tidak dapat menghapus akun sendiri!');
             }
 
-            DB::beginTransaction();
-            $userName = $user->name;
-            $user->delete(); // Soft delete
-            DB::commit();
+            \DB::beginTransaction();
 
-            return redirect()->route("admin.{$role}.index")->with('success', "{$role} {$userName} berhasil dihapus!");
-        } catch (Exception $e) {
-            DB::rollBack();
+            $userName = $user->name;
+
+            $user->forceDelete(); // Hard delete, permanen
+
+            \DB::commit();
+
+            return redirect()->route("admin.{$role}.index")
+                ->with('success', "{$role} {$userName} berhasil dihapus permanen!");
+        } catch (\Exception $e) {
+            \DB::rollBack();
             return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
@@ -191,18 +217,15 @@ class UserController extends Controller
     public function edit($id)
     {
         $user = User::findOrFail($id);
-        $role = $user->role;
 
-        $positions = Position::all();
         $identities = MasterIdentity::all();
 
         return view('users.edit', compact(
             'user',
-            'positions',
             'identities'
         ));
     }
-    
+
     /**
      * Custom validation messages.
      */

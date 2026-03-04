@@ -1,14 +1,14 @@
 <?php
 
+use App\Http\Controllers\ApotekerController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ManageUserController;
 use App\Http\Controllers\ObatController;
 use App\Http\Controllers\PasienController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RekamMedisController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\ApotekerController;
-use App\Http\Controllers\ManageUserController;
 use Illuminate\Support\Facades\Route;
 
 // ==================================================
@@ -42,8 +42,24 @@ Route::get('/pasien', [PasienController::class, 'form'])
 // ==================================================
 // 2. AUTHENTICATED ROUTES (WAJIB LOGIN)
 // ==================================================
+
+
 Route::middleware(['auth'])->group(function () {
 
+// Group khusus admin (opsional)
+Route::prefix('users')->name('users.')->group(function () {
+
+    Route::get('/', [ManageUserController::class, 'index'])->name('index');
+
+    Route::get('/create', [ManageUserController::class, 'create'])->name('create');
+    Route::post('/', [ManageUserController::class, 'store'])->name('store');
+
+    Route::get('/{id}/edit', [ManageUserController::class, 'edit'])->name('edit');
+    Route::put('/{id}', [ManageUserController::class, 'update'])->name('update');
+
+    Route::delete('/{id}', [ManageUserController::class, 'destroy'])
+        ->name('destroy');
+});
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     // --- SHARED SERVICES ---
@@ -52,8 +68,12 @@ Route::middleware(['auth'])->group(function () {
 
     // ================= ADMIN =================
     Route::middleware(['role:admin'])->group(function () {
-        Route::get('/users', [ManageUserController::class, 'index'])->name('users.index');
-        Route::delete('/users/{id}', [ManageUserController::class, 'destroy'])->name('users.destroy');
+        Route::get('/admin/users', [UserController::class, 'index'])->name('admin.admin.index');
+        Route::get('/admin/users/create', [UserController::class, 'create'])->name('admin.admin.create');
+        Route::post('/admin/users', [UserController::class, 'store'])->name('admin.admin.store');
+        Route::get('/admin/users/{id}/edit', [UserController::class, 'edit'])->name('admin.admin.edit');
+        Route::put('/admin/users/{id}', [UserController::class, 'update'])->name('admin.admin.update');
+        Route::delete('/admin/users/{id}', [UserController::class, 'destroy'])->name('admin.admin.destroy');
     });
 
     Route::prefix('admin')->name('admin.')->middleware('role:admin')->group(function () {
@@ -102,7 +122,6 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('pasien', PasienController::class);
         Route::resource('obat', ObatController::class);
         Route::resource('rekammedis', RekamMedisController::class)
-            ->names('rekam_medis')
             ->except(['edit', 'create']);
 
         Route::patch('/rekam-medis/{id}/validasi', [RekamMedisController::class, 'validasi'])
