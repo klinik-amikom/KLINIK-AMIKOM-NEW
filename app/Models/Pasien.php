@@ -3,11 +3,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Pasien extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     /**
      * The table associated with the model.
@@ -22,13 +21,11 @@ class Pasien extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'identity_number',
-        'name',
-        'birth_date',
-        'no_telp',
-        'identity_type',
-        'gender',
-        'address',
+        'identity_id',
+        'kode_pasien',
+        'poli',
+        'queue_number',
+        'status',
     ];
 
     /**
