@@ -1,7 +1,12 @@
 <!-- Admin Dashboard Sidebar -->
 @php
-    $prefix = auth()->user()->role; 
+    $prefix = auth()->user()->role;
 @endphp
+
+@php
+    $user = auth()->user();
+@endphp
+
 <div id="sidebar"
     class="fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-800 shadow-lg transform lg:translate-x-0 -translate-x-full lg:block transition-transform duration-300 ease-in-out flex flex-col border-r border-gray-200 dark:border-gray-700">
 
@@ -10,7 +15,7 @@
         <div class="flex items-center space-x-2">
             <div
                 class="w-8 h-8 bg-gradient-to-br from-grey-500 to-purple-600 rounded-lg flex items-center justify-center">
-                <img src="{{asset('landingpage')}}/img/abstract/logo_UAYO.png" alt="logo AMIKOM">
+                <img src="{{ asset('landingpage') }}/img/abstract/logo_UAYO.png" alt="logo AMIKOM">
             </div>
             <div>
                 <h1 class="text-lg font-bold text-gray-900 dark:text-white">Klinik Amikom</h1>
@@ -28,14 +33,15 @@
         <div class="flex items-center space-x-3">
             <div
                 class="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold">
-                AD
+                {{ strtoupper(substr($user->position->position, 0, 2)) }}
             </div>
             <div class="flex-1 min-w-0">
+
                 <p class="text-sm font-medium text-gray-900 dark:text-white truncate">
-                    Administrator
+                    {{ $user->name }}
                 </p>
                 <p class="text-xs text-gray-500 dark:text-gray-400 truncate">
-                    Super Admin
+                    {{ $user->position->position }}
                 </p>
             </div>
         </div>
@@ -44,9 +50,9 @@
     <!-- Navigation Menu -->
     <nav class="flex-1 mt-4 px-4 space-y-1 overflow-y-auto scrollbar-hide">
         <!-- Dashboard -->
-        <a href="{{ route($prefix.'.dashboard') }}"
+        <a href="{{ route($prefix . '.dashboard') }}"
             class="nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200
-            {{ Request::routeIs($prefix.'.dashboard') ? 'ACTIVE CLASS' : 'NORMAL CLASS' }}
+            {{ Request::routeIs($prefix . '.dashboard') ? 'ACTIVE CLASS' : 'NORMAL CLASS' }}
                 ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 border-r-2 border-purple-500'
                 : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}
             ">
@@ -55,18 +61,18 @@
         </a>
 
         <!-- Manage Outlet -->
-        <a href="{{ route($prefix.'.pasien.index') }}"
+        <a href="{{ route($prefix . '.pasien.index') }}"
             class="nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200
-            {{ Request::routeIs($prefix.'.pasien.*')
+            {{ Request::routeIs($prefix . '.pasien.*')
                 ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 border-r-2 border-purple-500'
                 : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
             <i class="fas fa-bed mr-3 text-gray-400 group-hover:text-gray-500"></i>
             <span>Data Pasien</span>
         </a>
 
-        <a href="{{ route($prefix.'.obat.index') }}"
+        <a href="{{ route($prefix . '.obat.index') }}"
             class="nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200
-            {{ Request::routeIs($prefix.'.obat.*')
+            {{ Request::routeIs($prefix . '.obat.*')
                 ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 border-r-2 border-purple-500'
                 : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
             <i class="fas fa- fa-capsules mr-3 text-gray-400 group-hover:text-gray-500"></i>
@@ -74,13 +80,13 @@
         </a>
 
         <!-- Menu Management -->
-        <a href="{{ route($prefix.'.rekammedis.index') }}"
+        <a href="{{ route('rekammedis.index') }}"
             class="nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200
-            {{ Request::routeIs($prefix.'rekammedis.*')
+            {{ Request::routeIs($prefix . 'rekammedis.*')
                 ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 border-r-2 border-purple-500'
                 : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
             <i class="fas fa-file-waveform mr-3 text-gray-400 group-hover:text-gray-500"></i>
-            
+
             <span>Laporan Rekam Medis</span>
         </a>
 

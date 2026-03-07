@@ -16,8 +16,9 @@ class MasterIdentity extends Model
         'identity_type',
         'name',
         'birth_date',
-        'no_telp',
         'gender',
+        'no_telp',
+        'email',
         'address',
     ];
 

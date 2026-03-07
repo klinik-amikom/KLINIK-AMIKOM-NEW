@@ -1,3 +1,7 @@
+@php
+    $prefix = auth()->user()->role;
+@endphp
+
 @extends('layouts.app')
 
 @section('title', 'Data Pasien')
@@ -70,10 +74,14 @@
             </p>
         </div>
         <div class="w-full sm:w-auto">
-            <button onclick="openCreatePasienModal()"
-                class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg shadow-sm transition-colors duration-200">
-                <i class="fas fa-plus mr-2"></i> Tambah Pasien
-            </button>
+            @auth
+                @if (auth()->user()->isAdmin())
+                    <button onclick="openCreatePasienModal()"
+                        class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg shadow-sm transition-colors duration-200">
+                       <i class="fas fa-plus mr-2"></i> Tambah Pasien
+                    </button>
+                @endif
+            @endauth
         </div>
     </div>
 
@@ -155,29 +163,46 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4 text-right space-x-2">
-                                <button
-                                    onclick="editPasien({{ $pasien->id }}, {
-                                        identity_number: '{{ $pasien->identity->identity_number }}',
-                                        name: '{{ addslashes($pasien->identity->name) }}',
-                                        birth_date: '{{ $pasien->identity->birth_date }}',
-                                        no_telp: '{{ $pasien->identity->no_telp }}',
-                                        identity_type: '{{ $pasien->identity->identity_type }}',
-                                        gender: '{{ $pasien->identity->gender }}',
-                                        address: '{{ addslashes($pasien->identity->address) }}',
-                                        poli: '{{ $pasien->poli }}',
-                                        status: '{{ $pasien->status }}'
-                                    })"
-                                    class="text-purple-600 hover:text-purple-900"><i class="fas fa-edit"></i></button>
 
-                                <a href="{{ route('admin.pasien.show', $pasien->id) }}"
-                                    class="text-blue-600 hover:text-blue-900"><i class="fas fa-eye"></i></a>
+                                {{-- ADMIN ONLY --}}
+                                @if (auth()->user()->isAdmin())
+                                    <button
+                                        onclick="editPasien({{ $pasien->id }}, {
+                identity_number: '{{ $pasien->identity->identity_number }}',
+                name: '{{ addslashes($pasien->identity->name) }}',
+                birth_date: '{{ $pasien->identity->birth_date }}',
+                no_telp: '{{ $pasien->identity->no_telp }}',
+                identity_type: '{{ $pasien->identity->identity_type }}',
+                gender: '{{ $pasien->identity->gender }}',
+                address: '{{ addslashes($pasien->identity->address) }}',
+                poli: '{{ $pasien->poli }}',
+                status: '{{ $pasien->status }}'
+            })"
+                                        class="text-purple-600 hover:text-purple-900">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                @endif
 
-                                <form action="{{ route('admin.pasien.destroy', $pasien->id) }}" method="POST"
-                                    class="inline" onsubmit="return confirm('Hapus data ini?')">
-                                    @csrf @method('DELETE')
-                                    <button type="submit" class="text-red-600 hover:text-red-900"><i
-                                            class="fas fa-trash"></i></button>
-                                </form>
+
+                                {{-- SEMUA ROLE BOLEH LIHAT --}}
+                                <a href="{{ route($prefix . '.pasien.show', $pasien->id) }}"
+                                    class="text-blue-600 hover:text-blue-900">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+
+
+                                {{-- ADMIN ONLY --}}
+                                @if (auth()->user()->isAdmin())
+                                    <form action="{{ route($prefix . '.pasien.destroy', $pasien->id) }}" method="POST"
+                                        class="inline" onsubmit="return confirm('Hapus data ini?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-red-600 hover:text-red-900">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                @endif
+
                             </td>
                         </tr>
                     @empty
@@ -198,7 +223,7 @@
                     <button onclick="closeCreatePasienModal()"><i class="fas fa-times text-gray-400"></i></button>
                 </div>
 
-                <form id="create-pasien-form" action="{{ route('admin.pasien.store') }}" method="POST"
+                <form id="create-pasien-form" action="{{ route($prefix . '.pasien.store') }}" method="POST"
                     class="p-6 space-y-4">
                     @csrf
 
@@ -281,15 +306,13 @@
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
-<div class="sm:col-span-2">
-    <label class="block text-sm font-medium text-gray-500">
-        No Identitas
-    </label>
-    <input type="text"
-        name="identity_number"
-        id="edit-identity-number"
-        class="w-full px-3 py-2 border rounded-lg">
-</div>
+                        <div class="sm:col-span-2">
+                            <label class="block text-sm font-medium text-gray-500">
+                                No Identitas
+                            </label>
+                            <input type="text" name="identity_number" id="edit-identity-number"
+                                class="w-full px-3 py-2 border rounded-lg">
+                        </div>
 
                         <div class="sm:col-span-2">
                             <label class="block text-sm font-medium">Nama Lengkap *</label>
@@ -367,7 +390,7 @@
             let nik = this.value;
 
             if (nik.length === 16) {
-                fetch(`/admin/pasien/identity/${nik}`)
+                fetch(`/${@json($prefix)}/pasien/identity/${nik}`)
                     .then(res => res.json())
                     .then(res => {
 
@@ -402,7 +425,7 @@
         function editPasien(id, data) {
 
             document.getElementById('edit-pasien-form')
-                .action = `/admin/pasien/${id}`;
+                .action = `{{ url($prefix . '/pasien') }}/${id}`;
 
             document.getElementById('edit-identity-number').value = data.identity_number ?? '';
             document.getElementById('edit-name').value = data.name ?? '';

@@ -22,13 +22,11 @@ class Pasien extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'identity_number',
-        'name',
-        'birth_date',
-        'no_telp',
-        'identity_type',
-        'gender',
-        'address',
+        'identity_id',
+        'kode_pasien',
+        'poli',
+        'queue_number',
+        'status',
     ];
 
     /**

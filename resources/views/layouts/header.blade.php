@@ -1,4 +1,7 @@
 <!-- Admin Dashboard Header -->
+@php
+    $user = auth()->user();
+@endphp
 <header class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 sticky top-0 z-30">
     <div class="flex items-center justify-between h-16 px-4 md:px-6">
         <!-- Mobile Menu Button -->
@@ -34,16 +37,16 @@
                         onclick="toggleProfileDropdown()">
                     <!-- Admin Avatar -->
                     <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
-                        AD
+                        {{ strtoupper(substr($user->position->position, 0, 2)) }}
                     </div>
                     
                     <!-- Admin Info (Hidden on mobile) -->
                     <div class="hidden sm:block text-left">
                         <span class="text-sm font-medium text-gray-700 dark:text-gray-300 block">
-                            Administrator
+                            {{ $user->name }}
                         </span>
                         <p class="text-xs text-purple-600 dark:text-green-400">
-                            Super Admin
+                            {{ $user->position->position }}
                         </p>
                     </div>
                     
@@ -60,14 +63,14 @@
                     <div class="px-4 py-3 border-b border-gray-100 dark:border-gray-700">
                         <div class="flex items-center space-x-3 mb-3">
                             <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center text-white font-semibold">
-                                AD
+                                {{ strtoupper(substr($user->position->position, 0, 2)) }}
                             </div>
                             <div>
                                 <p class="text-sm font-medium text-gray-900 dark:text-white">
-                                    Administrator
+                                    {{ $user->name }}
                                 </p>
                                 <p class="text-xs text-gray-500 dark:text-gray-400">
-                                    admin@canteenexpress.com
+                                    {{ $user->email }}
                                 </p>
                             </div>
                         </div>

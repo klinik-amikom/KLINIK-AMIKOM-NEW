@@ -59,6 +59,26 @@ Route::get('/pasien', function () {
 
 Route::middleware(['auth'])->group(function () {
 
+// ================= REKAM MEDIS (GLOBAL - SEMUA ROLE) =================
+Route::prefix('rekam-medis')->name('rekammedis.')->group(function () {
+
+    Route::get('/', [RekamMedisController::class, 'index'])->name('index');
+    Route::post('/', [RekamMedisController::class, 'store'])->name('store');
+
+    Route::get('/{id}', [RekamMedisController::class, 'show'])->name('show');
+    Route::put('/{id}', [RekamMedisController::class, 'update'])->name('update');
+    Route::delete('/{id}', [RekamMedisController::class, 'destroy'])->name('destroy');
+
+    Route::patch('/{id}/validasi', [RekamMedisController::class, 'validasi'])
+        ->name('validasi');
+
+    Route::get('/export/pdf', [RekamMedisController::class, 'exportPDF'])
+        ->name('export.pdf');
+
+    Route::get('/export/excel', [RekamMedisController::class, 'exportExcel'])
+        ->name('export.excel');
+});
+
 // Group khusus admin (opsional)
 Route::prefix('users')->name('users.')->group(function () {
 
@@ -101,13 +121,7 @@ Route::prefix('users')->name('users.')->group(function () {
 
         Route::resource('pasien', PasienController::class);
         Route::resource('obat', ObatController::class);
-        Route::resource('rekammedis', RekamMedisController::class)->except(['edit', 'create']);
 
-        Route::get('/rekam-medis/export/pdf', [RekamMedisController::class, 'exportPDF'])
-            ->name('rekam-medis.export.pdf');
-
-        Route::get('/rekam-medis/export/excel', [RekamMedisController::class, 'exportExcel'])
-            ->name('rekam-medis.export.excel');
     });
 
     // ================= DOKTER =================
@@ -119,13 +133,7 @@ Route::prefix('users')->name('users.')->group(function () {
 
         Route::resource('pasien', PasienController::class);
         Route::resource('obat', ObatController::class);
-        Route::resource('rekammedis', RekamMedisController::class)->except(['edit', 'create']);
 
-        Route::get('/rekam-medis/export/pdf', [RekamMedisController::class, 'exportPDF'])
-            ->name('rekam-medis.export.pdf');
-
-        Route::get('/rekam-medis/export/excel', [RekamMedisController::class, 'exportExcel'])
-            ->name('rekam-medis.export.excel');
     });
 
     // ================= APOTEKER =================
@@ -134,16 +142,17 @@ Route::prefix('users')->name('users.')->group(function () {
 
         Route::resource('pasien', PasienController::class);
         Route::resource('obat', ObatController::class);
-        Route::resource('rekammedis', RekamMedisController::class)
-            ->except(['edit', 'create']);
 
-        Route::patch('/rekam-medis/{id}/validasi', [RekamMedisController::class, 'validasi'])
-            ->name('rekam-medis.validasi');
-
-        Route::get('/rekam-medis/export/pdf', [RekamMedisController::class, 'exportPDF'])
-            ->name('rekam-medis.export.pdf');
-
-        Route::get('/rekam-medis/export/excel', [RekamMedisController::class, 'exportExcel'])
-            ->name('rekam-medis.export.excel');
     });
+
+    Route::post('/pasien/{id}/konfirmasi', 
+        [PasienController::class, 'konfirmasi']
+    )->name('pasien.konfirmasi');
+
+    Route::post('/rekammedis/{id}/mulai', [RekamMedisController::class, 'mulaiPeriksa'])
+    ->name('rekammedis.mulai');
+
+    Route::post('/rekammedis/{id}/selesai', [RekamMedisController::class, 'selesai'])
+        ->name('rekammedis.selesai');
+        
 });

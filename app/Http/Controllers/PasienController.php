@@ -5,6 +5,9 @@ use App\Models\MasterIdentity;
 use App\Models\Pasien;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use App\Models\RekamMedis;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class PasienController extends Controller
 {
@@ -62,8 +65,10 @@ class PasienController extends Controller
             'status'      => 'menunggu_konfirmasi',
         ]);
 
+        $role = auth()->user()->role;
+
         return redirect()
-            ->route('admin.pasien.index')
+            ->route($role . '.pasien.index')
             ->with('success', 'Pasien berhasil ditambahkan.');
     }
 
@@ -73,8 +78,10 @@ class PasienController extends Controller
 
         $pasien->delete(); // karena pakai SoftDeletes
 
+        $role = auth()->user()->role;
+
         return redirect()
-            ->route('admin.pasien.index')
+            ->route($role . '.pasien.index')
             ->with('success', 'Pasien berhasil dihapus.');
     }
 
@@ -115,11 +122,13 @@ class PasienController extends Controller
             'status' => $request->status,
         ]);
 
+        $role = auth()->user()->role;
+
         return redirect()
-            ->route('admin.pasien.index')
+            ->route($role . '.pasien.index')
             ->with('success', 'Data pasien berhasil diperbarui.');
     }
-    
+
     // 🔍 API cek NIK
     public function cekNik($nik)
     {
@@ -145,5 +154,59 @@ class PasienController extends Controller
         return $pdf->download(
             'bukti-pendaftaran-' . $pasien->kode_pasien . '.pdf'
         );
+    }
+
+    public function show($id)
+    {
+        $pasien = Pasien::with('identity')->findOrFail($id);
+
+        $role = auth()->user()->role;
+
+        return view('pasien.show', compact('pasien', 'role'));
+    }
+
+    public function konfirmasi($id)
+    {
+        $pasien = Pasien::findOrFail($id);
+
+        // ❌ Cegah jika sudah dikonfirmasi
+        if ($pasien->status !== 'menunggu_konfirmasi') {
+            return back()->with('error', 'Pasien sudah dikonfirmasi.');
+        }
+
+        DB::transaction(function () use ($pasien) {
+
+            // 🔄 Ubah status pasien
+            $pasien->update([
+                'status' => 'terdaftar',
+            ]);
+
+            // 🔢 Generate kode rekam medis
+            $lastRekam = RekamMedis::withTrashed()
+                ->orderBy('id', 'desc')
+                ->first();
+
+            $newNumber = $lastRekam
+                ? (int) substr($lastRekam->kode_rekam_medis, 2) + 1
+                : 1;
+
+            $kodeRekam = 'RM' . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
+
+            // 💾 Insert ke rekam medis
+            RekamMedis::create([
+                'kode_rekam_medis'   => $kodeRekam,
+                'pasien_id'          => $pasien->id,
+                'dokter_id'          => 1, // sementara default (nanti bisa dinamis)
+                'tanggal_periksa'    => Carbon::today(),
+                'diagnosis'          => '-',
+                'status'             => 'menunggu_pemeriksaan',
+            ]);
+        });
+
+        $role = auth()->user()->role;
+
+        return redirect()
+            ->route($role . '.pasien.index')
+            ->with('success', 'Pasien berhasil dikonfirmasi dan masuk ke rekam medis.');
     }
 }
