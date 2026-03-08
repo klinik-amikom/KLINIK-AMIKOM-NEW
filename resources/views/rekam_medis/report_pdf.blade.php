@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Laporan Rekam Medis</title>
     <style>
@@ -8,17 +9,19 @@
             font-size: 12px;
         }
 
-        .header {
-            text-align: center;
+        .header-table {
+            width: 100%;
             margin-bottom: 20px;
-            position: relative;
         }
 
-        .header img {
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 60px;
+        .logo-cell {
+            width: 80px;
+        }
+
+        .title-cell {
+            text-align: center;
+            font-weight: bold;
+            font-size: 18px;
         }
 
         .header-title {
@@ -33,64 +36,101 @@
         }
 
         th {
-            background-color: #6a1b9a; /* ungu */
+            background-color: #6a1b9a;
+            /* ungu */
             color: white;
             font-weight: bold;
             text-align: center;
         }
 
-        td, th {
-            border: 1px solid #333;
+        td,
+        th {
+            border: 1px solid #f5f5f5;
             padding: 5px;
             text-align: left;
         }
 
         tbody tr:nth-child(even) {
-            background-color: #f8f4fb; /* putih keungu-unguan */
+            background-color: #f8f4fb;
+            /* putih keungu-unguan */
         }
 
         tbody tr:nth-child(odd) {
             background-color: white;
         }
+
+        th {
+            background-color: #6a1b9a;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+        }
     </style>
 </head>
+
 <body>
 
-<div class="header">
-    <img src="{{ asset('landingpage')}}/img/logo_amikom.png" alt="Logo Amikom" style="width: 120px; height: auto;">
-    <div class="header-title">
-        Laporan Rekam Medis Klinik Amikom Yogyakarta
-    </div>
-</div>
+    <table class="header-table">
+        <tr>
+            <td class="logo-cell">
+                <img src="{{ public_path('landingpage/img/logo_amikom.png') }}" width="70">
+            </td>
 
-<table>
-    <thead class="text-center">
-    <tr>
-        <th>Kode Rekam</th>
-        <th>Tanggal Periksa</th>
-        <th>Pasien</th>
-        <th>Dokter</th>
-        <th>Obat</th>
-        <th>Diagnosis</th>
-        <th>Resep</th>
-        <th>Jumlah Obat</th>
-    </tr>
-</thead>
-    <tbody>
-        @foreach ($rekamMedis as $rekam)
+            <td class="title-cell">
+                <b>LAPORAN REKAM MEDIS</b><br>
+                <b>KLINIK AMIKOM YOGYAKARTA</b>
+            </td>
+
+            <td style="width:80px"></td>
+        </tr>
+    </table>
+    <hr style="border:1px solid black; margin-bottom:15px;">
+    <table>
+        <thead class="text-center">
             <tr>
-                <td>{{ $rekam->kode_rekam_medis }}</td>
-                <td>{{ $rekam->tanggal_periksa }}</td>
-                <td>{{ $rekam->pasien->nama_pasien ?? '-' }}</td>
-                <td>{{ $rekam->user->nama ?? '-' }}</td>
-                <td>{{ $rekam->obat->nama_obat ?? '-' }}</td>
-                <td>{{ $rekam->diagnosis }}</td>
-                <td>{{ $rekam->resep }}</td>
-                <td>{{ $rekam->jumlah_obat }}</td>
+                <th>Kode Rekam</th>
+                <th>Tanggal Periksa</th>
+                <th>Pasien</th>
+                <th>Dokter</th>
+                <th>Obat</th>
+                <th>Diagnosis</th>
+                <th>Resep</th>
+                <th>Jumlah Obat</th>
             </tr>
-        @endforeach
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach ($rekamMedis as $rekam)
+                <tr>
+                    <td>{{ $rekam->kode_rekam_medis }}</td>
+                    <td>{{ $rekam->tanggal_periksa }}</td>
+                    <td>{{ $rekam->pasien->identity->name ?? '-' }}</td>
+
+                    <td>{{ $rekam->dokter->name ?? '-' }}</td>
+
+                    <td>
+                        @foreach ($rekam->resepObat as $resep)
+                            {{ $resep->obat->nama_obat ?? '-' }}<br>
+                        @endforeach
+                    </td>
+
+                    <td>{{ $rekam->diagnosis ?? '-' }}</td>
+
+                    <td>
+                        @foreach ($rekam->resepObat as $resep)
+                            {{ $resep->aturan_pakai ?? '-' }}<br>
+                        @endforeach
+                    </td>
+
+                    <td>
+                        @foreach ($rekam->resepObat as $resep)
+                            {{ $resep->jumlah ?? '-' }}<br>
+                        @endforeach
+                    </td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
 
 </body>
+
 </html>

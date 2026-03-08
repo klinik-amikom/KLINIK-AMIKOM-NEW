@@ -24,14 +24,25 @@
 
     {{-- ================= HEADER ================= --}}
     <div class="mb-6">
-        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+        <h2 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-1 sm:mb-2">
             Kelola Rekam Medis
         </h2>
-        <p class="text-gray-600 dark:text-gray-400">
+        <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400">
             Daftar seluruh rekam medis pasien
         </p>
-    </div>
 
+        <div class="mt-6 mb-6">
+            <div class="relative max-w-md">
+                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                    <i class="fas fa-search"></i>
+                </span>
+
+                <input type="text" id="rekammedis-search"
+                    placeholder="Cari kode, nama pasien, NIK, dokter, atau diagnosis..."
+                    class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 text-sm">
+            </div>
+        </div>
+    </div>
 
     {{-- ================= TABLE ================= --}}
     <div class="bg-white dark:bg-gray-800 shadow rounded-xl border overflow-hidden">
@@ -43,52 +54,57 @@
         </div>
 
         <div class="overflow-x-auto">
-            <table class="w-full text-sm text-left">
-                <thead class="bg-gray-50 dark:bg-gray-700 text-xs uppercase">
-                    <tr>
-                        <th class="px-4 py-3">#</th>
-                        <th class="px-4 py-3">Kode</th>
-                        <th class="px-4 py-3">NIK</th>
-                        <th class="px-4 py-3">Nama Pasien</th>
-                        <th class="px-4 py-3">Tanggal</th>
-                        <th class="px-4 py-3">Dokter</th>
-                        <th class="px-4 py-3">Obat</th>
-                        <th class="px-4 py-3">Diagnosis</th>
-                        <th class="px-4 py-3">Status</th>
-                        <th class="px-4 py-3 text-right">Aksi</th>
+            <table class="w-full text-sm text-left border border-gray-200 dark:border-gray-700">
+                <thead class="bg-gray-50 dark:bg-gray-700 text-xs uppercase divide-x dark:divide-gray-600">
+                    <tr class="odd:bg-white even:bg-gray-50 dark:odd:bg-gray-800 dark:even:bg-gray-700 hover:bg-gray-100">
+                        <th class="px-4 py-3 text-center">#</th>
+                        <th class="px-4 py-3 text-center border border-gray-200">Kode</th>
+                        <th class="px-4 py-3 text-center border border-gray-200">NIK</th>
+                        <th class="px-4 py-3 text-center border border-gray-200">Nama Pasien</th>
+                        <th class="px-4 py-3 text-center border border-gray-200">Tanggal</th>
+                        <th class="px-4 py-3 text-center border border-gray-200">Dokter</th>
+                        <th class="px-4 py-3 text-center border border-gray-200">Obat</th>
+                        <th class="px-4 py-3 text-center border border-gray-200">Diagnosis</th>
+                        <th class="px-4 py-3 text-center border border-gray-200">Status</th>
+
+                        @if (auth()->user()->role == 'dokter')
+                            <th class="px-4 py-3 text-center">Periksa</th>
+                        @endif
+
+                        <th class="px-4 py-3 text-center">Aksi</th>
                     </tr>
                 </thead>
 
-                <tbody class="divide-y dark:divide-gray-700">
+                <tbody class="divide-y divide-gray-200 dark:divide-gray-700 divide-x">
 
                     @forelse ($dataRekamMedis as $item)
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
-
-                            <td class="px-4 py-3">{{ $loop->iteration }}</td>
+                        <tr
+                            class="rekammedis-row odd:bg-white even:bg-gray-50 dark:odd:bg-gray-800 dark:even:bg-gray-700 hover:bg-gray-100">
+                            <td class="px-4 py-3 border border-gray-200">{{ $loop->iteration }}</td>
 
                             <td class="px-4 py-3 font-semibold text-purple-600">
                                 {{ $item->kode_rekam_medis }}
                             </td>
 
                             {{-- NIK --}}
-                            <td class="px-4 py-3">
+                            <td class="px-4 py-3 border border-gray-200">
                                 {{ $item->pasien->identity->identity_number ?? '-' }}
                             </td>
 
                             {{-- Nama Pasien --}}
-                            <td class="px-4 py-3">
+                            <td class="px-4 py-3 border border-gray-200">
                                 {{ $item->pasien->identity->name ?? '-' }}
                             </td>
 
-                            <td class="px-4 py-3">
+                            <td class="px-4 py-3 border border-gray-200">
                                 {{ \Carbon\Carbon::parse($item->tanggal_periksa)->format('d-m-Y') }}
                             </td>
 
-                            <td class="px-4 py-3">
+                            <td class="px-4 py-3 border border-gray-200">
                                 {{ $item->dokter->name ?? '-' }}
                             </td>
 
-                            <td class="px-4 py-3">
+                            <td class="px-4 py-3 border border-gray-200">
                                 @if ($item->resepObat->count() > 0)
                                     <ul class="space-y-1">
                                         @foreach ($item->resepObat as $resep)
@@ -107,91 +123,248 @@
                                 @endif
                             </td>
 
-                            <td class="px-4 py-3">
+                            <td class="px-4 py-3 border border-gray-200">
                                 {{ $item->diagnosis ?? '-' }}
                             </td>
 
                             {{-- STATUS BADGE --}}
-                            <td class="px-4 py-3">
-                                @if ($item->status == 'menunggu_pemeriksaan')
-                                    <span class="px-2 py-1 text-xs bg-yellow-100 text-yellow-700 rounded">
-                                        Menunggu Pemeriksaan
-                                    </span>
-                                @elseif($item->status == 'diperiksa')
-                                    <span class="px-2 py-1 text-xs bg-purple-100 text-purple-700 rounded">
-                                        Sedang Diperiksa
-                                    </span>
-                                @elseif($item->status == 'menunggu_obat')
-                                    <span class="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded">
-                                        Menunggu Obat
-                                    </span>
-                                @elseif($item->status == 'selesai')
-                                    <span class="px-2 py-1 text-xs bg-green-100 text-green-700 rounded">
-                                        Selesai
-                                    </span>
-                                @endif
+                            <td class="px-4 py-3 border border-gray-200">
+                                @switch($item->status)
+                                    @case('menunggu_pemeriksaan')
+                                        <span class="px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-700 rounded-full">
+                                            Menunggu Pemeriksaan
+                                        </span>
+                                    @break
+
+                                    @case('diperiksa')
+                                        <span class="px-2 py-1 text-xs font-medium bg-purple-100 text-purple-700 rounded-full">
+                                            Sedang Diperiksa
+                                        </span>
+                                    @break
+
+                                    @case('menunggu_obat')
+                                        <span class="px-2 py-1 text-xs font-medium bg-orange-100 text-orange-700 rounded-full">
+                                            Menunggu Obat
+                                        </span>
+                                    @break
+
+                                    @case('selesai')
+                                        <span class="px-2 py-1 text-xs font-medium bg-green-100 text-green-700 rounded-full">
+                                            Selesai
+                                        </span>
+                                    @break
+
+                                    @default
+                                        <span class="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded-full">
+                                            -
+                                        </span>
+                                @endswitch
                             </td>
 
-                            {{-- AKSI --}}
-                            <td class="px-4 py-3 text-right">
-                                <div class="flex justify-end space-x-3">
+                            @if (auth()->user()->role == 'dokter')
+                                <td class="px-4 py-3 text-center">
 
-                                    {{-- DETAIL --}}
-                                    <a href="{{ route('rekammedis.show', $item->id) }}"
-                                        class="text-blue-600 hover:text-blue-800">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-
-                                    {{-- ================= MULAI PERIKSA (KHUSUS DOKTER) ================= --}}
-                                    @if (auth()->user()->role == 'dokter' && $item->status == 'menunggu_pemeriksaan')
+                                    {{-- Jika masih menunggu --}}
+                                    @if ($item->status == 'menunggu_pemeriksaan')
                                         <form action="{{ route('rekammedis.mulai', $item->id) }}" method="POST">
                                             @csrf
                                             <button type="submit"
-                                                class="bg-yellow-500 text-white text-xs px-2 py-1 rounded hover:bg-yellow-600">
-                                                Mulai Periksa
+                                                class="bg-yellow-500 text-white text-xs px-3 py-1 rounded hover:bg-yellow-600">
+                                                Mulai
+                                            </button>
+                                        </form>
+
+                                        {{-- Jika sudah diperiksa --}}
+                                    @elseif($item->status == 'diperiksa')
+                                        <button class="bg-gray-400 text-white text-xs px-3 py-1 rounded cursor-not-allowed">
+                                            Sedang
+                                        </button>
+
+                                        {{-- Jika sudah lanjut --}}
+                                    @else
+                                        <button
+                                            class="bg-gray-300 text-gray-600 text-xs px-3 py-1 rounded cursor-not-allowed">
+                                            Selesai
+                                        </button>
+                                    @endif
+
+                                </td>
+                            @endif
+
+                            {{-- AKSI --}}
+                            <td class="px-4 py-3 border border-gray-200">
+                                <div class="flex justify-end space-x-3">
+
+                                    {{-- KHUSUS APOTEKER --}}
+                                    @if (auth()->user()->role == 'apoteker')
+                                        @if ($item->status == 'menunggu_obat')
+                                            <form action="{{ route('rekammedis.selesai', $item->id) }}" method="POST">
+                                                @csrf
+                                                <button type="submit"
+                                                    class="bg-green-600 text-white text-xs px-3 py-1 rounded hover:bg-green-700">
+                                                    Konfirmasi Obat
+                                                </button>
+                                            </form>
+                                        @elseif($item->status == 'selesai')
+                                            <span
+                                                class="bg-gray-300 text-gray-600 text-xs px-3 py-1 rounded inline-block w-full text-center">
+                                                Sudah Diberikan
+                                            </span>
+                                        @else
+                                            <span class="text-gray-400 text-xs">
+                                                Menunggu Dokter
+                                            </span>
+                                        @endif
+                                    @else
+                                        {{-- AKSI UNTUK ROLE LAIN --}}
+                                        <a href="{{ route('rekammedis.show', $item->id) }}"
+                                            class="text-blue-600 hover:text-blue-800">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+
+                                        <form action="{{ route('rekammedis.destroy', $item->id) }}" method="POST"
+                                            onsubmit="return confirm('Yakin ingin menghapus data ini?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="text-red-600 hover:text-red-800">
+                                                <i class="fas fa-trash"></i>
                                             </button>
                                         </form>
                                     @endif
-
-                                    {{-- Hapus --}}
-                                    <form action="{{ route('rekammedis.destroy', $item->id) }}" method="POST"
-                                        onsubmit="return confirm('Yakin ingin menghapus data ini?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-red-600 hover:text-red-800">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </form>
 
                                 </div>
                             </td>
 
                         </tr>
-                    @empty
-                        <tr>
-                            <td colspan="10" class="text-center py-8 text-gray-500">
-                                Data rekam medis belum tersedia
-                            </td>
-                        </tr>
-                    @endforelse
+                        @empty
+                            <tr>
+                                <td colspan="10" class="text-center py-8 text-gray-500">
+                                    Data rekam medis belum tersedia
+                                </td>
+                            </tr>
+                        @endforelse
 
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
 
 
-    {{-- ================= EXPORT ================= --}}
-    <div class="flex justify-end mt-4 space-x-2">
-        <a href="{{ route('rekammedis.export.pdf') }}"
-            class="bg-red-600 text-white px-4 py-2 text-sm rounded hover:bg-red-700">
-            Export PDF
-        </a>
+        {{-- ================= EXPORT ================= --}}
+        <div class="flex justify-end mt-4 space-x-2">
 
-        <a href="{{ route('rekammedis.export.excel') }}"
-            class="bg-green-600 text-white px-4 py-2 text-sm rounded hover:bg-green-700">
-            Export Excel
-        </a>
-    </div>
+            <button onclick="openExportModal('pdf')" class="bg-red-600 text-white px-4 py-2 text-sm rounded hover:bg-red-700">
+                Export PDF
+            </button>
 
-@endsection
+            <button onclick="openExportModal('excel')"
+                class="bg-green-600 text-white px-4 py-2 text-sm rounded hover:bg-green-700">
+                Export Excel
+            </button>
+
+        </div>
+
+        {{-- ================= MODAL EXPORT ================= --}}
+        <div id="export-modal" class="fixed inset-0 bg-black bg-opacity-40 hidden items-center justify-center z-50">
+
+            <div class="bg-white rounded-lg shadow-lg w-96 p-6">
+
+                <h3 class="text-lg font-semibold mb-4">
+                    Export Rekam Medis
+                </h3>
+
+                <form id="export-form" method="GET">
+
+                    <div class="mb-4">
+                        <label class="block text-sm mb-1">Tanggal Mulai</label>
+                        <input type="date" name="tanggal_mulai" class="w-full border rounded px-3 py-2">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="block text-sm mb-1">Tanggal Akhir</label>
+                        <input type="date" name="tanggal_selesai" class="w-full border rounded px-3 py-2">
+                    </div>
+
+                    <div class="flex justify-end space-x-2 mt-4">
+
+                        <button type="button" onclick="closeExportModal()"
+                            class="px-3 py-2 text-sm bg-gray-300 rounded hover:bg-gray-400">
+                            Batal
+                        </button>
+
+                        <button type="submit" class="px-3 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700">
+                            Export
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+
+                const input = document.getElementById('rekammedis-search');
+                const rows = document.querySelectorAll('.rekammedis-row');
+                const tbody = document.querySelector('table tbody');
+
+                const emptyRow = document.createElement('tr');
+                emptyRow.style.display = 'none';
+
+                emptyRow.innerHTML = `
+        <td colspan="11" class="px-6 py-10 text-center text-gray-500">
+            Data rekam medis tidak ditemukan.
+        </td>
+    `;
+
+                tbody.appendChild(emptyRow);
+
+                input.addEventListener('input', function() {
+
+                    const keyword = this.value.toLowerCase().trim();
+                    let visibleCount = 0;
+
+                    rows.forEach(row => {
+
+                        const match = row.innerText.toLowerCase().includes(keyword);
+
+                        row.style.display = match ? '' : 'none';
+
+                        if (match) visibleCount++;
+
+                    });
+
+                    if (keyword !== '' && visibleCount === 0) {
+                        emptyRow.style.display = '';
+                    } else {
+                        emptyRow.style.display = 'none';
+                    }
+
+                });
+
+            });
+
+            function openExportModal(type) {
+
+                let form = document.getElementById('export-form');
+
+                if (type === 'pdf') {
+                    form.action = "{{ route('rekammedis.export.pdf') }}";
+                } else {
+                    form.action = "{{ route('rekammedis.export.excel') }}";
+                }
+
+                document.getElementById('export-modal').classList.remove('hidden');
+                document.getElementById('export-modal').classList.add('flex');
+            }
+
+            function closeExportModal() {
+                document.getElementById('export-modal').classList.add('hidden');
+            }
+        </script>
+
+
+    @endsection

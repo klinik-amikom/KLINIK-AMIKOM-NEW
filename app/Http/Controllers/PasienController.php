@@ -3,18 +3,29 @@ namespace App\Http\Controllers;
 
 use App\Models\MasterIdentity;
 use App\Models\Pasien;
-use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Http\Request;
 use App\Models\RekamMedis;
-use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PasienController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
-        $data = Pasien::with('identity')->get();
+        $search = $request->search;
+
+        $data = Pasien::with('identity')
+            ->when($search, function ($query) use ($search) {
+                $query->where('kode_pasien', 'like', "%$search%")
+                    ->orWhereHas('identity', function ($q) use ($search) {
+                        $q->where('name', 'like', "%$search%")
+                            ->orWhere('identity_number', 'like', "%$search%");
+                    });
+            })
+            ->paginate(10)
+            ->withQueryString();
 
         return view('pasien.index', compact('data'));
     }
@@ -194,12 +205,12 @@ class PasienController extends Controller
 
             // 💾 Insert ke rekam medis
             RekamMedis::create([
-                'kode_rekam_medis'   => $kodeRekam,
-                'pasien_id'          => $pasien->id,
-                'dokter_id'          => 1, // sementara default (nanti bisa dinamis)
-                'tanggal_periksa'    => Carbon::today(),
-                'diagnosis'          => '-',
-                'status'             => 'menunggu_pemeriksaan',
+                'kode_rekam_medis' => $kodeRekam,
+                'pasien_id'        => $pasien->id,
+                'dokter_id'        => 1, // sementara default (nanti bisa dinamis)
+                'tanggal_periksa'  => Carbon::today(),
+                'diagnosis'        => '-',
+                'status'           => 'menunggu_pemeriksaan',
             ]);
         });
 

@@ -2,7 +2,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\RekamMedis;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\RekamMedisExport;
 
 class RekamMedisController extends Controller
 {
@@ -129,14 +132,46 @@ class RekamMedisController extends Controller
         $rekam = RekamMedis::with('pasien')->findOrFail($id);
 
         $rekam->update([
-            'status' => 'selesai'
+            'status' => 'selesai',
         ]);
 
         $rekam->pasien->update([
-            'status' => 'selesai'
+            'status' => 'selesai',
         ]);
 
         return back()->with('success', 'Obat telah diberikan, pasien selesai.');
+    }
+
+    public function exportPDF(Request $request)
+    {
+        $mulai = $request->tanggal_mulai;
+        $selesai = $request->tanggal_selesai;
+
+        $rekamMedis = RekamMedis::with(['pasien.identity','dokter','resepObat.obat'])
+            ->when($mulai && $selesai, function ($query) use ($mulai, $selesai) {
+                $query->whereBetween('tanggal_periksa', [$mulai, $selesai]);
+            })
+            ->orderBy('tanggal_periksa','desc')
+            ->get();
+
+        $pdf = Pdf::loadView('rekam_medis.report_pdf', compact('rekamMedis','mulai','selesai'))
+            ->setPaper('a4','landscape');
+
+        return $pdf->download('rekam_medis.pdf');
+    }
+
+    public function exportExcel(Request $request)
+    {
+        $mulai = $request->tanggal_mulai;
+        $selesai = $request->tanggal_selesai;
+
+        $data = RekamMedis::with(['pasien.identity','dokter','resepObat.obat'])
+            ->when($mulai && $selesai, function ($query) use ($mulai, $selesai) {
+                $query->whereBetween('tanggal_periksa', [$mulai, $selesai]);
+            })
+            ->get();
+
+        return Excel::download(new RekamMedisExport($data), 'rekam_medis.xlsx');
     }
 
 }

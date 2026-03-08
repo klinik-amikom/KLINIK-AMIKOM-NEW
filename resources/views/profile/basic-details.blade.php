@@ -40,7 +40,7 @@
                 {{-- ALERT BERHASIL --}}
                 <div class="bg-green-100 border border-green-400 text-green-800 px-4 py-4 rounded mb-6">
                     <h2 class="text-xl font-bold mb-2">🎉 Pendaftaran Berhasil!</h2>
-                    <p>Nomor Antrian Anda: <strong class="text-lg">{{ $pasien->kode_pasien }}</strong></p>
+                    <p>Nomor Antrian Anda: <strong class="text-lg">{{ $pasien->queue_number }}</strong></p>
                     <p class="text-sm text-gray-600 mb-4">Silakan simpan nomor ini untuk keperluan konsultasi.</p>
 
                     <hr class="my-4">
@@ -78,21 +78,21 @@
                     {{-- NIK / Identity Number --}}
                     <div>
                         <label for="nik" class="block mb-1 font-medium">NIK</label>
-                        <input type="text" id="nik" name="nik" required placeholder="Masukan Nomor Induk Kependudukan (16 digit angka)"
+                        <input type="text" id="nik" name="nik" placeholder="Masukan Nomor Induk Kependudukan (16 digit angka)"
                             class="w-full border rounded-md px-3 py-2">
                     </div>
 
                     {{-- Nama --}}
                     <div>
                         <label for="nama_pasien" class="block mb-1 font-medium">Nama Lengkap</label>
-                        <input type="text" id="nama_pasien" name="nama_pasien" required placeholder="Nama Lengkap"
+                        <input type="text" id="nama_pasien" name="nama_pasien" placeholder="Nama Lengkap"
                             class="w-full border rounded-md px-3 py-2" style="background-color:#e5e7eb; cursor:not-allowed;" readonly>
                     </div>
 
                     {{-- Tanggal Lahir --}}
                     <div>
                         <label for="tanggal_lahir" class="block mb-1 font-medium">Tanggal Lahir</label>
-                        <input type="date" id="tanggal_lahir" name="tanggal_lahir" required
+                        <input type="date" id="tanggal_lahir" name="tanggal_lahir"
                             class="w-full border rounded-md px-3 py-2" style="background-color:#e5e7eb; cursor:not-allowed;" readonly>
                     </div>
 
@@ -126,14 +126,14 @@
                     {{-- Alamat --}}
                     <div>
                         <label for="alamat" class="block mb-1 font-medium">Alamat Lengkap</label>
-                        <textarea id="alamat" name="alamat" rows="3" required placeholder="Alamat lengkap"
+                        <textarea id="alamat" name="alamat" rows="3" placeholder="Alamat lengkap"
                             class="w-full border rounded-md px-3 py-2" style="background-color:#e5e7eb; cursor:not-allowed;" readonly></textarea>
                     </div>
 
                     {{-- Poli --}}
                     <div>
                         <label for="poli" class="block mb-1 font-medium">Poli Tujuan</label>
-                        <select id="poli" name="poli" required class="w-full border rounded-md px-3 py-2">
+                        <select id="poli" name="poli" class="w-full border rounded-md px-3 py-2">
                             <option value="" disabled selected>Pilih Poli</option>
                             <option value="Poli Umum">Poli Umum</option>
                             <option value="Poli Gigi">Poli Gigi</option>

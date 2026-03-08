@@ -94,12 +94,11 @@
                             <div class="divider"></div>
 
                             <div class="description">
-                                <p>Klinik Amikom adalah fasilitas kesehatan gratis yang disediakan oleh Universitas
-                                    Amikom Yogyakarta.
-                                    Klinik ini memiliki dua layanan utama, yaitu Poli Umum dan Poli Gigi. Berlokasi di
-                                    Gedung 3 Lantai 1,
-                                    klinik ini diperuntukkan bagi seluruh mahasiswa, dosen, dan karyawan Amikom tanpa
-                                    dipungut biaya.</p>
+                                <p style="text-align: justify;">
+                                    Klinik Amikom adalah fasilitas kesehatan gratis yang disediakan oleh Universitas Amikom Yogyakarta.
+                                    Klinik ini memiliki dua layanan utama, yaitu Poli Umum dan Poli Gigi. Berlokasi di Gedung 3 Lantai 1,
+                                    klinik ini diperuntukkan bagi seluruh mahasiswa, dosen, dan karyawan Amikom tanpa dipungut biaya.
+                                </p>
                             </div>
                            <div class="cta-button">
                                 <a href="#services" class="btn">
@@ -143,11 +142,11 @@
 
                     <div class="col-lg-6 mt-4 mt-lg-0" data-aos="fade-left" data-aos-delay="300">
                         <div class="about-content">
-                            <h2>Meningkatkan Kesejahteraan Sivitas Akademika Melalui Layanan Kesehatan</h2>
-                            <p class="lead">Klinik Amikom hadir sebagai komitmen Universitas Amikom Yogyakarta dalam
+                            <h2 style="text-align: justify;">Meningkatkan Kesejahteraan Sivitas Akademika Melalui Layanan Kesehatan</h2>
+                            <p class="lead" style="text-align: justify;">Klinik Amikom hadir sebagai komitmen Universitas Amikom Yogyakarta dalam
                                 menyediakan
                                 fasilitas kesehatan gratis bagi seluruh civitas kampus.</p>
-                            <p>Dengan layanan Poli Umum dan Poli Gigi, klinik ini mendukung kenyamanan, produktivitas,
+                            <p style="text-align: justify;">Dengan layanan Poli Umum dan Poli Gigi, klinik ini mendukung kenyamanan, produktivitas,
                                 dan kualitas
                                 hidup mahasiswa, dosen, serta karyawan di lingkungan kampus.</p>
 
@@ -156,7 +155,7 @@
                                     <div class="feature-item">
                                         <i class="bi bi-check-circle-fill"></i>
                                         <h5>Tim Medis Profesional</h5>
-                                        <p>Tenaga kesehatan berpengalaman siap memberikan pelayanan yang ramah, cepat,
+                                        <p style="text-align: justify;">Tenaga kesehatan berpengalaman siap memberikan pelayanan yang ramah, cepat,
                                             dan tepat untuk
                                             seluruh civitas akademika.</p>
                                     </div>
@@ -165,7 +164,7 @@
                                     <div class="feature-item">
                                         <i class="bi bi-lightbulb-fill"></i>
                                         <h5>Pelayanan Proaktif dan Responsif</h5>
-                                        <p>Klinik Amikom mengutamakan kenyamanan pasien dengan pendekatan pelayanan yang
+                                        <p style="text-align: justify;">Klinik Amikom mengutamakan kenyamanan pasien dengan pendekatan pelayanan yang
                                             sigap, modern, dan
                                             berorientasi pada kebutuhan.</p>
                                     </div>
@@ -251,7 +250,7 @@
                 <!-- Poli Umum -->
                 <div class="poli-box">
                     <h3 style="color: #e3a127">Poli Umum</h3>
-                    <p>
+                    <p style="text-align: justify;">
                         Poli Umum Klinik Amikom melayani pemeriksaan kesehatan umum seperti demam, flu, batuk, tekanan darah, dan konsultasi kesehatan dasar lainnya. 
                         Layanan ini cocok bagi pasien yang membutuhkan diagnosis awal atau penanganan penyakit ringan.
                     </p>
@@ -260,7 +259,7 @@
                 <!-- Poli Gigi -->
                 <div class="poli-box">
                     <h3 style="color: #e3a127">Poli Gigi</h3>
-                    <p>
+                    <p style="text-align: justify;">
                         Poli Gigi menyediakan layanan perawatan kesehatan gigi dan mulut seperti pemeriksaan gigi, pembersihan karang gigi, penambalan, pencabutan, dan konsultasi perawatan gigi lainnya.
                         Ditangani oleh dokter gigi profesional dengan peralatan yang higienis.
                     </p>
@@ -319,12 +318,8 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>Senin - Kamis</td>
-                        <td>09:00 - 16:00</td>
-                    </tr>
-                    <tr>
-                        <td>Jumat</td>
-                        <td>08:00 - 15:00</td>
+                        <td>Senin - Jum'at</td>
+                        <td>09.00 - 15:00</td>
                     </tr>
                     <tr>
                         <td>Sabtu & Minggu</td>
@@ -368,12 +363,12 @@
                                 <div class="row">
                                     <div class="col-lg-8">
                                         <h2>Pelayanan Ramah dan Cepat</h2>
-                                        <p>
+                                        <p style="text-align: justify;">
                                             Saya datang ke Klinik Amikom saat sedang merasa tidak enak badan di tengah
                                             padatnya jadwal kuliah. Ternyata proses pendaftarannya sangat cepat, dan
                                             dokter serta perawatnya ramah sekali. Saya merasa sangat terbantu.
                                         </p>
-                                        <p>
+                                        <p style="text-align: justify;">
                                             Obat yang diberikan pun efektif, dan penjelasan dari dokter sangat mudah
                                             dipahami. Klinik ini sangat cocok untuk mahasiswa seperti saya yang butuh
                                             pelayanan cepat dan nyaman.
@@ -402,13 +397,13 @@
                                 <div class="row">
                                     <div class="col-lg-8">
                                         <h2>Tenaga Medis Profesional dan Informatif</h2>
-                                        <p>
+                                        <p style="text-align: justify;">
                                             Sebagai dosen, saya menghargai kejelasan informasi dalam proses pengobatan.
                                             Saat berobat ke Klinik Amikom, saya merasa dilayani dengan sangat
                                             profesional. Diagnosa disampaikan dengan rinci, dan saya diberi beberapa
                                             opsi pengobatan yang sesuai.
                                         </p>
-                                        <p>
+                                        <p style="text-align: justify;">
                                             Fasilitas kliniknya bersih dan tertata dengan baik. Ini menjadi contoh
                                             pelayanan kesehatan kampus yang ideal.
                                         </p>
@@ -438,13 +433,13 @@
                                         <h2>
                                             Solusi Kesehatan yang Praktis dan Efisien
                                         </h2>
-                                        <p>
+                                        <p style="text-align: justify;">
                                             Saya bekerja di lingkungan kampus dan sering tidak punya banyak waktu untuk
                                             ke luar kampus hanya untuk periksa. Untungnya, Klinik Amikom sangat
                                             membantu. Pelayanannya efisien, antrian tidak lama, dan obat bisa langsung
                                             diambil setelah konsultasi.
                                         </p>
-                                        <p>
+                                        <p style="text-align: justify;">
                                             Sangat direkomendasikan untuk rekan-rekan karyawan yang ingin pemeriksaan
                                             rutin tanpa mengganggu jam kerja.
                                         </p>
@@ -497,7 +492,7 @@
                             <div class="member-info flex-grow-1">
                                 <h4 style="color: #e3a127">dr. Andini Pratama</h4>
                                 <span>Dokter Poli Umum</span>
-                                <p>Memberikan pelayanan pemeriksaan umum, diagnosa ringan, serta konsultasi kesehatan
+                                <p style="text-align: justify;">Memberikan pelayanan pemeriksaan umum, diagnosa ringan, serta konsultasi kesehatan
                                     bagi mahasiswa dan staf Amikom.
                                 </p>
                                 <div class="social">
@@ -519,7 +514,7 @@
                             <div class="member-info flex-grow-1">
                                 <h4 style="color: #e3a127">drg. Sarah Jhonson</h4>
                                 <span>Dokter Poli Gigi</span>
-                                <p>Menangani pemeriksaan dan tindakan ringan terkait kesehatan gigi dan mulut, seperti
+                                <p style="text-align: justify;">Menangani pemeriksaan dan tindakan ringan terkait kesehatan gigi dan mulut, seperti
                                     pembersihan karang gigi dan penanganan nyeri gigi.</p>
                                 <div class="social">
                                     <a href=""><i class="bi bi-facebook"></i></a>
@@ -540,7 +535,7 @@
                             <div class="member-info flex-grow-1">
                                 <h4 style="color: #e3a127">William Anderson, S.Farm., Apt</h4>
                                 <span>Apoteker Klinik</span>
-                                <p>Mengelola penyediaan obat, meracik resep dokter, dan memberikan informasi penggunaan
+                                <p style="text-align: justify;">Mengelola penyediaan obat, meracik resep dokter, dan memberikan informasi penggunaan
                                     obat kepada pasien dengan aman dan tepat.</p>
                                 <div class="social">
                                     <a href=""><i class="bi bi-facebook"></i></a>
@@ -561,7 +556,7 @@
                             <div class="member-info flex-grow-1">
                                 <h4 style="color: #e3a127">Amanda Jepson</h4>
                                 <span>Administrator Klinik</span>
-                                <p>Mengatur jadwal pelayanan, mencatat data pasien, dan memastikan proses administratif
+                                <p style="text-align: justify;">Mengatur jadwal pelayanan, mencatat data pasien, dan memastikan proses administratif
                                     berjalan lancar dan efisien.</p>
                                 <div class="social">
                                     <a href=""><i class="bi bi-facebook"></i></a>
@@ -582,7 +577,7 @@
                             <div class="member-info flex-grow-1">
                                 <h4 style="color: #e3a127">dr. Brian Doe</h4>
                                 <span>Kepala Klinik Amikom</span>
-                                <p>Bertanggung jawab atas pengawasan dan manajemen keseluruhan layanan klinik,
+                                <p style="text-align: justify;">Bertanggung jawab atas pengawasan dan manajemen keseluruhan layanan klinik,
                                     memastikan kualitas dan kenyamanan pelayanan kesehatan.</p>
                                 <div class="social">
                                     <a href=""><i class="bi bi-facebook"></i></a>
@@ -609,44 +604,55 @@
             <div class="container" data-aos="fade-up" data-aos-delay="100">
 
                 <!-- Contact Info Boxes -->
-                <div class="row gy-4 mb-5">
-                    <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
-                        <div class="contact-info-box">
-                            <div class="icon-box">
-                                <i class="bi bi-geo-alt"></i>
-                            </div>
-                            <div class="info-content">
-                                <h4>Alamat Kami</h4>
-                                <p>Universitas Amikom Yogyakarta</p>
-                            </div>
-                        </div>
-                    </div>
+<div class="row gy-4 mb-5">
+    <div class="col-lg-3" data-aos="fade-up" data-aos-delay="100">
+        <div class="contact-info-box">
+            <div class="icon-box">
+                <i class="bi bi-geo-alt"></i>
+            </div>
+            <div class="info-content">
+                <h4>Alamat Kami</h4>
+                <p>Universitas Amikom Yogyakarta</p>
+            </div>
+        </div>
+    </div>
 
-                    <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
-                        <div class="contact-info-box">
-                            <div class="icon-box">
-                                <i class="bi bi-envelope"></i>
-                            </div>
-                            <div class="info-content">
-                                <h4>Email</h4>
-                                <p>klinikamikom@example.com</p>
-                            </div>
-                        </div>
-                    </div>
+    <div class="col-lg-3" data-aos="fade-up" data-aos-delay="200">
+        <div class="contact-info-box">
+            <div class="icon-box">
+                <i class="bi bi-envelope"></i>
+            </div>
+            <div class="info-content">
+                <h4>Email</h4>
+                <p>klinikamikom@example.com</p>
+            </div>
+        </div>
+    </div>
 
-                    <div class="col-lg-4" data-aos="fade-up" data-aos-delay="300">
-                        <div class="contact-info-box">
-                            <div class="icon-box">
-                                <i class="bi bi-headset"></i>
-                            </div>
-                            <div class="info-content">
-                                <h4>Jam Operasional</h4>
-                                <p>Senin-Kamis: 9 AM - 6 PM</p>
-                                <p>Jum'at: 9 AM - 4 PM</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    <div class="col-lg-3" data-aos="fade-up" data-aos-delay="300">
+        <div class="contact-info-box">
+            <div class="icon-box">
+                <i class="bi bi-headset"></i>
+            </div>
+            <div class="info-content">
+                <h4>Jam Operasional</h4>
+                <p>Senin - Jum'at: 09.00 - 15.00</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3" data-aos="fade-up" data-aos-delay="400">
+        <div class="contact-info-box">
+            <div class="icon-box">
+                <i class="bi bi-headset"></i>
+            </div>
+            <div class="info-content">
+                <h4>Dokter Praktek</h4>
+                <p>Senin - Jum'at: 10.00 - 15.00</p>
+            </div>
+        </div>
+    </div>
+</div>
 
             </div>
 

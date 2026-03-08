@@ -36,22 +36,9 @@ Route::get('/cek-nik/{nik}', [ProfileController::class, 'cekNik'])
 Route::post('/pasien', [PasienController::class, 'store'])->name('pasien.store');
 Route::get('/pasien/download-pdf/{id}', [PasienController::class, 'downloadPDF'])
     ->name('pasien.download.pdf');
-Route::get('/pasien', function () {
-    $pasien = null;
-    $linkWA = null;
-
-    if (session()->has('pasien_id')) {
-        $pasien = \App\Models\Pasien::with('identity')
-            ->find(session('pasien_id'));
-
-        if ($pasien) {
-            $linkWA = 'https://wa.me/62xxxx?text=Nomor%20Antrian%20' . $pasien->kode_pasien;
-        }
-    }
-
-    return view('profile.basic-details', compact('pasien', 'linkWA'));
-})->name('pasien.form');
-
+Route::get('/pasien', [PasienController::class, 'form'])
+    ->name('pasien.form');
+    
 // ==================================================
 // 2. AUTHENTICATED ROUTES (WAJIB LOGIN)
 // ==================================================
@@ -138,11 +125,10 @@ Route::prefix('users')->name('users.')->group(function () {
 
     // ================= APOTEKER =================
     Route::prefix('apoteker')->name('apoteker.')->middleware('role:apoteker')->group(function () {
-        Route::get('/dashboard', [ApotekerController::class, 'index'])->name('dashboard');
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
         Route::resource('pasien', PasienController::class);
         Route::resource('obat', ObatController::class);
-
     });
 
     Route::post('/pasien/{id}/konfirmasi', 
