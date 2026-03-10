@@ -33,12 +33,10 @@
             </p>
         </div>
         <div class="w-full sm:w-auto">
-            <a href="{{ route('admin.admin.create') }}"
-                class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2
-              bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium
-              rounded-lg shadow-sm transition-colors duration-200">
+            <button onclick="openCreateUserModal()"
+                class="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg">
                 <i class="fas fa-plus mr-2"></i> Tambah User
-            </a>
+            </button>
         </div>
     </div>
 
@@ -105,13 +103,21 @@
 
                             <td class="px-6 py-4">{{ $user->username }}</td>
                             <td class="px-6 py-4">{{ $user->email }}</td>
-                            <td>{{ $user->identity?->identity_type ?? '-' }}</td>
+                            <td>{{ $user->identity?->position ?? '-' }}</td>
                             <td class="px-6 py-4 text-right">
                                 <div class="flex justify-end space-x-3">
-                                    <a href="{{ route('admin.admin.edit', $user->id) }}"
+                                    <button
+                                        onclick="editUser(
+                                        '{{ $user->id }}',
+                                        '{{ $user->name }}',
+                                        '{{ $user->username }}',
+                                        '{{ $user->email }}',
+                                        '{{ $user->position_id }}'
+                                        )"
                                         class="text-purple-600 hover:text-purple-800">
+
                                         <i class="fas fa-edit"></i>
-                                    </a>
+                                    </button>
 
                                     <form action="{{ route('users.destroy', $user->id) }}" method="POST"
                                         onsubmit="return confirm('Yakin ingin menghapus user ini?')">
@@ -136,6 +142,161 @@
         </div>
     </div>
 
+    <!-- MODAL CREATE -->
+    <div id="create-user-modal"
+        class="fixed inset-0 bg-black/50 z-50 hidden backdrop-blur-sm flex items-center justify-center p-4">
+
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-md">
+
+            <div class="p-4 border-b dark:border-gray-700 flex justify-between items-center">
+                <h3 class="font-bold text-gray-900 dark:text-white">Tambah User</h3>
+                <button onclick="closeCreateUserModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <form action="{{ route('users.store') }}" method="POST" class="p-6 space-y-4">
+                @csrf
+
+                <div>
+                    <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Nama Lengkap *</label>
+                    <input type="text" name="name" required
+                        class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white text-sm focus:ring-purple-500">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Username *</label>
+                    <input type="text" name="username" required
+                        class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white text-sm focus:ring-purple-500">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Email *</label>
+                    <input type="email" name="email" required
+                        class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white text-sm focus:ring-purple-500">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Identity *</label>
+                    <select name="positions"
+                        class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white text-sm focus:ring-purple-500">
+
+                        <option value="">Pilih Identity</option>
+                        <option value="1">Admin</option>
+                        <option value="2">Dokter</option>
+                        <option value="3">Apoteker</option>
+
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Password *</label>
+                    <input type="password" name="password" required
+                        class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white text-sm">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Konfirmasi Password
+                        *</label>
+                    <input type="password" name="password_confirmation" required
+                        class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white text-sm">
+                </div>
+
+                <div class="flex justify-end space-x-3 pt-4">
+                    <button type="button" onclick="closeCreateUserModal()"
+                        class="px-4 py-2 text-sm text-gray-600 border rounded-lg">
+                        Batal
+                    </button>
+
+                    <button type="submit"
+                        class="px-4 py-2 text-sm bg-purple-600 text-white rounded-lg hover:bg-purple-700">
+                        Simpan User
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL EDIT -->
+    <div id="edit-user-modal"
+        class="fixed inset-0 bg-black/50 z-50 hidden backdrop-blur-sm flex items-center justify-center p-4">
+
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-md">
+
+            <div class="p-4 border-b dark:border-gray-700 flex justify-between items-center">
+                <h3 class="font-bold text-gray-900 dark:text-white">Edit Data User</h3>
+
+                <button onclick="closeEditUserModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <form id="edit-user-form" method="POST" class="p-6 space-y-4">
+                @csrf
+                @method('PUT')
+
+                <div>
+                    <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Nama Lengkap</label>
+                    <input type="text" name="name" id="edit-name" required
+                        class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white text-sm">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Username</label>
+                    <input type="text" name="username" id="edit-username" required
+                        class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white text-sm">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
+                    <input type="email" name="email" id="edit-email" required
+                        class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white text-sm">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Posisi</label>
+
+                    <select name="position_id" id="edit-position"
+                        class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white text-sm">
+
+                        <option value="1">Admin</option>
+                        <option value="2">Dokter</option>
+                        <option value="3">Apoteker</option>
+
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Password Baru</label>
+                    <input type="password" name="password" placeholder="Kosongkan jika tidak diubah"
+                        class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white text-sm">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Konfirmasi
+                        Password</label>
+                    <input type="password" name="password_confirmation"
+                        class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white text-sm">
+                </div>
+
+                <div class="flex justify-end space-x-3 pt-4">
+
+                    <button type="button" onclick="closeEditUserModal()"
+                        class="px-4 py-2 text-sm text-gray-600 border rounded-lg">
+                        Batal
+                    </button>
+
+                    <button type="submit"
+                        class="px-4 py-2 text-sm bg-purple-600 text-white rounded-lg hover:bg-purple-700">
+                        Update Data
+                    </button>
+
+                </div>
+
+            </form>
+        </div>
+    </div>
 @endsection
 
 @push('scripts')
@@ -166,5 +327,44 @@
                 });
             });
         });
+
+        function openCreateUserModal() {
+            const modal = document.getElementById('create-user-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeCreateUserModal() {
+            const modal = document.getElementById('create-user-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function openEditUserModal() {
+            const modal = document.getElementById('edit-user-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeEditUserModal() {
+            const modal = document.getElementById('edit-user-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function editUser(id, name, username, email, position_id) {
+
+            const form = document.getElementById('edit-user-form');
+
+            // route update
+            form.action = `/admin/admin/${id}`;
+
+            document.getElementById('edit-name').value = name;
+            document.getElementById('edit-username').value = username;
+            document.getElementById('edit-email').value = email;
+            document.getElementById('edit-position').value = position_id;
+
+            openEditUserModal();
+        }
     </script>
 @endpush

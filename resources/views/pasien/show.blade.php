@@ -1,61 +1,158 @@
 @extends('layouts.app')
 
-@section('title', 'Data Pasien')
-
-@section('page-title', 'Kelola Pasien')
+@section('title', 'Detail Pasien')
+@section('page-title', 'Detail Pasien')
 
 @section('content')
+
 @php
-    $steps = ['terdaftar', 'diperiksa', 'diobati', 'selesai'];
+    $steps = [
+        'menunggu_konfirmasi',
+        'terdaftar',
+        'diperiksa',
+        'menunggu_obat',
+        'selesai'
+    ];
+
+    $currentIndex = array_search($pasien->status, $steps);
+    $currentIndex = $currentIndex === false ? -1 : $currentIndex;
+
+    $statusColor = match($pasien->status) {
+        'menunggu_konfirmasi' => 'bg-gray-100 text-gray-700',
+        'terdaftar' => 'bg-yellow-100 text-yellow-700',
+        'diperiksa' => 'bg-blue-100 text-blue-700',
+        'menunggu_obat' => 'bg-purple-100 text-purple-700',
+        'selesai' => 'bg-green-100 text-green-700',
+        default => 'bg-gray-100 text-gray-700'
+    };
 @endphp
 
 <div class="max-w-7xl mx-auto px-4 py-6">
-    {{-- Informasi Pasien --}}
-    <div class="bg-white shadow rounded-lg p-6 mb-8">
-        <h2 class="text-xl font-semibold mb-4 text-purple-700">Data Pasien</h2>
-        <ul class="grid grid-cols-2 gap-4 text-sm">
-            <li><strong>Kode Pasien:</strong> {{ $pasien['kode_pasien'] }}</li>
-            <li><strong>Nama:</strong> {{ $pasien['nama_pasien'] }}</li>
-            <li><strong>Tanggal Lahir:</strong> {{ \Carbon\Carbon::parse($pasien['tanggal_lahir'])->format('d M Y') }}</li>
-            <li><strong>Jenis Kelamin:</strong> {{ $pasien['jenis_kel'] }}</li>
-            <li><strong>Alamat:</strong> {{ $pasien['alamat'] }}</li>
-            <li><strong>No. Telepon:</strong> {{ $pasien['no_telp'] }}</li>
-            <li><strong>Kategori:</strong> {{ ucfirst($pasien['kategori']) }}</li>
-            <li><strong>Poli:</strong> {{ $pasien['poli'] }}</li>
-        </ul>
+
+    {{-- TOMBOL BACK --}}
+    <div class="mb-4">
+        <a href="{{ route(auth()->user()->role . '.pasien.index') }}"
+           class="inline-flex items-center px-4 py-2 bg-gray-200 hover:bg-gray-300 text-sm rounded-lg transition">
+            <i class="fas fa-arrow-left mr-2"></i> Kembali ke Data Pasien
+        </a>
     </div>
 
-    {{-- Timeline Status --}}
+    {{-- INFORMASI PASIEN --}}
+    <div class="bg-white shadow rounded-lg p-8 mb-8">
+        <h2 class="text-xl font-semibold mb-8 text-purple-700">Data Pasien</h2>
+
+        <div class="grid grid-cols-2 gap-x-16 gap-y-4 text-sm">
+
+            <div class="flex">
+                <span class="w-40 font-semibold">Kode Pasien</span>
+                <span>: <span class="text-purple-600 font-bold ml-1">{{ $pasien->kode_pasien }}</span></span>
+            </div>
+
+            <div class="flex">
+                <span class="w-40 font-semibold">No Identitas</span>
+                <span>: {{ $pasien->identity->identity_number ?? '-' }}</span>
+            </div>
+
+            <div class="flex">
+                <span class="w-40 font-semibold">Nama</span>
+                <span>: {{ $pasien->identity->name ?? '-' }}</span>
+            </div>
+
+            <div class="flex">
+                <span class="w-40 font-semibold">Kategori</span>
+                <span>: {{ ucfirst($pasien->identity->identity_type ?? '-') }}</span>
+            </div>
+
+            <div class="flex">
+                <span class="w-40 font-semibold">Tanggal Lahir</span>
+                <span>:
+                    {{ $pasien->identity->birth_date
+                        ? \Carbon\Carbon::parse($pasien->identity->birth_date)->format('d M Y')
+                        : '-' }}
+                </span>
+            </div>
+
+            <div class="flex">
+                <span class="w-40 font-semibold">Jenis Kelamin</span>
+                <span>:
+                    {{ $pasien->identity->gender == 'L' ? 'Laki-laki' : 'Perempuan' }}
+                </span>
+            </div>
+
+            <div class="flex">
+                <span class="w-40 font-semibold">No. Telepon</span>
+                <span>: {{ $pasien->identity->no_telp ?? '-' }}</span>
+            </div>
+
+            <div class="flex">
+                <span class="w-40 font-semibold">Alamat</span>
+                <span>: {{ $pasien->identity->address ?? '-' }}</span>
+            </div>
+
+            <div class="flex">
+                <span class="w-40 font-semibold">Poli</span>
+                <span>: {{ $pasien->poli }}</span>
+            </div>
+
+            <div class="flex">
+                <span class="w-40 font-semibold">Status</span>
+                <span>:
+                    <span class="ml-1 px-3 py-1 text-xs rounded-full {{ $statusColor }}">
+                        {{ ucfirst(str_replace('_', ' ', $pasien->status)) }}
+                    </span>
+                </span>
+            </div>
+
+        </div>
+
+        {{-- BUTTON KONFIRMASI --}}
+        @if($pasien->status === 'menunggu_konfirmasi')
+            <div class="mt-6">
+                <form action="{{ route('pasien.konfirmasi', $pasien->id) }}" method="POST">
+                    @csrf
+                    <button class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm transition">
+                        ✔ Konfirmasi Kehadiran
+                    </button>
+                </form>
+            </div>
+        @endif
+
+    </div>
+
+
+    {{-- TIMELINE STATUS --}}
     <div class="bg-white shadow rounded-lg px-8 py-16">
-        <h2 class="text-xl font-semibold mb-6 text-purple-700">Status Pemeriksaan</h2>
+        <h2 class="text-xl font-semibold mb-10 text-purple-700 text-center">
+            Status Pemeriksaan
+        </h2>
 
-        <div class="flex items-center justify-between w-full">
+        <div class="flex items-center justify-between relative">
+
+            {{-- Garis utama --}}
+            <div class="absolute top-4 left-0 w-full h-1 bg-gray-300"></div>
+
             @foreach($steps as $index => $step)
-                <div class="flex items-center w-full relative ">
-                    <div class="absolute left-0 top-1/2 transform -translate-y-1/2 w-full h-1 
-                            bg-purple-600">
-                        </div>
-                    {{-- Garis penghubung --}}
-                    @if($index !== 0)
-                        <div class="absolute left-0 top-1/2 transform -translate-y-1/2 w-full h-1 
-                            {{ array_search($pasien['status'], $steps) >= $index ? 'bg-purple-600' : 'bg-gray-300' }}">
-                        </div>
-                    @endif
 
-                    {{-- Bulatan status --}}
-                    <div class="z-10 flex items-center justify-center w-8 h-8 rounded-full 
-                        {{ array_search($pasien['status'], $steps) >= $index ? 'bg-purple-600 text-white' : 'bg-gray-300 text-gray-600' }}">
+                <div class="relative flex flex-col items-center w-full">
+
+                    {{-- Bulatan --}}
+                    <div class="z-10 flex items-center justify-center w-10 h-10 rounded-full
+                        {{ $currentIndex >= $index 
+                            ? 'bg-purple-600 text-white' 
+                            : 'bg-gray-300 text-gray-600' }}">
                         {{ $index + 1 }}
                     </div>
 
                     {{-- Label --}}
-                    <div class="absolute top-10 text-sm text-center w-24 -ml-8">
-                        {{ ucfirst($step) }}
+                    <div class="mt-4 text-sm text-center">
+                        {{ ucfirst(str_replace('_', ' ', $step)) }}
                     </div>
+
                 </div>
+
             @endforeach
         </div>
     </div>
-</div>
 
+</div>
 @endsection

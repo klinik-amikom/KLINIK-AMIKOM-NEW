@@ -10,18 +10,8 @@ class RekamMedis extends Model
 {
     use HasFactory, SoftDeletes;
 
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
-    protected $table = 'rekam_medis'; // Fixed: was 'tabel_rekam_medis'
+    protected $table = 'rekam_medis';
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'kode_rekam_medis',
         'pasien_id',
@@ -29,22 +19,25 @@ class RekamMedis extends Model
         'tanggal_periksa',
         'diagnosis',
         'catatan',
-        'biaya_pemeriksaan',
-        'status',
+        'status'
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
         'tanggal_periksa' => 'date',
-        'biaya_pemeriksaan' => 'decimal:2',
+        'obat' => 'array',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
     ];
 
+    /*
+    |--------------------------------------------------------------------------
+    | RELATIONSHIPS
+    |--------------------------------------------------------------------------
+    */
+
     /**
-     * Get the pasien (patient) for this medical record.
+     * Relasi ke tabel pasien
      */
     public function pasien()
     {
@@ -52,34 +45,16 @@ class RekamMedis extends Model
     }
 
     /**
-     * Get the dokter (doctor) for this medical record.
+     * Relasi ke tabel users sebagai dokter
      */
     public function dokter()
     {
         return $this->belongsTo(User::class, 'dokter_id');
     }
 
-    /**
-     * Alias for dokter relationship.
-     */
-    public function user()
-    {
-        return $this->dokter();
-    }
-
-    /**
-     * Get the resep obat (medicine prescriptions) for this medical record.
-     */
     public function resepObat()
     {
         return $this->hasMany(ResepObat::class, 'rekam_medis_id');
     }
 
-    /**
-     * Get the transaksi (transaction) for this medical record.
-     */
-    public function transaksi()
-    {
-        return $this->hasOne(Transaksi::class, 'rekam_medis_id');
-    }
 }

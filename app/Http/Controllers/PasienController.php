@@ -2,20 +2,30 @@
 namespace App\Http\Controllers;
 
 use App\Models\MasterIdentity;
-use App\Mail\NotifikasiAntrian;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
 use App\Models\Pasien;
+use App\Models\RekamMedis;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PasienController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
-        $data = Pasien::with('identity')->get();
+        $search = $request->search;
+
+        $data = Pasien::with('identity')
+            ->when($search, function ($query) use ($search) {
+                $query->where('kode_pasien', 'like', "%$search%")
+                    ->orWhereHas('identity', function ($q) use ($search) {
+                        $q->where('name', 'like', "%$search%")
+                            ->orWhere('identity_number', 'like', "%$search%");
+                    });
+            })
+            ->paginate(10)
+            ->withQueryString();
 
         return view('pasien.index', compact('data'));
     }
@@ -49,10 +59,8 @@ class PasienController extends Controller
             ]);
         }
 
-        // 🔢 Generate kode pasien otomatis
-        $lastPasien = Pasien::with('identity')
-            ->orderBy('id', 'desc')
-            ->first();
+        // 🔢 Generate kode pasien
+        $lastPasien = Pasien::withTrashed()->orderBy('id', 'desc')->first();
 
         $newNumber = $lastPasien
             ? (int) substr($lastPasien->kode_pasien, 1) + 1
@@ -60,33 +68,18 @@ class PasienController extends Controller
 
         $kodePasien = 'P' . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
 
-        // Tentukan prefix berdasarkan poli
-        $prefix = $request->poli === 'Poli Umum' ? 'PU' : 'PG';
-
-        // Hitung jumlah pasien hari ini berdasarkan poli
-        $jumlahHariIni = Pasien::whereDate('created_at', today())
-            ->where('poli', $request->poli)
-            ->count() + 1;
-
-        // Format nomor antrian (3 digit)
-        $noAntrian = $prefix . '-' . str_pad($jumlahHariIni, 3, '0', STR_PAD_LEFT);
-
-        // 💾 Simpan ke database
+        // 💾 Simpan pasien
         $pasien = Pasien::create([
             'identity_id' => $identity->id,
             'kode_pasien' => $kodePasien,
             'poli'        => $request->poli,
-            'queue_number' => $noAntrian,
             'status'      => 'menunggu_konfirmasi',
         ]);
 
-        Mail::to($identity->email)->send(new NotifikasiAntrian($pasien));
-
-        // Untuk ditampilkan di blade
-        $pasien->load('identity');
+        $role = auth()->user()->role;
 
         return redirect()
-            ->route('admin.pasien.index')
+            ->route($role . '.pasien.index')
             ->with('success', 'Pasien berhasil ditambahkan.');
     }
 
@@ -96,8 +89,10 @@ class PasienController extends Controller
 
         $pasien->delete(); // karena pakai SoftDeletes
 
+        $role = auth()->user()->role;
+
         return redirect()
-            ->route('admin.pasien.index')
+            ->route($role . '.pasien.index')
             ->with('success', 'Pasien berhasil dihapus.');
     }
 
@@ -138,11 +133,13 @@ class PasienController extends Controller
             'status' => $request->status,
         ]);
 
+        $role = auth()->user()->role;
+
         return redirect()
-            ->route('admin.pasien.index')
+            ->route($role . '.pasien.index')
             ->with('success', 'Data pasien berhasil diperbarui.');
     }
-    
+
     // 🔍 API cek NIK
     public function cekNik($nik)
     {
@@ -170,17 +167,57 @@ class PasienController extends Controller
         );
     }
 
-    public function form()
+    public function show($id)
     {
-        $pasien = session('pasien_id')
-            ? \App\Models\Pasien::with('identity')->find(session('pasien_id'))
-            : null;
+        $pasien = Pasien::with('identity')->findOrFail($id);
 
-        $linkWA = $pasien
-            ? 'https://wa.me/62xxxx?text=Nomor%20Antrian%20' . $pasien->kode_pasien
-            : null;
+        $role = auth()->user()->role;
 
-        return view('profile.basic-details', compact('pasien', 'linkWA'));
+        return view('pasien.show', compact('pasien', 'role'));
     }
 
+    public function konfirmasi($id)
+    {
+        $pasien = Pasien::findOrFail($id);
+
+        // ❌ Cegah jika sudah dikonfirmasi
+        if ($pasien->status !== 'menunggu_konfirmasi') {
+            return back()->with('error', 'Pasien sudah dikonfirmasi.');
+        }
+
+        DB::transaction(function () use ($pasien) {
+
+            // 🔄 Ubah status pasien
+            $pasien->update([
+                'status' => 'terdaftar',
+            ]);
+
+            // 🔢 Generate kode rekam medis
+            $lastRekam = RekamMedis::withTrashed()
+                ->orderBy('id', 'desc')
+                ->first();
+
+            $newNumber = $lastRekam
+                ? (int) substr($lastRekam->kode_rekam_medis, 2) + 1
+                : 1;
+
+            $kodeRekam = 'RM' . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
+
+            // 💾 Insert ke rekam medis
+            RekamMedis::create([
+                'kode_rekam_medis' => $kodeRekam,
+                'pasien_id'        => $pasien->id,
+                'dokter_id'        => 1, // sementara default (nanti bisa dinamis)
+                'tanggal_periksa'  => Carbon::today(),
+                'diagnosis'        => '-',
+                'status'           => 'menunggu_pemeriksaan',
+            ]);
+        });
+
+        $role = auth()->user()->role;
+
+        return redirect()
+            ->route($role . '.pasien.index')
+            ->with('success', 'Pasien berhasil dikonfirmasi dan masuk ke rekam medis.');
+    }
 }

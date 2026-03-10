@@ -308,7 +308,7 @@
                     if (match) visibleCount++;
                 });
 
-                // LOGIKA PENTING (INI YANG LU MAU)
+                // LOGIKA PENTING 
                 if (keyword !== '' && visibleCount === 0) {
                     emptyRow.style.display = '';
                 } else {

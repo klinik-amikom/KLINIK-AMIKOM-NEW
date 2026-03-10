@@ -98,7 +98,7 @@ class UserController extends Controller
             $user = User::findOrFail($id);
 
             $rules = [
-                'identity_id' => 'required|exists:master_identities,id',
+                'position_id' => 'required|exists:positions,id',
                 'name' => 'required|string|max:255|min:2',
                 'username' => [
                     'required',
@@ -124,7 +124,7 @@ class UserController extends Controller
             DB::beginTransaction();
 
             $updateData = [
-                'identity_id' => $validatedData['identity_id'],
+                'position_id' => $validatedData['position_id'],
                 'name' => $validatedData['name'],
                 'username' => $validatedData['username'],
                 'email' => $validatedData['email'],

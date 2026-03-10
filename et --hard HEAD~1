@@ -1,0 +1,20 @@
+[33m742e0ff[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m update notif by email
+[33m4498eb1[m Merge pull request #2 from klinik-amikom/rasy
+[33mac6dcd5[m Merge branch 'main' into rasy
+[33ma43f9ae[m crud pasien
+[33mc620392[m done up to notif by email
+[33m67819df[m perbaikan fitur delete menu user
+[33mc38855d[m Merge pull request #1 from klinik-amikom/rasy
+[33md36bdd5[m update done simpan data pasien
+[33m954b82f[m update terbaru rasya, blm pull nasya
+[33mf46ad10[m perbaikan kolom identitas
+[33m28ed2b7[m perbaikan crud user
+[33m034fcc1[m tambah update kelola user
+[33m2a9ecc0[m perbaikan form pendaftaran
+[33m6714551[m perbaikan fitur search
+[33mbbaa17e[m update tabel pasien
+[33mf860af3[m benerin data pasien dan obat
+[33m2ab99dd[m ubah sidebar
+[33mda763c9[m ubah sidebar
+[33m283407c[m tambah env & remove gitignore.env
+[33m9f22c81[m kode terbaru

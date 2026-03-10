@@ -1,177 +1,177 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use App\Exports\RekamMedisExport;
-use App\Models\Obat;
-use App\Models\Pasien;
 use App\Models\RekamMedis;
-use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\RekamMedisExport;
 
 class RekamMedisController extends Controller
 {
-    /**
-     * Helper untuk menentukan prefix folder view berdasarkan role user.
-     * Mengasumsikan struktur folder: views/admin/..., views/dokter/..., views/apoteker/...
-     */
-    private function getViewPath($viewName)
-    {
-        $role = auth()->user()->role; // Uses getRoleAttribute() from User model
-        return $role . '.rekam_medis.' . $viewName;
-    }
-
-    /**
-     * Helper untuk redirect kembali ke index sesuai role.
-     */
-    private function redirectIndex()
-    {
-        $role = auth()->user()->role; // Uses getRoleAttribute() from User model
-        return redirect()->route($role . '.rekammedis.index');
-    }
-
     public function index(Request $request)
     {
         $pencarian = $request->query('cari');
 
-        $dataRekamMedis = RekamMedis::with(['pasien', 'user', 'obat'])
+        $dataRekamMedis = RekamMedis::with(['pasien.identity', 'dokter', 'resepObat.obat'])
             ->when($pencarian, function ($query, $pencarian) {
-                $query->where('kode_rekam_medis', 'like', '%' . $pencarian . '%')
+                $query->where('kode_rekam_medis', 'like', "%$pencarian%")
                     ->orWhereHas('pasien', function ($q) use ($pencarian) {
-                        $q->where('nama_pasien', 'like', '%' . $pencarian . '%');
+                        $q->where('nama_pasien', 'like', "%$pencarian%");
                     })
-                    ->orWhere('diagnosis', 'like', '%' . $pencarian . '%');
+                    ->orWhere('diagnosis', 'like', "%$pencarian%");
             })
+            ->orderBy('tanggal_periksa', 'desc')
             ->get();
 
-        $pasiens = Pasien::all();
-        $dokters = User::whereHas('position', function ($q) {
-            $q->where('code', 'DOK');
-        })->get();
-        $obats = Obat::all();
-
-        return view($this->getViewPath('index'), compact(
-            'dataRekamMedis',
-            'pencarian',
-            'pasiens',
-            'dokters',
-            'obats'
-        ));
+        return view('rekam_medis.index', compact('dataRekamMedis'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
             'tanggal_periksa' => 'required|date',
-            'pasien_id' => 'required|exists:pasien,id',
-            'dokter_id' => 'required|exists:users,id',
-            'obat_id' => 'required|exists:obat,id',
-            'diagnosis' => 'nullable|string',
-            'resep' => 'nullable|string',
-            'tgl_ambil_obat' => 'nullable|date',
-            'jumlah_obat' => 'nullable|numeric|min:1',
+            'pasien_id'       => 'required|exists:pasien,id',
+            'dokter_id'       => 'required|exists:users,id',
         ]);
 
-        // Generate kode otomatis
-        $lastRecord = RekamMedis::latest('id')->first();
-        $nextNumber = $lastRecord ? $lastRecord->id + 1 : 1;
-        $kodeRekamMedis = 'RM' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+        $last = RekamMedis::latest('id')->first();
+        $next = $last ? $last->id + 1 : 1;
+        $kode = 'RM' . str_pad($next, 3, '0', STR_PAD_LEFT);
 
         RekamMedis::create([
-            'kode_rekam_medis' => $kodeRekamMedis,
-            'tanggal_periksa' => $request->tanggal_periksa,
-            'pasien_id' => $request->pasien_id,
-            'dokter_id' => $request->dokter_id,
-            'diagnosis' => $request->diagnosis,
-            'catatan' => $request->resep, // Using catatan field from new schema
-            'status' => 'menunggu_pemeriksaan',
+            'kode_rekam_medis' => $kode,
+            'tanggal_periksa'  => $request->tanggal_periksa,
+            'pasien_id'        => $request->pasien_id,
+            'dokter_id'        => $request->dokter_id,
+            'status'           => 'menunggu_pemeriksaan',
         ]);
 
-        // Logic Tambahan dari Controller Dokter: Update status pasien
-        $pasien = Pasien::find($request->pasien_id);
-        if ($pasien) {
-            $pasien->status = 'diperiksa';
-            $pasien->save();
-        }
-
-        return $this->redirectIndex()->with('success', 'Data rekam medis berhasil ditambahkan!');
-    }
-
-    public function update(Request $request, $id)
-    {
-        $rekam = RekamMedis::findOrFail($id);
-
-        $request->validate([
-            'tanggal_periksa' => 'required|date',
-            'pasien_id' => 'required|exists:pasien,id',
-            'dokter_id' => 'required|exists:users,id',
-            'obat_id' => 'required|exists:obat,id',
-            'diagnosis' => 'nullable|string',
-            'resep' => 'nullable|string',
-            'tgl_ambil_obat' => 'nullable|date',
-            'jumlah_obat' => 'nullable|numeric|min:1',
-        ]);
-
-        $rekam->update([
-            'tanggal_periksa' => $request->tanggal_periksa,
-            'pasien_id' => $request->pasien_id,
-            'dokter_id' => $request->dokter_id,
-            'diagnosis' => $request->diagnosis,
-            'catatan' => $request->resep, // Using catatan field from new schema
-        ]);
-
-        // Pastikan status pasien terupdate
-        $pasien = Pasien::find($request->pasien_id);
-        if ($pasien && $pasien->status !== 'diperiksa') {
-            $pasien->status = 'diperiksa';
-            $pasien->save();
-        }
-
-        return $this->redirectIndex()->with('success', 'Data rekam medis berhasil diperbarui!');
+        return redirect()->route('rekammedis.index')
+            ->with('success', 'Rekam medis berhasil dibuat.');
     }
 
     public function show($id)
     {
-        $rekam = RekamMedis::with(['pasien', 'user', 'obat'])->findOrFail($id);
-        return view($this->getViewPath('show'), compact('rekam'));
+        $rekam = RekamMedis::with([
+            'dokter',
+            'pasien.identity',
+            'resepObat.obat',
+        ])->findOrFail($id);
+
+        $obats = \App\Models\Obat::all();
+
+        return view('rekam_medis.show', compact('rekam', 'obats'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $rekam = RekamMedis::with('pasien')->findOrFail($id);
+
+        $request->validate([
+            'diagnosis'    => 'required|string',
+            'obat_id'      => 'required|array|min:1',
+            'obat_id.*'    => 'exists:obat,id',
+            'jumlah'       => 'required|array',
+            'jumlah.*'     => 'integer|min:1',
+            'aturan_pakai' => 'nullable|array',
+        ]);
+
+        // Update diagnosis & status rekam medis
+        $rekam->update([
+            'diagnosis' => $request->diagnosis,
+            'status'    => 'menunggu_obat',
+        ]);
+
+        // Update status pasien
+        $rekam->pasien->update([
+            'status' => 'menunggu_obat',
+        ]);
+
+        // Hapus resep lama
+        $rekam->resepObat()->delete();
+
+        // Insert resep baru
+        foreach ($request->obat_id as $i => $obatId) {
+            $rekam->resepObat()->create([
+                'obat_id'      => $obatId,
+                'jumlah'       => $request->jumlah[$i],
+                'aturan_pakai' => $request->aturan_pakai[$i] ?? null,
+            ]);
+        }
+
+        return redirect()->route('rekammedis.index')
+            ->with('success', 'Pemeriksaan selesai, pasien menunggu obat.');
     }
 
     public function destroy($id)
     {
-        $rekam = RekamMedis::findOrFail($id);
-        $rekam->delete();
+        RekamMedis::findOrFail($id)->delete();
 
-        return $this->redirectIndex()->with('success', 'Data rekam medis berhasil dihapus!');
+        return redirect()->route('rekammedis.index')
+            ->with('success', 'Data berhasil dihapus.');
     }
 
-    public function exportPDF()
+    public function mulaiPeriksa($id)
     {
-        $rekamMedis = RekamMedis::all();
-        // PDF tetap menggunakan folder view role masing-masing sesuai logic awal Anda
-        $pdf = Pdf::loadView($this->getViewPath('report_pdf'), compact('rekamMedis'));
+        $rekam = RekamMedis::with('pasien')->findOrFail($id);
+
+        $rekam->update([
+            'status' => 'diperiksa',
+        ]);
+
+        $rekam->pasien->update([
+            'status' => 'diperiksa',
+        ]);
+
+        return back()->with('success', 'Pasien mulai diperiksa.');
+    }
+
+    public function selesai($id)
+    {
+        $rekam = RekamMedis::with('pasien')->findOrFail($id);
+
+        $rekam->update([
+            'status' => 'selesai',
+        ]);
+
+        $rekam->pasien->update([
+            'status' => 'selesai',
+        ]);
+
+        return back()->with('success', 'Obat telah diberikan, pasien selesai.');
+    }
+
+    public function exportPDF(Request $request)
+    {
+        $mulai = $request->tanggal_mulai;
+        $selesai = $request->tanggal_selesai;
+
+        $rekamMedis = RekamMedis::with(['pasien.identity','dokter','resepObat.obat'])
+            ->when($mulai && $selesai, function ($query) use ($mulai, $selesai) {
+                $query->whereBetween('tanggal_periksa', [$mulai, $selesai]);
+            })
+            ->orderBy('tanggal_periksa','desc')
+            ->get();
+
+        $pdf = Pdf::loadView('rekam_medis.report_pdf', compact('rekamMedis','mulai','selesai'))
+            ->setPaper('a4','landscape');
+
         return $pdf->download('rekam_medis.pdf');
     }
 
-    public function exportExcel()
+    public function exportExcel(Request $request)
     {
-        return Excel::download(new RekamMedisExport, 'rekam_medis.xlsx');
+        $mulai = $request->tanggal_mulai;
+        $selesai = $request->tanggal_selesai;
+
+        $data = RekamMedis::with(['pasien.identity','dokter','resepObat.obat'])
+            ->when($mulai && $selesai, function ($query) use ($mulai, $selesai) {
+                $query->whereBetween('tanggal_periksa', [$mulai, $selesai]);
+            })
+            ->get();
+
+        return Excel::download(new RekamMedisExport($data), 'rekam_medis.xlsx');
     }
 
-    public function validasi($id)
-    {
-        try {
-            $rekamMedis = RekamMedis::findOrFail($id);
-            $rekamMedis->status = 'diobati';
-            $rekamMedis->save();
-
-            $rekamMedis->pasien->status = 'diobati';
-            $rekamMedis->pasien->save();
-
-            return redirect()->back()->with('success', 'Status berhasil divalidasi.');
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat validasi.');
-        }
-    }
 }

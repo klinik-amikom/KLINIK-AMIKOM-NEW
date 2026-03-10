@@ -6,501 +6,365 @@
 
 @section('content')
 
-    {{-- Alert Messages --}}
+    {{-- ================= ALERT ================= --}}
     @if (session('success'))
-        <div class="alert-auto-hide mb-4 bg-purple-100 border border-purple-400 text-purple-700 px-4 py-3 rounded relative dark:bg-purple-900/30 dark:border-purple-600 dark:text-purple-300"
-            role="alert">
-            <strong class="font-bold">Berhasil!</strong>
-            <span class="block sm:inline">{{ session('success') }}</span>
-            <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
-                <svg onclick="this.parentElement.parentElement.remove()"
-                    class="fill-current h-6 w-6 text-purple-500 cursor-pointer" role="button"
-                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                    <title>Close</title>
-                    <path
-                        d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" />
-                </svg>
-            </span>
+        <div class="mb-4 bg-purple-100 border border-purple-400 text-purple-700 px-4 py-3 rounded">
+            <strong>Berhasil!</strong>
+            {{ session('success') }}
         </div>
     @endif
 
     @if (session('error'))
-        <div class="alert-auto-hide mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative dark:bg-red-900/30 dark:border-red-600 dark:text-red-300"
-            role="alert">
-            <strong class="font-bold">Error!</strong>
-            <span class="block sm:inline">{{ session('error') }}</span>
-            <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
-                <svg onclick="this.parentElement.parentElement.remove()"
-                    class="fill-current h-6 w-6 text-red-500 cursor-pointer" role="button"
-                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                    <title>Close</title>
-                    <path
-                        d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" />
-                </svg>
-            </span>
+        <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+            <strong>Error!</strong>
+            {{ session('error') }}
         </div>
     @endif
 
-    <div class="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0 mb-6 sm:mb-8">
-        <div>
-            <h2 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-1 sm:mb-2">
-                Kelola Rekam Medis
-            </h2>
-            <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400">
-                Kelola data Rekam Medis dalam sistem
-            </p>
-        </div>
-        <div class="w-full sm:w-auto">
-            <button onclick="openCreateRekamMedisModal()"
-                class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition-colors duration-200">
-                <i class="fas fa-plus mr-2"></i>
-                Tambah Rekam Medis
-            </button>
-        </div>
-    </div>
 
+    {{-- ================= HEADER ================= --}}
     <div class="mb-6">
-        <div class="relative max-w-md">
-            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <i class="fas fa-search text-gray-400"></i>
-            </span>
-            <input type="text" id="rekam-search" placeholder="Cari kode rekam medis, diagnosis, atau tanggal..."
-                class="block w-full pl-10 pr-3 py-2 border border-gray-300
-                   dark:border-gray-600 rounded-lg
-                   bg-white dark:bg-gray-700
-                   text-gray-900 dark:text-white
-                   focus:ring-purple-500 focus:border-purple-500 text-sm">
+        <h2 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-1 sm:mb-2">
+            Kelola Rekam Medis
+        </h2>
+        <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400">
+            Daftar seluruh rekam medis pasien
+        </p>
+
+        <div class="mt-6 mb-6">
+            <div class="relative max-w-md">
+                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                    <i class="fas fa-search"></i>
+                </span>
+
+                <input type="text" id="rekammedis-search"
+                    placeholder="Cari kode, nama pasien, NIK, dokter, atau diagnosis..."
+                    class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 text-sm">
+            </div>
         </div>
     </div>
 
-    <div class="bg-white dark:bg-gray-800 shadow-sm rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-        <div class="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">
-            <h3 class="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">Daftar Rekam Medis</h3>
+    {{-- ================= TABLE ================= --}}
+    <div class="bg-white dark:bg-gray-800 shadow rounded-xl border overflow-hidden">
+
+        <div class="p-4 border-b dark:border-gray-700">
+            <h3 class="font-semibold text-gray-900 dark:text-white">
+                Daftar Rekam Medis
+            </h3>
         </div>
 
         <div class="overflow-x-auto">
-            <table class="w-full text-left min-w-full">
-                <thead>
-                    <tr class="bg-gray-50 dark:bg-gray-700">
-                        <th class="px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">#</th>
-                        <th class="px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Kode Rekam</th>
-                        <th class="px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Tanggal Periksa
-                        </th>
-                        <th class="px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Pasien</th>
-                        <th class="px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Dokter</th>
-                        <th class="px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Obat</th>
-                        <th class="px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Diagnosis</th>
-                        <th class="px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Resep</th>
-                        <th class="px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Tgl Ambil Obat
-                        </th>
-                        <th class="px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Jumlah Obat
-                        </th>
-                        <th class="px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-300 uppercase text-right">Aksi
-                        </th>
+            <table class="w-full text-sm text-left border border-gray-200 dark:border-gray-700">
+                <thead class="bg-gray-50 dark:bg-gray-700 text-xs uppercase divide-x dark:divide-gray-600">
+                    <tr class="odd:bg-white even:bg-gray-50 dark:odd:bg-gray-800 dark:even:bg-gray-700 hover:bg-gray-100">
+                        <th class="px-4 py-3 text-center">#</th>
+                        <th class="px-4 py-3 text-center border border-gray-200">Kode</th>
+                        <th class="px-4 py-3 text-center border border-gray-200">NIK</th>
+                        <th class="px-4 py-3 text-center border border-gray-200">Nama Pasien</th>
+                        <th class="px-4 py-3 text-center border border-gray-200">Tanggal</th>
+                        <th class="px-4 py-3 text-center border border-gray-200">Dokter</th>
+                        <th class="px-4 py-3 text-center border border-gray-200">Obat</th>
+                        <th class="px-4 py-3 text-center border border-gray-200">Diagnosis</th>
+                        <th class="px-4 py-3 text-center border border-gray-200">Status</th>
+
+                        @if (auth()->user()->role == 'dokter')
+                            <th class="px-4 py-3 text-center">Periksa</th>
+                        @endif
+
+                        <th class="px-4 py-3 text-center">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+
+                <tbody class="divide-y divide-gray-200 dark:divide-gray-700 divide-x">
+
                     @forelse ($dataRekamMedis as $item)
-                        <tr class="rekam-row">
-                            <td class="px-4 py-3 text-sm text-gray-900 dark:text-white">{{ $loop->iteration }}</td>
-                            <td class="px-4 py-3 text-sm text-gray-900 dark:text-white">{{ $item->kode_rekam_medis }}</td>
-                            <td class="px-4 py-3 text-sm text-gray-900 dark:text-white">{{ $item->tanggal_periksa }}</td>
-                            <td class="px-4 py-3 text-sm text-gray-900 dark:text-white">
-                                {{ $item->pasien->nama_pasien ?? '-' }}</td>
-                            <td class="px-4 py-3 text-sm text-gray-900 dark:text-white">{{ $item->user->name ?? '-' }}</td>
-                            <td class="px-4 py-3 text-sm text-gray-900 dark:text-white">{{ $item->obat->nama_obat ?? '-' }}
+                        <tr
+                            class="rekammedis-row odd:bg-white even:bg-gray-50 dark:odd:bg-gray-800 dark:even:bg-gray-700 hover:bg-gray-100">
+                            <td class="px-4 py-3 border border-gray-200">{{ $loop->iteration }}</td>
+
+                            <td class="px-4 py-3 font-semibold text-purple-600">
+                                {{ $item->kode_rekam_medis }}
                             </td>
-                            <td class="px-4 py-3 text-sm text-gray-900 dark:text-white">{{ $item->diagnosis ?? '-' }}</td>
-                            <td class="px-4 py-3 text-sm text-gray-900 dark:text-white">{{ $item->resep ?? '-' }}</td>
-                            <td class="px-4 py-3 text-sm text-gray-900 dark:text-white">
-                                {{ $item->tanggal_pengambilan ?? '-' }}</td>
-                            <td class="px-4 py-3 text-sm text-gray-900 dark:text-white">{{ $item->jumlah_obat ?? '0' }}
+
+                            {{-- NIK --}}
+                            <td class="px-4 py-3 border border-gray-200">
+                                {{ $item->pasien->identity->identity_number ?? '-' }}
                             </td>
-                            <td class="px-4 py-3 text-sm text-right">
-                                <div class="flex justify-end space-x-2">
-                                    <button onclick="editRekamMedis({{ $item->id }})"
-                                        class="text-purple-600 hover:text-purple-800 dark:text-purple-400 dark:hover:text-purple-300">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <form action="{{ route('admin.rekammedis.destroy', $item->id) }}" method="POST"
-                                        class="inline" onsubmit="return confirm('Yakin ingin menghapus data ini?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit"
-                                            class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300">
-                                            <i class="fas fa-trash"></i>
+
+                            {{-- Nama Pasien --}}
+                            <td class="px-4 py-3 border border-gray-200">
+                                {{ $item->pasien->identity->name ?? '-' }}
+                            </td>
+
+                            <td class="px-4 py-3 border border-gray-200">
+                                {{ \Carbon\Carbon::parse($item->tanggal_periksa)->format('d-m-Y') }}
+                            </td>
+
+                            <td class="px-4 py-3 border border-gray-200">
+                                {{ $item->dokter->name ?? '-' }}
+                            </td>
+
+                            <td class="px-4 py-3 border border-gray-200">
+                                @if ($item->resepObat->count() > 0)
+                                    <ul class="space-y-1">
+                                        @foreach ($item->resepObat as $resep)
+                                            <li class="text-xs bg-gray-100 px-2 py-1 rounded">
+                                                <strong>{{ $resep->obat->nama_obat ?? '-' }}</strong>
+                                                ({{ $resep->jumlah }} pcs)
+                                                <br>
+                                                <span class="text-gray-500">
+                                                    {{ $resep->aturan_pakai ?? '-' }}
+                                                </span>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                @else
+                                    <span class="text-gray-400">-</span>
+                                @endif
+                            </td>
+
+                            <td class="px-4 py-3 border border-gray-200">
+                                {{ $item->diagnosis ?? '-' }}
+                            </td>
+
+                            {{-- STATUS BADGE --}}
+                            <td class="px-4 py-3 border border-gray-200">
+                                @switch($item->status)
+                                    @case('menunggu_pemeriksaan')
+                                        <span class="px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-700 rounded-full">
+                                            Menunggu Pemeriksaan
+                                        </span>
+                                    @break
+
+                                    @case('diperiksa')
+                                        <span class="px-2 py-1 text-xs font-medium bg-purple-100 text-purple-700 rounded-full">
+                                            Sedang Diperiksa
+                                        </span>
+                                    @break
+
+                                    @case('menunggu_obat')
+                                        <span class="px-2 py-1 text-xs font-medium bg-orange-100 text-orange-700 rounded-full">
+                                            Menunggu Obat
+                                        </span>
+                                    @break
+
+                                    @case('selesai')
+                                        <span class="px-2 py-1 text-xs font-medium bg-green-100 text-green-700 rounded-full">
+                                            Selesai
+                                        </span>
+                                    @break
+
+                                    @default
+                                        <span class="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded-full">
+                                            -
+                                        </span>
+                                @endswitch
+                            </td>
+
+                            @if (auth()->user()->role == 'dokter')
+                                <td class="px-4 py-3 text-center">
+
+                                    {{-- Jika masih menunggu --}}
+                                    @if ($item->status == 'menunggu_pemeriksaan')
+                                        <form action="{{ route('rekammedis.mulai', $item->id) }}" method="POST">
+                                            @csrf
+                                            <button type="submit"
+                                                class="bg-yellow-500 text-white text-xs px-3 py-1 rounded hover:bg-yellow-600">
+                                                Mulai
+                                            </button>
+                                        </form>
+
+                                        {{-- Jika sudah diperiksa --}}
+                                    @elseif($item->status == 'diperiksa')
+                                        <button class="bg-gray-400 text-white text-xs px-3 py-1 rounded cursor-not-allowed">
+                                            Sedang
                                         </button>
-                                    </form>
+
+                                        {{-- Jika sudah lanjut --}}
+                                    @else
+                                        <button
+                                            class="bg-gray-300 text-gray-600 text-xs px-3 py-1 rounded cursor-not-allowed">
+                                            Selesai
+                                        </button>
+                                    @endif
+
+                                </td>
+                            @endif
+
+                            {{-- AKSI --}}
+                            <td class="px-4 py-3 border border-gray-200">
+                                <div class="flex justify-end space-x-3">
+
+                                    {{-- KHUSUS APOTEKER --}}
+                                    @if (auth()->user()->role == 'apoteker')
+                                        @if ($item->status == 'menunggu_obat')
+                                            <form action="{{ route('rekammedis.selesai', $item->id) }}" method="POST">
+                                                @csrf
+                                                <button type="submit"
+                                                    class="bg-green-600 text-white text-xs px-3 py-1 rounded hover:bg-green-700">
+                                                    Konfirmasi Obat
+                                                </button>
+                                            </form>
+                                        @elseif($item->status == 'selesai')
+                                            <span
+                                                class="bg-gray-300 text-gray-600 text-xs px-3 py-1 rounded inline-block w-full text-center">
+                                                Sudah Diberikan
+                                            </span>
+                                        @else
+                                            <span class="text-gray-400 text-xs">
+                                                Menunggu Dokter
+                                            </span>
+                                        @endif
+                                    @else
+                                        {{-- AKSI UNTUK ROLE LAIN --}}
+                                        <a href="{{ route('rekammedis.show', $item->id) }}"
+                                            class="text-blue-600 hover:text-blue-800">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+
+                                        <form action="{{ route('rekammedis.destroy', $item->id) }}" method="POST"
+                                            onsubmit="return confirm('Yakin ingin menghapus data ini?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="text-red-600 hover:text-red-800">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    @endif
+
                                 </div>
                             </td>
+
                         </tr>
-                    @empty
-                        <tr>
-                            <td colspan="11" class="text-center px-4 py-8 text-gray-500 dark:text-gray-400">
-                                <i class="fas fa-notes-medical text-4xl mb-4"></i>
-                                <p class="text-lg font-medium">Data rekam medis tidak tersedia</p>
-                                <p class="text-sm">Belum ada rekam medis yang terdaftar dalam sistem</p>
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                        @empty
+                            <tr>
+                                <td colspan="10" class="text-center py-8 text-gray-500">
+                                    Data rekam medis belum tersedia
+                                </td>
+                            </tr>
+                        @endforelse
+
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
 
-    <div class="flex justify-end mt-3">
-        <a href="{{ route('admin.rekam-medis.export.pdf') }}"
-            class="bg-red-600 text-white px-3 py-1.5 text-sm rounded-md
-               hover:bg-red-700 mr-2">
-            Export PDF
-        </a>
-        <a href="{{ route('admin.rekam-medis.export.excel') }}"
-            class="bg-green-600 text-white px-3 py-1.5 text-sm rounded-md
-               hover:bg-green-700">
-            Export Excel
-        </a>
-    </div>
 
-    <!-- Create Rekam Medis Modal -->
-    <div id="create-rekammedis-modal"
-        class="fixed inset-0 bg-black/50 dark:bg-black/70 z-[999] hidden backdrop-blur-sm transition-all duration-300">
-        <div class="flex items-center justify-center min-h-screen p-2 sm:p-4">
-            <div
-                class="bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 w-full max-w-sm sm:max-w-md transform transition-all duration-300 scale-95 max-h-[90vh] overflow-y-auto">
-                <div
-                    class="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700 sticky top-0 bg-white dark:bg-gray-800 z-10">
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
-                            Tambah Rekam Medis Baru
-                        </h3>
-                        <button onclick="closeCreateRekamMedisModal()"
-                            class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 p-1">
-                            <i class="fas fa-times"></i>
+        {{-- ================= EXPORT ================= --}}
+        <div class="flex justify-end mt-4 space-x-2">
+
+            <button onclick="openExportModal('pdf')" class="bg-red-600 text-white px-4 py-2 text-sm rounded hover:bg-red-700">
+                Export PDF
+            </button>
+
+            <button onclick="openExportModal('excel')"
+                class="bg-green-600 text-white px-4 py-2 text-sm rounded hover:bg-green-700">
+                Export Excel
+            </button>
+
+        </div>
+
+        {{-- ================= MODAL EXPORT ================= --}}
+        <div id="export-modal" class="fixed inset-0 bg-black bg-opacity-40 hidden items-center justify-center z-50">
+
+            <div class="bg-white rounded-lg shadow-lg w-96 p-6">
+
+                <h3 class="text-lg font-semibold mb-4">
+                    Export Rekam Medis
+                </h3>
+
+                <form id="export-form" method="GET">
+
+                    <div class="mb-4">
+                        <label class="block text-sm mb-1">Tanggal Mulai</label>
+                        <input type="date" name="tanggal_mulai" class="w-full border rounded px-3 py-2">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="block text-sm mb-1">Tanggal Akhir</label>
+                        <input type="date" name="tanggal_selesai" class="w-full border rounded px-3 py-2">
+                    </div>
+
+                    <div class="flex justify-end space-x-2 mt-4">
+
+                        <button type="button" onclick="closeExportModal()"
+                            class="px-3 py-2 text-sm bg-gray-300 rounded hover:bg-gray-400">
+                            Batal
                         </button>
-                    </div>
-                </div>
 
-                <form id="create-rekammedis-form" action="{{ route('admin.rekammedis.store') }}" method="POST"
-                    class="p-4 sm:p-6">
-                    @csrf
-                    <div class="space-y-4">
-
-                        <!-- Tanggal Periksa -->
-                        <div>
-                            <label for="tanggal_periksa"
-                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Tanggal Periksa <span class="text-red-500">*</span>
-                            </label>
-                            <input type="date" id="tanggal_periksa" name="tanggal_periksa" required
-                                class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white transition-colors duration-200">
-                        </div>
-
-                        <!-- Pasien -->
-                        <div>
-                            <label for="pasien_id"
-                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Pasien <span class="text-red-500">*</span>
-                            </label>
-                            <select id="pasien_id" name="pasien_id" required
-                                class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white">
-                                <option value="" disabled selected>Pilih Pasien</option>
-                                @foreach ($pasiens as $pasien)
-                                    <option value="{{ $pasien->id }}">{{ $pasien->nama_pasien }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <!-- Dokter -->
-                        <div>
-                            <label for="dokter_id"
-                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Dokter <span class="text-red-500">*</span>
-                            </label>
-                            <select id="dokter_id" name="dokter_id" required
-                                class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white">
-                                <option value="" disabled selected>Pilih Dokter</option>
-                                @foreach ($dokters as $dokter)
-                                    <option value="{{ $dokter->id }}">{{ $dokter->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <!-- Obat -->
-                        <div>
-                            <label for="obat_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Obat <span class="text-red-500">*</span>
-                            </label>
-                            <select id="obat_id" name="obat_id" required
-                                class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white">
-                                <option value="" disabled selected>Pilih Obat</option>
-                                @foreach ($obats as $obat)
-                                    <option value="{{ $obat->id }}">{{ $obat->nama_obat }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <!-- Diagnosis -->
-                        <div>
-                            <label for="diagnosis"
-                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Diagnosis
-                            </label>
-                            <textarea id="diagnosis" name="diagnosis" rows="2"
-                                class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white">{{ old('diagnosis') }}</textarea>
-                        </div>
-
-                        <!-- Resep -->
-                        <div>
-                            <label for="resep" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Resep
-                            </label>
-                            <textarea id="resep" name="resep" rows="2"
-                                class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white">{{ old('resep') }}</textarea>
-                        </div>
-
-                        <!-- Tanggal Ambil Obat -->
-                        <div>
-                            <label for="tgl_ambil_obat"
-                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Tanggal Ambil Obat
-                            </label>
-                            <input type="date" id="tgl_ambil_obat" name="tgl_ambil_obat"
-                                class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white">
-                        </div>
-
-                        <!-- Jumlah Obat -->
-                        <div>
-                            <label for="jumlah_obat"
-                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Jumlah Obat
-                            </label>
-                            <input type="number" id="jumlah_obat" name="jumlah_obat" min="1"
-                                class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white">
-                        </div>
+                        <button type="submit" class="px-3 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700">
+                            Export
+                        </button>
 
                     </div>
 
-                    <div
-                        class="px-4 sm:px-6 py-3 sm:py-4 bg-gray-50 dark:bg-gray-700/50 border-t border-gray-200 dark:border-gray-700 rounded-b-xl mt-6">
-                        <div class="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-3">
-                            <button type="button" onclick="closeCreateRekamMedisModal()"
-                                class="w-full sm:w-auto px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors">
-                                Batal
-                            </button>
-                            <button type="submit"
-                                class="w-full sm:w-auto px-4 py-2 border border-transparent rounded-md text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 transition-colors">
-                                Simpan
-                            </button>
-                        </div>
-                    </div>
                 </form>
 
             </div>
+
         </div>
-    </div>
 
-    <!-- Edit Rekam Medis Modal -->
-    <div id="edit-rekammedis-modal"
-        class="fixed inset-0 bg-black/50 dark:bg-black/70 z-[999] hidden backdrop-blur-sm transition-all duration-300">
-        <div class="flex items-center justify-center min-h-screen p-2 sm:p-4">
-            <div
-                class="bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 w-full max-w-sm sm:max-w-md transform transition-all duration-300 scale-95 max-h-[90vh] overflow-y-auto">
-                <div
-                    class="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700 sticky top-0 bg-white dark:bg-gray-800 z-10">
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
-                            Edit Rekam Medis
-                        </h3>
-                        <button onclick="closeEditRekamMedisModal()"
-                            class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 p-1">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
 
-                <form id="edit-rekammedis-form" method="POST" class="p-4 sm:p-6">
-                    @csrf
-                    @method('PUT')
-                    <div class="space-y-4">
+                const input = document.getElementById('rekammedis-search');
+                const rows = document.querySelectorAll('.rekammedis-row');
+                const tbody = document.querySelector('table tbody');
 
-                        <!-- Tanggal Periksa -->
-                        <div>
-                            <label for="edit_tanggal_periksa"
-                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Tanggal Periksa <span class="text-red-500">*</span>
-                            </label>
-                            <input type="date" id="edit_tanggal_periksa" name="tanggal_periksa" required
-                                class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white transition-colors duration-200">
-                        </div>
+                const emptyRow = document.createElement('tr');
+                emptyRow.style.display = 'none';
 
-                        <!-- Pasien -->
-                        <div>
-                            <label for="edit_pasien_id"
-                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Pasien <span class="text-red-500">*</span>
-                            </label>
-                            <select id="edit_pasien_id" name="pasien_id" required
-                                class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white">
-                                <option value="" disabled>Pilih Pasien</option>
-                                @foreach ($pasiens as $pasien)
-                                    <option value="{{ $pasien->id }}">{{ $pasien->nama_pasien }}</option>
-                                @endforeach
-                            </select>
-                        </div>
+                emptyRow.innerHTML = `
+        <td colspan="11" class="px-6 py-10 text-center text-gray-500">
+            Data rekam medis tidak ditemukan.
+        </td>
+    `;
 
-                        <!-- Dokter -->
-                        <div>
-                            <label for="edit_dokter_id"
-                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Dokter <span class="text-red-500">*</span>
-                            </label>
-                            <select id="edit_dokter_id" name="dokter_id" required
-                                class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white">
-                                <option value="" disabled>Pilih Dokter</option>
-                                @foreach ($dokters as $dokter)
-                                    <option value="{{ $dokter->id }}">{{ $dokter->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
+                tbody.appendChild(emptyRow);
 
-                        <!-- Obat -->
-                        <div>
-                            <label for="edit_obat_id"
-                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Obat <span class="text-red-500">*</span>
-                            </label>
-                            <select id="edit_obat_id" name="obat_id" required
-                                class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white">
-                                <option value="" disabled>Pilih Obat</option>
-                                @foreach ($obats as $obat)
-                                    <option value="{{ $obat->id }}">{{ $obat->nama_obat }}</option>
-                                @endforeach
-                            </select>
-                        </div>
+                input.addEventListener('input', function() {
 
-                        <!-- Diagnosis -->
-                        <div>
-                            <label for="edit_diagnosis"
-                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Diagnosis
-                            </label>
-                            <textarea id="edit_diagnosis" name="diagnosis" rows="2"
-                                class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white"></textarea>
-                        </div>
+                    const keyword = this.value.toLowerCase().trim();
+                    let visibleCount = 0;
 
-                        <!-- Resep -->
-                        <div>
-                            <label for="edit_resep"
-                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Resep
-                            </label>
-                            <textarea id="edit_resep" name="resep" rows="2"
-                                class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white"></textarea>
-                        </div>
+                    rows.forEach(row => {
 
-                        <!-- Tanggal Ambil Obat -->
-                        <div>
-                            <label for="edit_tgl_ambil_obat"
-                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Tanggal Ambil Obat
-                            </label>
-                            <input type="date" id="edit_tgl_ambil_obat" name="tgl_ambil_obat"
-                                class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white">
-                        </div>
+                        const match = row.innerText.toLowerCase().includes(keyword);
 
-                        <!-- Jumlah Obat -->
-                        <div>
-                            <label for="edit_jumlah_obat"
-                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Jumlah Obat
-                            </label>
-                            <input type="number" id="edit_jumlah_obat" name="jumlah_obat" min="1"
-                                class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white">
-                        </div>
-                        <!-- Kolom Aksi -->
-                        <a href="{{ route('admin.rekammedis.show', $item->id) }}"
-                            class="inline-flex items-center px-2 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600 transition">
-                            👁️ Detail
-                        </a>
+                        row.style.display = match ? '' : 'none';
 
+                        if (match) visibleCount++;
 
+                    });
 
-                    </div>
+                    if (keyword !== '' && visibleCount === 0) {
+                        emptyRow.style.display = '';
+                    } else {
+                        emptyRow.style.display = 'none';
+                    }
 
-                    <div
-                        class="px-4 sm:px-6 py-3 sm:py-4 bg-gray-50 dark:bg-gray-700/50 border-t border-gray-200 dark:border-gray-700 rounded-b-xl mt-6">
-                        <div class="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-3">
-                            <button type="button" onclick="closeEditRekamMedisModal()"
-                                class="w-full sm:w-auto px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors">
-                                Batal
-                            </button>
-                            <button type="submit"
-                                class="w-full sm:w-auto px-4 py-2 border border-transparent rounded-md text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 transition-colors">
-                                Update
-                            </button>
-                        </div>
-                    </div>
-                </form>
+                });
 
-            </div>
-        </div>
-    </div>
-
-@endsection
-@push('scripts')
-    <script>
-        // Data rekam medis untuk edit
-        const rekamMedisData = @json($dataRekamMedis);
-
-        function openCreateRekamMedisModal() {
-            document.getElementById('create-rekammedis-modal').classList.remove('hidden');
-        }
-
-        function closeCreateRekamMedisModal() {
-            document.getElementById('create-rekammedis-modal').classList.add('hidden');
-            document.getElementById('create-rekammedis-form').reset();
-        }
-
-        function editRekamMedis(id) {
-            const rekam = rekamMedisData.find(item => item.id === id);
-            if (!rekam) return;
-            document.getElementById('edit-rekammedis-form').action = `/admin/rekammedis/${id}`;
-            document.getElementById('edit_tanggal_periksa').value = rekam.tanggal_periksa;
-            document.getElementById('edit_pasien_id').value = rekam.pasien_id;
-            document.getElementById('edit_dokter_id').value = rekam.user_id;
-            document.getElementById('edit_obat_id').value = rekam.obat_id;
-            document.getElementById('edit_diagnosis').value = rekam.diagnosis || '';
-            document.getElementById('edit_resep').value = rekam.resep || '';
-            document.getElementById('edit_tgl_ambil_obat').value = rekam.tanggal_pengambilan || '';
-            document.getElementById('edit_jumlah_obat').value = rekam.jumlah_obat || '';
-            document.getElementById('edit-rekammedis-modal').classList.remove('hidden');
-        }
-
-        function closeEditRekamMedisModal() {
-            document.getElementById('edit-rekammedis-modal').classList.add('hidden');
-            document.getElementById('edit-rekammedis-form').reset();
-        }
-
-        // Search functionality
-        document.getElementById('rekam-search')?.addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            document.querySelectorAll('.rekam-row').forEach(row => {
-                row.style.display = [...row.querySelectorAll('td')]
-                    .some(td => td.textContent.toLowerCase().includes(searchTerm)) ? '' : 'none';
             });
-        });
 
-        // Auto-hide alerts
-        document.querySelectorAll('.alert-auto-hide').forEach(alert => {
-            setTimeout(() => alert.remove(), 5000);
-        });
+            function openExportModal(type) {
 
-        // Close modal on Escape
-        document.addEventListener('keydown', e => {
-            if (e.key === 'Escape') {
-                closeCreateRekamMedisModal();
-                closeEditRekamMedisModal();
+                let form = document.getElementById('export-form');
+
+                if (type === 'pdf') {
+                    form.action = "{{ route('rekammedis.export.pdf') }}";
+                } else {
+                    form.action = "{{ route('rekammedis.export.excel') }}";
+                }
+
+                document.getElementById('export-modal').classList.remove('hidden');
+                document.getElementById('export-modal').classList.add('flex');
             }
-        });
-    </script>
-@endpush
+
+            function closeExportModal() {
+                document.getElementById('export-modal').classList.add('hidden');
+            }
+        </script>
+
+
+    @endsection
