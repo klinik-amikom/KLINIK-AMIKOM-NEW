@@ -103,7 +103,7 @@
 
                             <td class="px-6 py-4">{{ $user->username }}</td>
                             <td class="px-6 py-4">{{ $user->email }}</td>
-                            <td>{{ $user->identity?->position ?? '-' }}</td>
+                            <td>{{ $user->position?->position ?? '-' }}</td>
                             <td class="px-6 py-4 text-right">
                                 <div class="flex justify-end space-x-3">
                                     <button

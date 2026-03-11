@@ -19,27 +19,25 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        // Detect role from URL segment
-        $segment = $request->segment(2); // 'admin', 'dokter', or 'apoteker'
+        // Ambil role dari URL (admin / dokter / apoteker) hanya untuk judul/logic di view
+        $segment = $request->segment(2);
         $role = in_array($segment, ['admin', 'dokter', 'apoteker']) ? $segment : 'admin';
 
-        try {
-            // Map role to position code
-            $positionCode = ['admin' => 'ADM', 'dokter' => 'DOK', 'apoteker' => 'APT'][$role];
+        // Ambil SEMUA user (tanpa filter dulu supaya data pasti muncul)
+        $users = User::with(['position', 'identity'])
+            ->join('positions', 'users.position_id', '=', 'positions.id')
+            ->orderByRaw("
+                CASE 
+                    WHEN positions.position = 'Admin' THEN 1
+                    WHEN positions.position = 'Dokter' THEN 2
+                    WHEN positions.position = 'Apoteker' THEN 3
+                END
+            ")
+            ->select('users.*')
+            ->get();
 
-            // Get users with this position
-            $users = User::whereHas('identity', function ($q) use ($role) {
-                $q->where('name', ucfirst($role));
-            })
-                ->with('identity')
-                ->orderBy('created_at', 'desc')
-                ->get();
-
-
-            return view("{$role}.index", compact('users', 'role'));
-        } catch (Exception $e) {
-            return redirect()->back()->with('error', "Gagal memuat data {$role}: " . $e->getMessage());
-        }
+        // View kamu memang hanya ini
+        return view('users.index', compact('users', 'role'));
     }
 
     public function create()
@@ -138,7 +136,9 @@ class UserController extends Controller
 
             DB::commit();
 
-            return redirect()->route('admin.admin.index')
+            $role = strtolower($user->position->position);
+
+            return redirect()->route("admin.$role.index")
                 ->with('success', 'User berhasil diperbarui!');
         } catch (Exception $e) {
             DB::rollBack();

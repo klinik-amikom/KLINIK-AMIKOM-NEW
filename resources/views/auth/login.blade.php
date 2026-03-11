@@ -137,7 +137,7 @@
                     </h2>
 
                     <!-- Description -->
-                    <p class="text-lg lg:text-xl opacity-90 leading-relaxed max-w-md">
+                    <p class="text-lg lg:text-xl opacity-90 leading-relaxed max-w-md" style="text-align: justify;">
                         Klinik Amikom adalah fasilitas kesehatan gratis yang disediakan oleh Universitas Amikom
                         Yogyakarta.
                         Klinik ini memiliki dua layanan utama, yaitu:
