@@ -9,6 +9,8 @@ use App\Http\Controllers\PasienController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RekamMedisController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\JadwalDokterController;
+use App\Http\Controllers\JadwalKlinikController;
 use Illuminate\Support\Facades\Route;
 
 // ==================================================
@@ -39,47 +41,47 @@ Route::get('/pasien/download-pdf/{id}', [PasienController::class, 'downloadPDF']
 Route::get('/pasien', [PasienController::class, 'form'])
     ->name('pasien.form');
 
-    // ==================================================
+// ==================================================
 // 2. AUTHENTICATED ROUTES (WAJIB LOGIN)
 // ==================================================
 
 
 Route::middleware(['auth'])->group(function () {
 
-// ================= REKAM MEDIS (GLOBAL - SEMUA ROLE) =================
-Route::prefix('rekam-medis')->name('rekammedis.')->group(function () {
+    // ================= REKAM MEDIS (GLOBAL - SEMUA ROLE) =================
+    Route::prefix('rekam-medis')->name('rekammedis.')->group(function () {
 
-    Route::get('/', [RekamMedisController::class, 'index'])->name('index');
-    Route::post('/', [RekamMedisController::class, 'store'])->name('store');
+        Route::get('/', [RekamMedisController::class, 'index'])->name('index');
+        Route::post('/', [RekamMedisController::class, 'store'])->name('store');
 
-    Route::get('/{id}', [RekamMedisController::class, 'show'])->name('show');
-    Route::put('/{id}', [RekamMedisController::class, 'update'])->name('update');
-    Route::delete('/{id}', [RekamMedisController::class, 'destroy'])->name('destroy');
+        Route::get('/{id}', [RekamMedisController::class, 'show'])->name('show');
+        Route::put('/{id}', [RekamMedisController::class, 'update'])->name('update');
+        Route::delete('/{id}', [RekamMedisController::class, 'destroy'])->name('destroy');
 
-    Route::patch('/{id}/validasi', [RekamMedisController::class, 'validasi'])
-        ->name('validasi');
+        Route::patch('/{id}/validasi', [RekamMedisController::class, 'validasi'])
+            ->name('validasi');
 
-    Route::get('/export/pdf', [RekamMedisController::class, 'exportPDF'])
-        ->name('export.pdf');
+        Route::get('/export/pdf', [RekamMedisController::class, 'exportPDF'])
+            ->name('export.pdf');
 
-    Route::get('/export/excel', [RekamMedisController::class, 'exportExcel'])
-        ->name('export.excel');
-});
+        Route::get('/export/excel', [RekamMedisController::class, 'exportExcel'])
+            ->name('export.excel');
+    });
 
-// Group khusus admin (opsional)
-Route::prefix('users')->name('users.')->group(function () {
+    // Group khusus admin (opsional)
+    Route::prefix('users')->name('users.')->group(function () {
 
-    Route::get('/', [ManageUserController::class, 'index'])->name('index');
+        Route::get('/', [ManageUserController::class, 'index'])->name('index');
 
-    Route::get('/create', [ManageUserController::class, 'create'])->name('create');
-    Route::post('/', [ManageUserController::class, 'store'])->name('store');
+        Route::get('/create', [ManageUserController::class, 'create'])->name('create');
+        Route::post('/', [ManageUserController::class, 'store'])->name('store');
 
-    Route::get('/{id}/edit', [ManageUserController::class, 'edit'])->name('edit');
-    Route::put('/{id}', [ManageUserController::class, 'update'])->name('update');
+        Route::get('/{id}/edit', [ManageUserController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [ManageUserController::class, 'update'])->name('update');
 
-    Route::delete('/{id}', [ManageUserController::class, 'destroy'])
-        ->name('destroy');
-});
+        Route::delete('/{id}', [ManageUserController::class, 'destroy'])
+            ->name('destroy');
+    });
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     // --- SHARED SERVICES ---
@@ -108,7 +110,6 @@ Route::prefix('users')->name('users.')->group(function () {
 
         Route::resource('pasien', PasienController::class);
         Route::resource('obat', ObatController::class);
-
     });
 
     // ================= DOKTER =================
@@ -120,7 +121,6 @@ Route::prefix('users')->name('users.')->group(function () {
 
         Route::resource('pasien', PasienController::class);
         Route::resource('obat', ObatController::class);
-
     });
 
     // ================= APOTEKER =================
@@ -131,14 +131,18 @@ Route::prefix('users')->name('users.')->group(function () {
         Route::resource('obat', ObatController::class);
     });
 
-    Route::post('/pasien/{id}/konfirmasi', 
+    Route::post(
+        '/pasien/{id}/konfirmasi',
         [PasienController::class, 'konfirmasi']
     )->name('pasien.konfirmasi');
 
     Route::post('/rekammedis/{id}/mulai', [RekamMedisController::class, 'mulaiPeriksa'])
-    ->name('rekammedis.mulai');
+        ->name('rekammedis.mulai');
 
     Route::post('/rekammedis/{id}/selesai', [RekamMedisController::class, 'selesai'])
         ->name('rekammedis.selesai');
-        
+
+
+    Route::resource('jadwal_dokter', JadwalDokterController::class);
+    Route::resource('jadwal_klinik', JadwalKlinikController::class);
 });

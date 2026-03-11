@@ -102,6 +102,48 @@
             </a>
         @endif
 
+        <div x-data="{ open: {{ Request::routeIs('jadwal_dokter.*') || Request::routeIs('jadwal_klinik.*') ? 'true' : 'false' }} }" class="w-full">
+
+            <button @click="open = !open"
+                class="nav-item group w-full flex items-center justify-between px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200
+                {{ Request::routeIs('jadwal_dokter.*') || Request::routeIs('jadwal_klinik.*')
+                    ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 border-r-2 border-purple-500'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
+
+                <div class="flex items-center">
+
+                    <i class="fas fa-calendar-alt mr-3 text-gray-400 group-hover:text-gray-500"></i>
+
+                    <span>Kelola Jadwal</span>
+
+                </div>
+
+                <i class="fas fa-chevron-down text-xs transition-transform" :class="{ 'rotate-180': open }"></i>
+
+            </button>
+
+            <div x-show="open" x-transition class="ml-8 mt-2 space-y-2">
+
+                <a href="{{ route('jadwal_dokter.index') }}"
+                    class="block text-sm
+{{ Request::routeIs('jadwal_dokter.*') ? 'text-purple-600 font-medium' : 'text-gray-600 hover:text-purple-600' }}">
+
+                    Jadwal Dokter
+
+                </a>
+
+                <a href="{{ route('jadwal_klinik.index') }}"
+                    class="block text-sm
+{{ Request::routeIs('jadwal_klinik.*') ? 'text-purple-600 font-medium' : 'text-gray-600 hover:text-purple-600' }}">
+
+                    Jadwal Klinik
+
+                </a>
+
+            </div>
+
+        </div>
+
 
         <!-- Divider -->
         <div class="border-t border-gray-200 dark:border-gray-700 my-4"></div>
