@@ -78,7 +78,7 @@
                     {{-- NIK / Identity Number --}}
                     <div>
                         <label for="nik" class="block mb-1 font-medium">NIK</label>
-                        <input type="text" id="nik" name="nik" placeholder="Masukan Nomor Induk Kependudukan (16 digit angka)"
+                        <input type="text" id="nik" name="identity_number" placeholder="Masukan Nomor Induk Kependudukan (16 digit angka)"
                             class="w-full border rounded-md px-3 py-2">
                     </div>
 
@@ -109,7 +109,7 @@
                     <div>
                         <label for="jenis_kel" class="block mb-1 font-medium">Jenis Kelamin</label>
                         <div class="flex">
-                            <input type="text" id="jenis_kel" name="jenis_kel" placeholder="Jenis Kelamin Pasien"
+                            <input type="text" id="jenis_kel" name="gender" placeholder="Jenis Kelamin Pasien"
                                 class="w-full border rounded-r-md px-3 py-2" style="background-color:#e5e7eb; cursor:not-allowed;" readonly>
                         </div>
                     </div>
@@ -118,7 +118,7 @@
                     <div>
                         <label for="kategori" class="block mb-1 font-medium">Kategori</label>
                         <div class="flex">
-                            <input type="text" id="kategori" name="kategori" placeholder="Kategori Pasien"
+                            <input type="text" id="kategori" name="identity_type" placeholder="Kategori Pasien"
                                 class="w-full border rounded-r-md px-3 py-2" style="background-color:#e5e7eb; cursor:not-allowed;" readonly>
                         </div>
                     </div>
@@ -167,12 +167,11 @@
 
                     // Gender mapping L/P → Laki-laki/Perempuan
                     document.getElementById('jenis_kel').value =
-                        res.data.gender === 'L' ? 'Laki-laki' : 'Perempuan';
+                        res.data.gender ;
 
                     // Kategori
                     document.getElementById('kategori').value =
-                        res.data.identity_type.charAt(0).toUpperCase() +
-                        res.data.identity_type.slice(1);
+                        res.data.identity_type;
                 } else {
                         console.log('Data tidak ditemukan');
                         }

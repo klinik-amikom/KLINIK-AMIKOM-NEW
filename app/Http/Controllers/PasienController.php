@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 use App\Models\MasterIdentity;
 use App\Models\Pasien;
 use App\Models\RekamMedis;
+use App\Mail\NotifikasiAntrian;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class PasienController extends Controller
 {
@@ -31,57 +33,84 @@ class PasienController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $request->validate([
-            'identity_number' => 'required|digits:16',
-            'nama_pasien'     => 'required|string|max:255',
-            'tanggal_lahir'   => 'required|date',
-            'no_telp'         => 'required|string|max:20',
-            'identity_type'   => 'required|in:mahasiswa,dosen,karyawan',
-            'gender'          => 'required|in:L,P',
-            'alamat'          => 'required|string',
-            'poli'            => 'required|in:Poli Umum,Poli Gigi',
+{
+    $request->validate([
+        'identity_number' => 'required|digits:16',
+        'nama_pasien'     => 'required|string|max:255',
+        'tanggal_lahir'   => 'required|date',
+        'no_telp'         => 'required|string|max:20',
+        'identity_type'   => 'required|in:mahasiswa,dosen,karyawan',
+        'gender'          => 'required|in:L,P',
+        'alamat'          => 'required|string',
+        'poli'            => 'required|in:Poli Umum,Poli Gigi',
+    ]);
+
+    // 🔎 Cek apakah identity sudah ada
+    $identity = MasterIdentity::where('identity_number', $request->identity_number)->first();
+
+    // 🆕 Jika belum ada → buat baru
+    if (!$identity) {
+        $identity = MasterIdentity::create([
+            'identity_number' => $request->identity_number,
+            'name'            => $request->nama_pasien,
+            'birth_date'      => $request->tanggal_lahir,
+            'no_telp'         => $request->no_telp,
+            'identity_type'   => $request->identity_type,
+            'gender'          => $request->gender,
+            'address'         => $request->alamat,
         ]);
+    }
 
-        // 🔎 Cek apakah identity sudah ada
-        $identity = MasterIdentity::where('identity_number', $request->identity_number)->first();
+    // 🔢 Generate kode pasien
+    $lastPasien = Pasien::orderBy('id','desc')->first();
 
-        // 🆕 Jika belum ada → buat baru
-        if (! $identity) {
-            $identity = MasterIdentity::create([
-                'identity_number' => $request->identity_number,
-                'name'            => $request->nama_pasien,
-                'birth_date'      => $request->tanggal_lahir,
-                'no_telp'         => $request->no_telp,
-                'identity_type'   => $request->identity_type,
-                'gender'          => $request->gender,
-                'address'         => $request->alamat,
-            ]);
-        }
+    $newNumber = $lastPasien
+        ? (int) substr($lastPasien->kode_pasien,1) + 1
+        : 1;
 
-        // 🔢 Generate kode pasien
-        $lastPasien = Pasien::withTrashed()->orderBy('id', 'desc')->first();
+    $kodePasien = 'P' . str_pad($newNumber,3,'0',STR_PAD_LEFT);
 
-        $newNumber = $lastPasien
-            ? (int) substr($lastPasien->kode_pasien, 1) + 1
-            : 1;
+    // 🔢 Generate nomor antrian
+    $prefix = $request->poli === 'Poli Umum' ? 'PU' : 'PG';
 
-        $kodePasien = 'P' . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
+    $jumlahHariIni = Pasien::whereDate('created_at', today())
+        ->where('poli', $request->poli)
+        ->count() + 1;
 
-        // 💾 Simpan pasien
-        $pasien = Pasien::create([
-            'identity_id' => $identity->id,
-            'kode_pasien' => $kodePasien,
-            'poli'        => $request->poli,
-            'status'      => 'menunggu_konfirmasi',
-        ]);
+    $noAntrian = $prefix . '-' . str_pad($jumlahHariIni,3,'0',STR_PAD_LEFT);
 
+    // 💾 Simpan pasien
+    $pasien = Pasien::create([
+        'identity_id'  => $identity->id,
+        'kode_pasien'  => $kodePasien,
+        'poli'         => $request->poli,
+        'queue_number' => $noAntrian,
+        'status'       => 'menunggu_konfirmasi',
+    ]);
+
+    // 📧 Kirim email notifikasi (jika ada email)
+    if($identity->email){
+        Mail::to($identity->email)->send(new NotifikasiAntrian($pasien));
+    }
+
+    // load relasi identity
+    $pasien->load('identity');
+
+    // 🔐 Jika admin login
+    if(auth()->check()){
         $role = auth()->user()->role;
 
         return redirect()
             ->route($role . '.pasien.index')
-            ->with('success', 'Pasien berhasil ditambahkan.');
+            ->with('success','Pasien berhasil ditambahkan.');
     }
+
+    // 🌐 Jika pendaftaran publik
+    return redirect()
+        ->route('pasien.form')
+        ->with('success','Pendaftaran berhasil')
+        ->with('pasien_id',$pasien->id);
+}
 
     public function destroy($id)
     {
@@ -156,6 +185,7 @@ class PasienController extends Controller
             'data'   => $identity,
         ]);
     }
+    
     public function downloadPDF($id)
     {
         $pasien = Pasien::with('identity')->findOrFail($id);
@@ -165,6 +195,19 @@ class PasienController extends Controller
         return $pdf->download(
             'bukti-pendaftaran-' . $pasien->kode_pasien . '.pdf'
         );
+    }
+
+    public function form()
+    {
+        $pasien = session('pasien_id')
+            ? \App\Models\Pasien::with('identity')->find(session('pasien_id'))
+            : null;
+
+        $linkWA = $pasien
+            ? 'https://wa.me/62xxxx?text=Nomor%20Antrian%20' . $pasien->kode_pasien
+            : null;
+
+        return view('profile.basic-details', compact('pasien', 'linkWA'));
     }
 
     public function show($id)
