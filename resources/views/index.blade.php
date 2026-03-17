@@ -283,42 +283,37 @@
 
         <section id="jadwal-dokter" class="jadwal-dokter">
             <h2 class="judul-jadwal">Jadwal Dokter Klinik Amikom</h2>
-            <table class="tabel-jadwal">
-                <thead class="thead-white">
-                    <tr>
-                        <th>Nama Dokter</th>
-                        <th>Poli</th>
-                        <th>Hari Praktik</th>
-                        <th>Jam</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Dr. A</td>
-                        <td>Poli Umum</td>
-                        <td>Senin & Rabu</td>
-                        <td>08:00 - 12:00</td>
-                    </tr>
-                    <tr>
-                        <td>Dr. B</td>
-                        <td>Poli Umum</td>
-                        <td>Selasa & Kamis</td>
-                        <td>10:00 - 14:00</td>
-                    </tr>
-                    <tr>
-                        <td>Dr. C</td>
-                        <td>Poli Gigi</td>
-                        <td>Senin & Jumat</td>
-                        <td>09:00 - 13:00</td>
-                    </tr>
-                    <tr>
-                        <td>Dr. D</td>
-                        <td>Poli Gigi</td>
-                        <td>Rabu & Kamis</td>
-                        <td>13:00 - 17:00</td>
-                    </tr>
-                </tbody>
-            </table>
+
+            <div class="overflow-x-auto">
+                <table class="tabel-jadwal">
+                    <thead class="thead-white">
+                        <tr>
+                            <th>Nama Dokter</th>
+                            <th>Poli</th>
+                            <th>Hari Praktik</th>
+                            <th>Jam</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @forelse($jadwal as $j)
+                            <tr>
+                                <td>{{ $j->nama_dokter }}</td>
+                                <td>Poli {{ $j->poli }}</td>
+                                <td>{{ $j->hari_praktik }}</td>
+                                <td>{{ $j->jam_praktik }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" style="text-align: center; padding: 20px;">
+                                    Jadwal dokter belum tersedia
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+
+                </table>
+            </div>
         </section>
 
         <section id="jadwal-klinik" class="jadwal-klinik">
@@ -331,14 +326,24 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>Senin - Jum'at</td>
-                        <td>09.00 - 15:00</td>
-                    </tr>
-                    <tr>
-                        <td>Sabtu & Minggu</td>
-                        <td>Tutup</td>
-                    </tr>
+                    @forelse($jadwalKlinik as $jk)
+                        <tr>
+                            <td>{{ $jk->hari }}</td>
+                            <td>
+                                @if ($jk->jam_buka == 'TUTUP')
+                                    <span style="color: red; font-weight: bold;">Tutup</span>
+                                @else
+                                    {{ $jk->jam_buka }}
+                                @endif
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="2" style="text-align: center; padding: 20px;">
+                                Jadwal klinik belum tersedia
+                            </td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </section>

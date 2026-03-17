@@ -13,12 +13,7 @@ use App\Http\Controllers\JadwalDokterController;
 use App\Http\Controllers\JadwalKlinikController;
 use Illuminate\Support\Facades\Route;
 
-// ==================================================
-// 1. PUBLIC ROUTES (TANPA LOGIN)
-// ==================================================
-Route::get('/', function () {
-    return view("index");
-});
+Route::get('/', [JadwalDokterController::class, 'landing']);
 
 Route::get('/login', [AuthController::class, 'loginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);

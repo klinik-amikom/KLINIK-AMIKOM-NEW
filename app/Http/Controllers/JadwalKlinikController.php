@@ -70,4 +70,6 @@ class JadwalKlinikController extends Controller
         JadwalKlinik::destroy($id);
         return redirect()->route('jadwal_klinik.index');
     }
+
 }
+

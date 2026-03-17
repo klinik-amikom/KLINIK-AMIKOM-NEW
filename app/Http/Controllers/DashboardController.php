@@ -1,13 +1,10 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use App\Models\Pasien;
 use App\Models\RekamMedis;
 use App\Models\User;
-use App\Models\Obat;
-use App\Models\Pasien;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
@@ -21,30 +18,22 @@ class DashboardController extends Controller
             ->orderBy('tanggal_periksa', 'asc')
             ->get();
 
-        // 2. Statistik User & Obat
-        $totalDokterAktif = User::whereHas('position', function ($q) {
-            $q->where('code', 'DOK');
-        })->count();
+        // Total pasien (unique dari rekam medis)
+        $totalPasien = RekamMedis::distinct('pasien_id')->count('pasien_id');
 
-        $totalAdmin = User::whereHas('position', function ($q) {
-            $q->where('code', 'ADM');
-        })->count();
+        // Pasien baru bulan ini (berdasarkan rekam medis bulan ini)
+        $pasienBaruBulanIni = RekamMedis::whereYear('tanggal_periksa', now()->year)
+            ->whereMonth('tanggal_periksa', now()->month)
+            ->distinct('pasien_id')
+            ->count('pasien_id');
 
-        $totalJenisObat = Obat::count();
-
-        $dokterBaruBulanIni = User::whereHas('position', function ($q) {
-            $q->where('code', 'DOK');
-        })
-            ->whereYear('created_at', now()->year)
-            ->whereMonth('created_at', now()->month)
-            ->count();
-
-        // 3. Statistik Kunjungan Hari Ini
-        $jumlahKunjunganHariIni = RekamMedis::whereDate('tanggal_periksa', today())->count();
+        // Statistik Kunjungan Hari Ini (dari rekam medis)
+        $jumlahKunjunganHariIni = RekamMedis::whereDate('tanggal_periksa', now()->toDateString())->count();
 
         // 4. Statistik Pasien berdasarkan identity_type dari master_identity
-        $pasienByKategori = Pasien::join('master_identity', 'pasien.identity_id', '=', 'master_identity.id')
-            ->select('master_identity.identity_type', DB::raw('count(*) as total'))
+        $pasienByKategori = RekamMedis::join('pasien', 'rekam_medis.pasien_id', '=', 'pasien.id')
+            ->join('master_identity', 'pasien.identity_id', '=', 'master_identity.id')
+            ->select('master_identity.identity_type', DB::raw('COUNT(DISTINCT pasien.id) as total'))
             ->groupBy('master_identity.identity_type')
             ->pluck('total', 'identity_type')
             ->toArray();
@@ -53,32 +42,79 @@ class DashboardController extends Controller
         $pasienByKategori = array_change_key_case($pasienByKategori, CASE_LOWER);
 
         $totalMahasiswa = $pasienByKategori['mahasiswa'] ?? 0;
-        $totalDosen = $pasienByKategori['dosen'] ?? 0;
-        $totalKaryawan = $pasienByKategori['karyawan'] ?? 0;
+        $totalDosen     = $pasienByKategori['dosen'] ?? 0;
+        $totalKaryawan  = $pasienByKategori['karyawan'] ?? 0;
 
         // Hitung kategori lainnya yang tidak termasuk dalam 3 kategori utama
         $totalLainnyaKategori = 0;
         foreach ($pasienByKategori as $kategori => $count) {
-            if (!in_array($kategori, ['mahasiswa', 'dosen', 'karyawan'])) {
+            if (! in_array($kategori, ['mahasiswa', 'dosen', 'karyawan'])) {
                 $totalLainnyaKategori += $count;
             }
         }
 
-        // 5. Tentukan View berdasarkan role dari position
-        $role = auth()->user()->role; // Uses getRoleAttribute() from User model 
+                                       // 5. Tentukan View berdasarkan role dari position
+        $role  = auth()->user()->role; // Uses getRoleAttribute() from User model
+
+        // Statistik status pelayanan pasien (hari ini)
+        $statusHariIni = Pasien::select('status', DB::raw('count(*) as total'))
+            ->groupBy('status')
+            ->pluck('total', 'status')
+            ->toArray();
+        // Mapping biar aman
+        $totalMenungguKonfirmasi = $statusHariIni['menunggu_konfirmasi'] ?? 0;
+        $totalTerdaftar          = $statusHariIni['terdaftar'] ?? 0;
+        $totalDiperiksa          = $statusHariIni['diperiksa'] ?? 0;
+        $totalMenungguObat       = $statusHariIni['menunggu_obat'] ?? 0;
+        $totalSelesai            = $statusHariIni['selesai'] ?? 0;
+
+
+        $kunjunganHarian = RekamMedis::select(
+                DB::raw('DATE(tanggal_periksa) as tanggal'),
+                DB::raw('COUNT(*) as total')
+            )
+            ->where('tanggal_periksa', '>=', now()->subDays(6))
+            ->groupBy('tanggal')
+            ->orderBy('tanggal')
+            ->get();
+    
+        $kunjunganMingguan = RekamMedis::select(
+                DB::raw('YEARWEEK(tanggal_periksa) as minggu'),
+                DB::raw('COUNT(*) as total')
+            )
+            ->groupBy('minggu')
+            ->orderBy('minggu')
+            ->limit(8)
+            ->get();
+
+        $kunjunganBulanan = RekamMedis::select(
+                DB::raw('DATE_FORMAT(tanggal_periksa, "%Y-%m") as bulan'),
+                DB::raw('COUNT(*) as total')
+            )
+            ->groupBy('bulan')
+            ->orderBy('bulan')
+            ->limit(12)
+            ->get(); 
+
 
         // Pastikan view tersedia di folder: resources/views/{role}/dashboard/index.blade.php
         return view('.dashboard.index', compact(
             'rekamMedisData',
-            'totalDokterAktif',
-            'dokterBaruBulanIni',
-            'totalAdmin',
-            'totalJenisObat',
+            'totalPasien',
+            'pasienBaruBulanIni',
             'jumlahKunjunganHariIni',
             'totalMahasiswa',
             'totalDosen',
             'totalKaryawan',
-            'totalLainnyaKategori'
+            'totalLainnyaKategori',
+            'totalMenungguKonfirmasi',
+            'totalTerdaftar',
+            'totalDiperiksa',
+            'totalMenungguObat',
+            'totalSelesai',
+            'kunjunganHarian',
+            'kunjunganMingguan',
+            'kunjunganBulanan'
         ));
     }
 }

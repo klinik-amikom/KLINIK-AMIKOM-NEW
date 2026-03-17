@@ -122,28 +122,28 @@
 
             </button>
 
-            <div x-show="open" x-transition class="ml-8 mt-2 space-y-2">
+            <div x-show="open" x-transition
+                class="ml-6 mt-2 space-y-2 pl-4 border-l-2 border-gray-200 dark:border-gray-700">
 
                 <a href="{{ route('jadwal_dokter.index') }}"
-                    class="block text-sm
-{{ Request::routeIs('jadwal_dokter.*') ? 'text-purple-600 font-medium' : 'text-gray-600 hover:text-purple-600' }}">
-
+                    class="block px-4 py-2 rounded-lg text-sm transition-all duration-200
+                    {{ Request::routeIs('jadwal_dokter.*')
+                        ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 font-medium'
+                        : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-purple-600' }}">
                     Jadwal Dokter
-
                 </a>
 
                 <a href="{{ route('jadwal_klinik.index') }}"
-                    class="block text-sm
-{{ Request::routeIs('jadwal_klinik.*') ? 'text-purple-600 font-medium' : 'text-gray-600 hover:text-purple-600' }}">
-
+                    class="block px-4 py-2 rounded-lg text-sm transition-all duration-200
+                    {{ Request::routeIs('jadwal_klinik.*')
+                        ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 font-medium'
+                        : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-purple-600' }}">
                     Jadwal Klinik
-
                 </a>
 
             </div>
 
         </div>
-
 
         <!-- Divider -->
         <div class="border-t border-gray-200 dark:border-gray-700 my-4"></div>

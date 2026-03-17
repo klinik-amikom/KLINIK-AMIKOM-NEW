@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\JadwalDokter;
+use App\Models\JadwalKlinik;
 use Illuminate\Http\Request;
 
 class JadwalDokterController extends Controller
@@ -58,5 +59,13 @@ class JadwalDokterController extends Controller
     {
         JadwalDokter::destroy($id);
         return redirect()->route('jadwal_dokter.index');
+    }
+
+    public function landing()
+    {
+        $jadwal = JadwalDokter::all();
+        $jadwalKlinik = JadwalKlinik::all();
+
+        return view('index', compact('jadwal', 'jadwalKlinik'));
     }
 }
