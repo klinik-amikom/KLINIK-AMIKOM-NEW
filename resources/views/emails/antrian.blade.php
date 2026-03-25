@@ -52,6 +52,18 @@
                                         {{ ucfirst(str_replace('_',' ', $pasien->status)) }}
                                     </td>
                                 </tr>
+                                <tr>
+                                    <td style="border-bottom:1px solid #ddd;"><strong>Tanggal Kunjungan</strong></td>
+                                    <td style="border-bottom:1px solid #ddd;">
+                                        {{ \Carbon\Carbon::parse($pasien->tanggal_kunjungan)->translatedFormat('d F Y') }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="border-bottom:1px solid #ddd;"><strong>Estimasi Jam</strong></td>
+                                    <td style="border-bottom:1px solid #ddd; color:#0d6efd; font-weight:bold;">
+                                        {{ \Carbon\Carbon::parse($pasien->estimasi_jam)->format('H:i') }} WIB
+                                    </td>
+                                </tr>
                             </table>
 
                             <div style="margin:25px 0; text-align:center;">
@@ -66,7 +78,8 @@
                             </div>
 
                             <p style="font-size:13px; color:#555; line-height:1.6;">
-                                Mohon untuk datang 15 menit sebelum jadwal pelayanan dan menunjukkan email ini kepada petugas apabila diperlukan.
+                                Mohon untuk datang <strong>10-15 menit sebelum pukul {{ \Carbon\Carbon::parse($pasien->estimasi_jam)->format('H:i') }} WIB</strong> 
+                                agar proses pelayanan berjalan dengan lancar.
                             </p>
 
                             <p style="font-size:13px; color:#555; line-height:1.6;">

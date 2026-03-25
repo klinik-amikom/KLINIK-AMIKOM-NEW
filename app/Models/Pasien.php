@@ -25,6 +25,8 @@ class Pasien extends Model
         'kode_pasien',
         'poli',
         'queue_number',
+        'estimasi_jam',
+        'visit_date',
         'status',
     ];
 

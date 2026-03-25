@@ -48,7 +48,19 @@
                     <h2 class="text-xl font-bold mb-2">🎉 Pendaftaran Berhasil!</h2>
                     <p>Nomor Antrian Anda: <strong class="text-lg">{{ $pasien->queue_number }}</strong></p>
                     <p class="text-sm text-gray-600 mb-4">Silakan simpan nomor ini untuk keperluan konsultasi.</p>
+                    <p class="text-sm text-gray-700 mb-2">
+                        Tanggal Kunjungan:
+                        <strong>
+                            {{ \Carbon\Carbon::parse($pasien->tanggal_kunjungan)->translatedFormat('d F Y') }}
+                        </strong>
+                    </p>
 
+                    <p class="text-sm text-gray-700 mb-4">
+                        Estimasi Jam Pemeriksaan:
+                        <strong class="text-blue-600">
+                            {{ \Carbon\Carbon::parse($pasien->estimasi_jam)->format('H:i') }} WIB
+                        </strong>
+                    </p>
                     <hr class="my-4">
 
                     <h3 class="text-lg font-semibold mb-2">Detail Pendaftaran:</h3>
@@ -70,6 +82,9 @@
                         Download Bukti Pendaftaran (PDF)
                     </a>
                 </div>
+                <p class="text-xs text-gray-500 italic">
+                    *Harap datang 10-15 menit sebelum waktu pemeriksaan.
+                </p>
             @else
                 <h2 class="text-2xl font-semibold mb-6 text-center">Silakan isi formulir pendaftaran</h2>
                 <form action="{{ route('pasien.store') }}" method="POST" class="space-y-6">

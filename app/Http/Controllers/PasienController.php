@@ -33,77 +33,125 @@ class PasienController extends Controller
     }
 
     public function store(Request $request)
-{
-    $request->validate([
-        'identity_number' => 'required|digits:16',
-        'nama_pasien'     => 'required|string|max:255',
-        'tanggal_lahir'   => 'required|date',
-        'no_telp'         => 'required|string|max:20',
-        'identity_type'   => 'required|in:mahasiswa,dosen,karyawan',
-        'gender'          => 'required|in:L,P',
-        'alamat'          => 'required|string',
-        'poli'            => 'required|in:Poli Umum,Poli Gigi',
-    ]);
+    {
+        $request->validate([
+            'identity_number' => 'required|digits:16',
+            'nama_pasien'     => 'required|string|max:255',
+            'tanggal_lahir'   => 'required|date',
+            'no_telp'         => 'required|string|max:20',
+            'identity_type'   => 'required|in:mahasiswa,dosen,karyawan',
+            'gender'          => 'required|in:L,P',
+            'alamat'          => 'required|string',
+            'poli'            => 'required|in:Poli Umum,Poli Gigi',
+        ]);
 
-    // 🔎 Cek apakah identity sudah ada
-    $identity = MasterIdentity::where('identity_number', $request->identity_number)->first();
+        // 🔎 Cek identity
+        $identity = MasterIdentity::where('identity_number', $request->identity_number)->first();
 
-    $identity = MasterIdentity::where('identity_number', $request->identity_number)->first();
+        if (!$identity) {
+            return back()->with('error', 'NIK tidak terdaftar sebagai civitas AMIKOM.');
+        }
 
-    if (!$identity) {
-        return back()->with('error', 'NIK tidak terdaftar sebagai civitas AMIKOM.');
-    }
+        // 🔢 Generate kode pasien
+        $lastPasien = Pasien::orderBy('id','desc')->first();
 
-    // 🔢 Generate kode pasien
-    $lastPasien = Pasien::orderBy('id','desc')->first();
+        $newNumber = ($lastPasien && $lastPasien->kode_pasien)
+            ? (int) substr($lastPasien->kode_pasien,1) + 1
+            : 1;
 
-    $newNumber = $lastPasien
-        ? (int) substr($lastPasien->kode_pasien,1) + 1
-        : 1;
+        $kodePasien = 'P' . str_pad($newNumber,3,'0',STR_PAD_LEFT);
 
-    $kodePasien = 'P' . str_pad($newNumber,3,'0',STR_PAD_LEFT);
+        // 🔢 Tentukan tanggal kunjungan (default hari ini)
+        $tanggalKunjungan = Carbon::today();
 
-    // 🔢 Generate nomor antrian
-    $prefix = $request->poli === 'Poli Umum' ? 'PU' : 'PG';
+        // ⏰ Jam operasional
+        $jamBuka  = Carbon::parse($tanggalKunjungan)->setTime(8, 0);
+        $jamTutup = Carbon::parse($tanggalKunjungan)->setTime(15, 0);
 
-    $jumlahHariIni = Pasien::whereDate('created_at', today())
-        ->where('poli', $request->poli)
-        ->count() + 1;
+        // ⏱ durasi per pasien
+        $durasi = 15;
 
-    $noAntrian = $prefix . '-' . str_pad($jumlahHariIni,3,'0',STR_PAD_LEFT);
+        // 🔎 Ambil pasien terakhir di tanggal tersebut
+        $lastPasienHariIni = Pasien::whereDate('visit_date', $tanggalKunjungan)
+            ->where('poli', $request->poli) // 🔥 TAMBAHAN PENTING
+            ->orderBy('estimasi_jam', 'desc')
+            ->first();
 
-    // 💾 Simpan pasien
-    $pasien = Pasien::create([
-        'identity_id'  => $identity->id,
-        'kode_pasien'  => $kodePasien,
-        'poli'         => $request->poli,
-        'queue_number' => $noAntrian,
-        'status'       => 'menunggu_konfirmasi',
-    ]);
+        if (!$lastPasienHariIni) {
+            // pasien pertama
+            $waktuDaftar = now();
 
-    // 📧 Kirim email notifikasi (jika ada email)
-    if($identity->email){
-        Mail::to($identity->email)->send(new NotifikasiAntrian($pasien));
-    }
+            $estimasiJam = $waktuDaftar->lt($jamBuka)
+                ? $jamBuka
+                : $waktuDaftar;
+        } else {
+            // pasien berikutnya
+            $estimasiJam = Carbon::parse($lastPasienHariIni->estimasi_jam)
+                ->addMinutes($durasi);
+        }
 
-    // load relasi identity
-    $pasien->load('identity');
+        // 🔁 Jika melebihi jam operasional → pindah ke besok
+        if ($estimasiJam->gt($jamTutup)) {
 
-    // 🔐 Jika admin login
-    if(auth()->check()){
-        $role = auth()->user()->role;
+            $tanggalKunjungan = Carbon::tomorrow();
 
+            $jamBukaBesok = Carbon::parse($tanggalKunjungan)->setTime(8, 0);
+
+            $lastBesok = Pasien::whereDate('visit_date', $tanggalKunjungan)
+                ->where('poli', $request->poli) // 🔥 WAJIB
+                ->orderBy('estimasi_jam', 'desc')
+                ->first();
+
+            if (!$lastBesok) {
+                $estimasiJam = $jamBukaBesok;
+            } else {
+                $estimasiJam = Carbon::parse($lastBesok->estimasi_jam)
+                    ->addMinutes($durasi);
+            }
+        }
+
+        // 🔢 Generate nomor antrian berdasarkan tanggal kunjungan
+        $prefix = $request->poli === 'Poli Umum' ? 'PU' : 'PG';
+
+        $jumlah = Pasien::whereDate('visit_date', $tanggalKunjungan)
+            ->where('poli', $request->poli)
+            ->count() + 1;
+
+        $noAntrian = $prefix . '-' . str_pad($jumlah,3,'0',STR_PAD_LEFT);
+
+        // 💾 Simpan pasien
+        $pasien = Pasien::create([
+            'identity_id'        => $identity->id,
+            'kode_pasien'        => $kodePasien,
+            'poli'               => $request->poli,
+            'queue_number'       => $noAntrian,
+            'estimasi_jam'       => $estimasiJam,
+            'visit_date'         => $tanggalKunjungan,
+            'status'             => 'menunggu_konfirmasi',
+        ]);
+
+        // 📧 Email
+        if ($identity->email) {
+            Mail::to($identity->email)->send(new NotifikasiAntrian($pasien));
+        }
+
+        $pasien->load('identity');
+
+        // 🔐 Admin
+        if (auth()->check()) {
+            $role = auth()->user()->role;
+
+            return redirect()
+                ->route($role . '.pasien.index')
+                ->with('success','Pasien berhasil ditambahkan.');
+        }
+
+        // 🌐 Publik
         return redirect()
-            ->route($role . '.pasien.index')
-            ->with('success','Pasien berhasil ditambahkan.');
+            ->route('pasien.form')
+            ->with('success','Pendaftaran berhasil')
+            ->with('pasien_id',$pasien->id);
     }
-
-    // 🌐 Jika pendaftaran publik
-    return redirect()
-        ->route('pasien.form')
-        ->with('success','Pendaftaran berhasil')
-        ->with('pasien_id',$pasien->id);
-}
 
     public function destroy($id)
     {
