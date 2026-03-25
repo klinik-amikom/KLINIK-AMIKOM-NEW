@@ -48,17 +48,10 @@ class PasienController extends Controller
     // 🔎 Cek apakah identity sudah ada
     $identity = MasterIdentity::where('identity_number', $request->identity_number)->first();
 
-    // 🆕 Jika belum ada → buat baru
+    $identity = MasterIdentity::where('identity_number', $request->identity_number)->first();
+
     if (!$identity) {
-        $identity = MasterIdentity::create([
-            'identity_number' => $request->identity_number,
-            'name'            => $request->nama_pasien,
-            'birth_date'      => $request->tanggal_lahir,
-            'no_telp'         => $request->no_telp,
-            'identity_type'   => $request->identity_type,
-            'gender'          => $request->gender,
-            'address'         => $request->alamat,
-        ]);
+        return back()->with('error', 'NIK tidak terdaftar sebagai civitas AMIKOM.');
     }
 
     // 🔢 Generate kode pasien
@@ -203,11 +196,7 @@ class PasienController extends Controller
             ? \App\Models\Pasien::with('identity')->find(session('pasien_id'))
             : null;
 
-        $linkWA = $pasien
-            ? 'https://wa.me/62xxxx?text=Nomor%20Antrian%20' . $pasien->kode_pasien
-            : null;
-
-        return view('profile.basic-details', compact('pasien', 'linkWA'));
+        return view('profile.basic-details', compact('pasien'));
     }
 
     public function show($id)

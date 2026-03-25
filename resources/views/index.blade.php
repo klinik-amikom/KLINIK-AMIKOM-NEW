@@ -234,7 +234,7 @@
                                 <span class="step-number" style="color: #e3a127">Langkah 03</span>
                                 <h3>Tunggu Konfirmasi</h3>
                                 <p>Setelah pendaftaran, Anda akan menerima konfirmasi dan nomor antrian dari pihak
-                                    klinik melalui email atau WhatsApp.</p>
+                                    klinik melalui email.</p>
                             </div>
                         </div>
                     </div><!-- End Step Item -->

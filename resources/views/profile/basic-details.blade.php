@@ -21,6 +21,12 @@
     </style>
 </head>
 
+@if(session('error'))
+<div class="bg-red-100 border border-red-400 text-red-800 px-4 py-3 rounded mb-4">
+    {{ session('error') }}
+</div>
+@endif
+
 <body class="bg-gray-100 text-gray-900 font-sans">
     <header class="bg-white shadow px-6 py-4 flex justify-between items-center">
         <h1 class="text-2xl font-semibold mb-6 flex items-center space-x-2 text-black font-sans">
@@ -49,7 +55,7 @@
                     <ul class="space-y-1 text-gray-700">
                         <li><strong>Nama:</strong> {{ $pasien->identity->name }}</li>
                         <li><strong>Tanggal Lahir:</strong> {{ $pasien->identity->birth_date }}</li>
-                        <li><strong>Jenis Kelamin:</strong> 
+                        <li><strong>Jenis Kelamin:</strong>
                             {{ $pasien->identity->gender == 'L' ? 'Laki-laki' : 'Perempuan' }}
                         </li>
                         <li><strong>Alamat:</strong> {{ $pasien->identity->address }}</li>
@@ -64,12 +70,6 @@
                         Download Bukti Pendaftaran (PDF)
                     </a>
                 </div>
-                <div class="mt-6">
-                    <a href="{{ $linkWA }}" target="_blank"
-                        class="inline-block bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
-                        Kirim ke WhatsApp
-                    </a>
-                </div>
             @else
                 <h2 class="text-2xl font-semibold mb-6 text-center">Silakan isi formulir pendaftaran</h2>
                 <form action="{{ route('pasien.store') }}" method="POST" class="space-y-6">
@@ -78,7 +78,8 @@
                     {{-- NIK / Identity Number --}}
                     <div>
                         <label for="nik" class="block mb-1 font-medium">NIK</label>
-                        <input type="text" id="nik" name="identity_number" placeholder="Masukan Nomor Induk Kependudukan (16 digit angka)"
+                        <input type="text" id="nik" name="identity_number"
+                            placeholder="Masukan Nomor Induk Kependudukan (16 digit angka)"
                             class="w-full border rounded-md px-3 py-2">
                     </div>
 
@@ -86,14 +87,16 @@
                     <div>
                         <label for="nama_pasien" class="block mb-1 font-medium">Nama Lengkap</label>
                         <input type="text" id="nama_pasien" name="nama_pasien" placeholder="Nama Lengkap"
-                            class="w-full border rounded-md px-3 py-2" style="background-color:#e5e7eb; cursor:not-allowed;" readonly>
+                            class="w-full border rounded-md px-3 py-2"
+                            style="background-color:#e5e7eb; cursor:not-allowed;" readonly>
                     </div>
 
                     {{-- Tanggal Lahir --}}
                     <div>
                         <label for="tanggal_lahir" class="block mb-1 font-medium">Tanggal Lahir</label>
                         <input type="date" id="tanggal_lahir" name="tanggal_lahir"
-                            class="w-full border rounded-md px-3 py-2" style="background-color:#e5e7eb; cursor:not-allowed;" readonly>
+                            class="w-full border rounded-md px-3 py-2"
+                            style="background-color:#e5e7eb; cursor:not-allowed;" readonly>
                     </div>
 
                     {{-- Nomor Telepon --}}
@@ -101,7 +104,8 @@
                         <label for="no_telp" class="block mb-1 font-medium">Nomor Telepon</label>
                         <div class="flex">
                             <input type="tel" id="no_telp" name="no_telp"
-                                class="w-full border rounded-r-md px-3 py-2" style="background-color:#e5e7eb; cursor:not-allowed;" readonly>
+                                class="w-full border rounded-r-md px-3 py-2"
+                                style="background-color:#e5e7eb; cursor:not-allowed;" readonly>
                         </div>
                     </div>
 
@@ -110,7 +114,8 @@
                         <label for="jenis_kel" class="block mb-1 font-medium">Jenis Kelamin</label>
                         <div class="flex">
                             <input type="text" id="jenis_kel" name="gender" placeholder="Jenis Kelamin Pasien"
-                                class="w-full border rounded-r-md px-3 py-2" style="background-color:#e5e7eb; cursor:not-allowed;" readonly>
+                                class="w-full border rounded-r-md px-3 py-2"
+                                style="background-color:#e5e7eb; cursor:not-allowed;" readonly>
                         </div>
                     </div>
 
@@ -119,7 +124,8 @@
                         <label for="kategori" class="block mb-1 font-medium">Kategori</label>
                         <div class="flex">
                             <input type="text" id="kategori" name="identity_type" placeholder="Kategori Pasien"
-                                class="w-full border rounded-r-md px-3 py-2" style="background-color:#e5e7eb; cursor:not-allowed;" readonly>
+                                class="w-full border rounded-r-md px-3 py-2"
+                                style="background-color:#e5e7eb; cursor:not-allowed;" readonly>
                         </div>
                     </div>
 
@@ -134,7 +140,7 @@
                     <div>
                         <label for="poli" class="block mb-1 font-medium">Poli Tujuan</label>
                         <select id="poli" name="poli" class="w-full border rounded-md px-3 py-2">
-                            <option value="" disabled selected>Pilih Poli</option>
+                            <option value="">Pilih Poli</option>
                             <option value="Poli Umum">Poli Umum</option>
                             <option value="Poli Gigi">Poli Gigi</option>
                         </select>
@@ -150,35 +156,61 @@
         </section>
     </main>
 </body>
+
 </html>
 <script>
-    document.getElementById('nik').addEventListener('keyup', function () {
+    document.getElementById('nik').addEventListener('keyup', function() {
         const nik = this.value;
 
         if (nik.length === 16) {
             fetch(`/cek-nik/${nik}`)
-            .then(res => res.json())
-            .then(res => {
-                if (res.status) {
-                    document.getElementById('nama_pasien').value = res.data.name;
-                    document.getElementById('tanggal_lahir').value = res.data.birth_date;
-                    document.getElementById('alamat').value = res.data.address;
-                    document.getElementById('no_telp').value = res.data.no_telp;
+                .then(res => res.json())
+                .then(res => {
+                    if (res.status) {
+                        document.getElementById('nama_pasien').value = res.data.name;
+                        document.getElementById('tanggal_lahir').value = res.data.birth_date;
+                        document.getElementById('alamat').value = res.data.address;
+                        document.getElementById('no_telp').value = res.data.no_telp;
 
-                    // Gender mapping L/P → Laki-laki/Perempuan
-                    document.getElementById('jenis_kel').value =
-                        res.data.gender ;
+                        // Gender mapping L/P → Laki-laki/Perempuan
+                        document.getElementById('jenis_kel').value =
+                            res.data.gender;
 
-                    // Kategori
-                    document.getElementById('kategori').value =
-                        res.data.identity_type;
-                } else {
-                        console.log('Data tidak ditemukan');
-                        }
+                        // Kategori
+                        document.getElementById('kategori').value =
+                            res.data.identity_type;
+                    } else {
+                        alert(
+                            '❌ NIK tidak terdaftar!\n\nAnda belum termasuk civitas akademik AMIKOM.\nSilakan hubungi admin di nomor: 0123456789');
+
+                        // kosongkan field biar tidak misleading
+                        document.getElementById('nama_pasien').value = '';
+                        document.getElementById('tanggal_lahir').value = '';
+                        document.getElementById('alamat').value = '';
+                        document.getElementById('no_telp').value = '';
+                        document.getElementById('jenis_kel').value = '';
+                        document.getElementById('kategori').value = '';
+                    }
                 })
                 .catch(() => {
                     alert('Terjadi kesalahan saat mengambil data');
                 });
+        }
+    });
+
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const nik = document.getElementById('nik').value;
+        const nama = document.getElementById('nama_pasien').value;
+        const tgl = document.getElementById('tanggal_lahir').value;
+        const telp = document.getElementById('no_telp').value;
+        const gender = document.getElementById('jenis_kel').value;
+        const kategori = document.getElementById('kategori').value;
+        const alamat = document.getElementById('alamat').value;
+        const poli = document.getElementById('poli').value;
+
+        if (!nik || !nama || !tgl || !telp || !gender || !kategori || !alamat || !poli) {
+            e.preventDefault();
+            alert('⚠️ Mohon lengkapi semua data terlebih dahulu!');
         }
     });
 </script>

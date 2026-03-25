@@ -15,7 +15,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    
+
     <!-- Tailwind Config -->
     <script>
         tailwind.config = {
@@ -468,7 +468,7 @@
     </script>
 </head>
 
-<body class="h-full bg-gray-50 dark:bg-gray-900 transition-colors duration-300 font-sans">
+<body class="h-full bg-gray-50 dark:bg-gray-900 transition-colors duration-300 font-sans" onclick="enableSound()">
     <div class="min-h-screen flex">
         <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 dark:bg-black/70 z-40 lg:hidden hidden backdrop-blur-sm transition-all duration-300">
         </div>
@@ -977,5 +977,21 @@
             });
         });
     </script>
+
+    <script>
+    let soundEnabled = false;
+
+    function enableSound() {
+        soundEnabled = true;
+
+        const audio = document.getElementById('notifSound');
+        if (audio) {
+            audio.play().then(() => {
+                audio.pause();
+                audio.currentTime = 0;
+            }).catch(() => {});
+        }
+    }
+</script>
 </body>
 </html>

@@ -140,4 +140,6 @@ Route::middleware(['auth'])->group(function () {
 
     Route::resource('jadwal_dokter', JadwalDokterController::class);
     Route::resource('jadwal_klinik', JadwalKlinikController::class);
+
+    Route::get('/cek-pasien-baru', [DashboardController::class, 'cekPasienBaru']);
 });

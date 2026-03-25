@@ -62,27 +62,35 @@
             </p>
         </div>
 
-        <!-- Total Jenis Obat -->
+        <!-- Pasien Aktif Saat Ini -->
         <div
             class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
             <div class="flex items-center justify-between mb-4">
                 <div class="p-3 bg-gradient-to-br from-green-500 to-green-600 rounded-xl">
-                    <i class="fa-solid fa-capsules text-white text-xl"></i>
+                    <i class="fa-solid fa-user-clock text-white text-xl"></i>
                 </div>
                 <span class="text-2xl font-bold text-gray-900 dark:text-white">
-
+                    {{ $pasienAktif }}
                 </span>
             </div>
             <h3 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
-                Menunggu Konsultasi
+                Pasien Aktif Saat Ini
             </h3>
-            <p class="text-xs text-green-600 flex items-center">
-                <i class="fas fa-arrow-up mr-1"></i>
-                Naik 12.5% dibading kemarin
+            <p
+                class="text-xs 
+                {{ $persenPerubahan >= 0 ? 'text-green-600' : 'text-red-600' }} 
+                flex items-center">
+
+                <i
+                    class="fas 
+                    {{ $persenPerubahan >= 0 ? 'fa-arrow-up' : 'fa-arrow-down' }} 
+                    mr-1"></i>
+
+                {{ abs(round($persenPerubahan, 1)) }}% dibanding kemarin
             </p>
         </div>
 
-        <!-- Jumlah Pasien Hari Ini -->
+        <!-- Rata-rata Waktu Pelayanan -->
         <div
             class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
             <div class="flex items-center justify-between mb-4">
@@ -90,15 +98,15 @@
                     <i class="fas fa-chart-line text-white text-xl"></i>
                 </div>
                 <span class="text-2xl font-bold text-gray-900 dark:text-white">
-                    {{ $jumlahKunjunganHariIni }}
+                    {{ $rataRataWaktu }} menit
                 </span>
             </div>
             <h3 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
-                Stok Obat
+                Rata-rata Waktu Pelayanan
             </h3>
             <p class="text-xs text-green-600 flex items-center">
                 <i class="fas fa-clock mr-1"></i>
-                Perlu restok
+                --
             </p>
         </div>
     </div>
@@ -141,68 +149,73 @@
                     </h3>
                 </div>
                 <div class="space-y-3">
-                    <!-- Activity 1 -->
-                    <div class="flex items-center space-x-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                        <div class="flex-shrink-0">
-                            <div
-                                class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white text-xs">
-                                <i class="fas fa-user-plus"></i>
-                            </div>
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <p class="text-sm font-medium text-gray-900 dark:text-white">
-                                Pasien baru terdaftar
-                            </p>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">
-                                "Agus Pratama" telah mendaftar sebagai pasien baru
-                            </p>
-                            <p class="text-xs text-green-600 dark:text-green-400 font-semibold">
-                                2 menit lalu
-                            </p>
-                        </div>
-                    </div>
+                    @forelse($aktivitas as $item)
+                        @php
+                            // mapping status ke tampilan
+                            $config = [
+                                'menunggu_konfirmasi' => [
+                                    'title' => 'Menunggu Konfirmasi',
+                                    'color' => 'yellow',
+                                    'icon' => 'fa-clock',
+                                ],
+                                'terdaftar' => [
+                                    'title' => 'Pasien Terdaftar',
+                                    'color' => 'green',
+                                    'icon' => 'fa-user-plus',
+                                ],
+                                'diperiksa' => [
+                                    'title' => 'Sedang Diperiksa',
+                                    'color' => 'blue',
+                                    'icon' => 'fa-stethoscope',
+                                ],
+                                'menunggu_obat' => [
+                                    'title' => 'Menunggu Obat',
+                                    'color' => 'purple',
+                                    'icon' => 'fa-pills',
+                                ],
+                                'selesai' => [
+                                    'title' => 'Selesai',
+                                    'color' => 'gray',
+                                    'icon' => 'fa-check',
+                                ],
+                            ];
 
-                    <!-- Activity 2 -->
-                    <div class="flex items-center space-x-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                        <div class="flex-shrink-0">
-                            <div
-                                class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white text-xs">
-                                <i class="fas fa-money-bill-wave"></i>
-                            </div>
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <p class="text-sm font-medium text-gray-900 dark:text-white">
-                                Obat berhasil diberikan
-                            </p>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">
-                                Paracetamol 500mg untuk pasien Andi diserahkan
-                            </p>
-                            <p class="text-xs text-green-600 dark:text-green-400 font-semibold">
-                                5 menit lalu
-                            </p>
-                        </div>
-                    </div>
+                            $c = $config[$item->status] ?? $config['menunggu_konfirmasi'];
+                        @endphp
 
-                    <!-- Activity 3 -->
-                    <div class="flex items-center space-x-3 p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
-                        <div class="flex-shrink-0">
-                            <div
-                                class="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center text-white text-xs">
-                                <i class="fas fa-exclamation-triangle"></i>
+                        <div
+                            class="flex items-center space-x-3 p-3 
+            bg-{{ $c['color'] }}-50 dark:bg-{{ $c['color'] }}-900/20 rounded-lg">
+
+                            <div class="flex-shrink-0">
+                                <div
+                                    class="w-8 h-8 bg-{{ $c['color'] }}-500 rounded-full flex items-center justify-center text-white text-xs">
+                                    <i class="fas {{ $c['icon'] }}"></i>
+                                </div>
+                            </div>
+
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-medium text-gray-900 dark:text-white">
+                                    {{ $c['title'] }}
+                                </p>
+
+                                <p class="text-xs text-gray-500 dark:text-gray-400">
+                                    "{{ $item->identity->name ?? '-' }}" sedang dalam proses
+                                    {{ str_replace('_', ' ', $item->status) }}
+                                </p>
+
+                                <p
+                                    class="text-xs text-{{ $c['color'] }}-600 dark:text-{{ $c['color'] }}-400 font-semibold">
+                                    {{ $item->updated_at->diffForHumans() }}
+                                </p>
                             </div>
                         </div>
-                        <div class="flex-1 min-w-0">
-                            <p class="text-sm font-medium text-gray-900 dark:text-white">
-                                Sistem maintenance
-                            </p>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">
-                                Backup otomatis telah selesai
-                            </p>
-                            <p class="text-xs text-yellow-600 dark:text-yellow-400 font-semibold">
-                                1 jam lalu
-                            </p>
-                        </div>
-                    </div>
+
+                    @empty
+                        <p class="text-sm text-gray-500 text-center">
+                            Belum ada aktivitas hari ini
+                        </p>
+                    @endforelse
                 </div>
             </div>
         </div>
@@ -331,7 +344,7 @@
             <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                        Kategori Pasien
+                        Kategori Pasien yang berobat
                     </h3>
                 </div>
                 <div class="space-y-3">
@@ -397,35 +410,6 @@
                             </div>
                         </div>
                     @endif
-                </div>
-            </div>
-
-            <!-- Quick Actions -->
-            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                    Tindakan Lainnya
-                </h3>
-                <div class="grid grid-cols-2 gap-3">
-                    <button onclick="exportReport()"
-                        class="flex flex-col items-center p-3 bg-green-50 dark:bg-green-900/20 hover:bg-green-100 dark:hover:bg-green-900/30 rounded-lg transition-colors duration-200">
-                        <i class="fas fa-download text-green-600 dark:text-green-400 text-lg mb-1"></i>
-                        <span class="text-xs font-medium text-green-700 dark:text-green-300">Export</span>
-                    </button>
-                    <button onclick="addMerchant()"
-                        class="flex flex-col items-center p-3 bg-green-50 dark:bg-green-900/20 hover:bg-green-100 dark:hover:bg-green-900/30 rounded-lg transition-colors duration-200">
-                        <i class="fas fa-plus text-green-600 dark:text-green-400 text-lg mb-1"></i>
-                        <span class="text-xs font-medium text-green-700 dark:text-green-300">Add User</span>
-                    </button>
-                    <button onclick="systemBackup()"
-                        class="flex flex-col items-center p-3 bg-purple-50 dark:bg-purple-900/20 hover:bg-purple-100 dark:hover:bg-purple-900/30 rounded-lg transition-colors duration-200">
-                        <i class="fas fa-database text-purple-600 dark:text-purple-400 text-lg mb-1"></i>
-                        <span class="text-xs font-medium text-purple-700 dark:text-purple-300">Backup</span>
-                    </button>
-                    <button onclick="systemSettings()"
-                        class="flex flex-col items-center p-3 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-lg transition-colors duration-200">
-                        <i class="fas fa-cog text-gray-600 dark:text-gray-400 text-lg mb-1"></i>
-                        <span class="text-xs font-medium text-gray-700 dark:text-gray-300">Settings</span>
-                    </button>
                 </div>
             </div>
         </div>
@@ -557,5 +541,9 @@
             }
 
         });
+
+        setInterval(() => {
+            location.reload();
+        }, 30000); // refresh tiap 30 detik
     </script>
 @endpush

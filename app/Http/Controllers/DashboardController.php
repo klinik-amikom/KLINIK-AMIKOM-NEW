@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\Pasien;
 use App\Models\RekamMedis;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
@@ -56,8 +57,8 @@ class DashboardController extends Controller
                                        // 5. Tentukan View berdasarkan role dari position
         $role  = auth()->user()->role; // Uses getRoleAttribute() from User model
 
-        // Statistik status pelayanan pasien (hari ini)
-        $statusHariIni = Pasien::select('status', DB::raw('count(*) as total'))
+        $statusHariIni = Pasien::select('status', DB::raw('COUNT(*) as total'))
+            ->whereDate('created_at', today()) // ✅ lebih clean
             ->groupBy('status')
             ->pluck('total', 'status')
             ->toArray();
@@ -68,34 +69,73 @@ class DashboardController extends Controller
         $totalMenungguObat       = $statusHariIni['menunggu_obat'] ?? 0;
         $totalSelesai            = $statusHariIni['selesai'] ?? 0;
 
+        // 🔥 Pasien Aktif Hari Ini (selain status selesai)
+        $pasienAktif = Pasien::whereDate('created_at', today())
+            ->where('status', '!=', 'selesai')
+            ->count();
+
+        // 🔥 Hari ini
+        $pasienAktifHariIni = Pasien::whereDate('created_at', today())
+            ->where('status', '!=', 'selesai')
+            ->count();
+
+        // 🔥 Kemarin
+        $pasienAktifKemarin = Pasien::whereDate('created_at', today()->subDay())
+            ->where('status', '!=', 'selesai')
+            ->count();
+
+        // 🔥 Hitung persentase
+        $persenPerubahan = 0;
+
+        if ($pasienAktifKemarin > 0) {
+            $persenPerubahan = (($pasienAktifHariIni - $pasienAktifKemarin) / $pasienAktifKemarin) * 100;
+        }
 
         $kunjunganHarian = RekamMedis::select(
-                DB::raw('DATE(tanggal_periksa) as tanggal'),
-                DB::raw('COUNT(*) as total')
-            )
+            DB::raw('DATE(tanggal_periksa) as tanggal'),
+            DB::raw('COUNT(*) as total')
+        )
             ->where('tanggal_periksa', '>=', now()->subDays(6))
             ->groupBy('tanggal')
             ->orderBy('tanggal')
             ->get();
-    
+
         $kunjunganMingguan = RekamMedis::select(
-                DB::raw('YEARWEEK(tanggal_periksa) as minggu'),
-                DB::raw('COUNT(*) as total')
-            )
+            DB::raw('YEARWEEK(tanggal_periksa) as minggu'),
+            DB::raw('COUNT(*) as total')
+        )
             ->groupBy('minggu')
             ->orderBy('minggu')
             ->limit(8)
             ->get();
 
         $kunjunganBulanan = RekamMedis::select(
-                DB::raw('DATE_FORMAT(tanggal_periksa, "%Y-%m") as bulan'),
-                DB::raw('COUNT(*) as total')
-            )
+            DB::raw('DATE_FORMAT(tanggal_periksa, "%Y-%m") as bulan'),
+            DB::raw('COUNT(*) as total')
+        )
             ->groupBy('bulan')
             ->orderBy('bulan')
             ->limit(12)
-            ->get(); 
+            ->get();
 
+        $rataWaktu = Pasien::whereDate('created_at', today())
+            ->where('status', 'selesai')
+            ->get()
+            ->map(function ($p) {
+                return Carbon::parse($p->created_at)
+                    ->diffInMinutes($p->updated_at);
+            });
+
+        $rataRataWaktu = $rataWaktu->count() > 0
+            ? round($rataWaktu->avg())
+            : 0;
+
+        // 🔥 Ambil aktivitas terbaru per status (hari ini)
+        $aktivitas = Pasien::with('identity')
+            ->whereDate('created_at', today())
+            ->latest()
+            ->take(10) // ambil 10 terbaru saja
+            ->get();
 
         // Pastikan view tersedia di folder: resources/views/{role}/dashboard/index.blade.php
         return view('.dashboard.index', compact(
@@ -112,9 +152,16 @@ class DashboardController extends Controller
             'totalDiperiksa',
             'totalMenungguObat',
             'totalSelesai',
+            'pasienAktif',
+            'pasienAktifHariIni',
+            'persenPerubahan',
             'kunjunganHarian',
             'kunjunganMingguan',
-            'kunjunganBulanan'
+            'kunjunganBulanan',
+            'rataRataWaktu',
+            'aktivitas',
         ));
     }
+
+    
 }
