@@ -42,6 +42,39 @@
                     class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 text-sm">
             </div>
         </div>
+
+        <div class="mb-4 flex flex-wrap items-end gap-2">
+
+            <!-- Dari -->
+            <div class="flex flex-col text-sm">
+                <label class="text-gray-500 dark:text-gray-400 text-xs mb-1">Dari</label>
+                <input type="date" id="start_date" value="{{ request('start_date') }}"
+                    class="px-2 py-1 border rounded-md text-sm w-36
+                   dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+            </div>
+
+            <!-- Sampai -->
+            <div class="flex flex-col text-sm">
+                <label class="text-gray-500 dark:text-gray-400 text-xs mb-1">Sampai</label>
+                <input type="date" id="end_date" value="{{ request('end_date') }}"
+                    class="px-2 py-1 border rounded-md text-sm w-36
+                   dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+            </div>
+
+            <!-- Button -->
+            <div class="flex gap-2">
+                <button onclick="filterTanggal()"
+                    class="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-sm rounded-md">
+                    Filter
+                </button>
+
+                <a href="{{ route('rekammedis.index') }}"
+                    class="px-3 py-1.5 bg-gray-400 hover:bg-gray-500 text-white text-sm rounded-md">
+                    Reset
+                </a>
+            </div>
+
+        </div>
     </div>
 
     {{-- ================= TABLE ================= --}}
@@ -364,7 +397,44 @@
             function closeExportModal() {
                 document.getElementById('export-modal').classList.add('hidden');
             }
+
+            function filterTanggal() {
+                let start = document.getElementById('start_date').value;
+                let end = document.getElementById('end_date').value;
+
+                // ✅ VALIDASI
+                if (start && end && start > end) {
+                    alert('Tanggal mulai tidak boleh lebih besar dari tanggal akhir');
+                    return;
+                }
+
+                let url = new URL(window.location.href);
+
+                // 🔄 RESET PAGINATION
+                url.searchParams.delete('page');
+
+                // 📅 START DATE
+                if (start) {
+                    url.searchParams.set('start_date', start);
+                } else {
+                    url.searchParams.delete('start_date');
+                }
+
+                // 📅 END DATE
+                if (end) {
+                    url.searchParams.set('end_date', end);
+                } else {
+                    url.searchParams.delete('end_date');
+                }
+
+                // 🚀 REDIRECT
+                window.location.href = url.toString();
+            }
+
+            // ✅ AUTO FILTER SAAT PILIH
+            document.addEventListener('DOMContentLoaded', function() {
+                document.getElementById('start_date').addEventListener('change', filterTanggal);
+                document.getElementById('end_date').addEventListener('change', filterTanggal);
+            });
         </script>
-
-
     @endsection

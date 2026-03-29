@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\RekamMedis;
@@ -6,23 +7,56 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\RekamMedisExport;
+use Carbon\Carbon;
 
 class RekamMedisController extends Controller
 {
     public function index(Request $request)
     {
-        $pencarian = $request->query('cari');
+        $search = $request->cari;
+
+        // ✅ FORMAT TANGGAL (BIAR AMAN)
+        $start = $request->start_date
+            ? Carbon::parse($request->start_date)->format('Y-m-d')
+            : null;
+
+        $end = $request->end_date
+            ? Carbon::parse($request->end_date)->format('Y-m-d')
+            : null;
 
         $dataRekamMedis = RekamMedis::with(['pasien.identity', 'dokter', 'resepObat.obat'])
-            ->when($pencarian, function ($query, $pencarian) {
-                $query->where('kode_rekam_medis', 'like', "%$pencarian%")
-                    ->orWhereHas('pasien', function ($q) use ($pencarian) {
-                        $q->where('nama_pasien', 'like', "%$pencarian%");
-                    })
-                    ->orWhere('diagnosis', 'like', "%$pencarian%");
+
+            // 🔍 SEARCH (WAJIB DI GROUPING)
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('kode_rekam_medis', 'like', "%{$search}%")
+                        ->orWhereHas('pasien.identity', function ($q2) use ($search) {
+                            $q2->where('name', 'like', "%{$search}%")
+                                ->orWhere('identity_number', 'like', "%{$search}%");
+                        })
+                        ->orWhere('diagnosis', 'like', "%{$search}%");
+                });
             })
+
+            // 📅 FILTER TANGGAL (FIX TOTAL)
+            ->when($start && $end, function ($query) use ($start, $end) {
+                $query->whereBetween('tanggal_periksa', [$start, $end]);
+            })
+
+            ->when($start && !$end, function ($query) use ($start) {
+                $query->whereDate('tanggal_periksa', '>=', $start);
+            })
+
+            ->when(!$start && $end, function ($query) use ($end) {
+                $query->whereDate('tanggal_periksa', '<=', $end);
+            })
+
+            // 🔽 URUTKAN
             ->orderBy('tanggal_periksa', 'desc')
-            ->get();
+
+            // ✅ PAKAI PAGINATION BIAR SAMA KAYAK PASIEN
+            ->paginate(10)
+            ->withQueryString();
 
         return view('rekam_medis.index', compact('dataRekamMedis'));
     }
@@ -147,15 +181,15 @@ class RekamMedisController extends Controller
         $mulai = $request->tanggal_mulai;
         $selesai = $request->tanggal_selesai;
 
-        $rekamMedis = RekamMedis::with(['pasien.identity','dokter','resepObat.obat'])
+        $rekamMedis = RekamMedis::with(['pasien.identity', 'dokter', 'resepObat.obat'])
             ->when($mulai && $selesai, function ($query) use ($mulai, $selesai) {
                 $query->whereBetween('tanggal_periksa', [$mulai, $selesai]);
             })
-            ->orderBy('tanggal_periksa','desc')
+            ->orderBy('tanggal_periksa', 'desc')
             ->get();
 
-        $pdf = Pdf::loadView('rekam_medis.report_pdf', compact('rekamMedis','mulai','selesai'))
-            ->setPaper('a4','landscape');
+        $pdf = Pdf::loadView('rekam_medis.report_pdf', compact('rekamMedis', 'mulai', 'selesai'))
+            ->setPaper('a4', 'landscape');
 
         return $pdf->download('rekam_medis.pdf');
     }
@@ -165,7 +199,7 @@ class RekamMedisController extends Controller
         $mulai = $request->tanggal_mulai;
         $selesai = $request->tanggal_selesai;
 
-        $data = RekamMedis::with(['pasien.identity','dokter','resepObat.obat'])
+        $data = RekamMedis::with(['pasien.identity', 'dokter', 'resepObat.obat'])
             ->when($mulai && $selesai, function ($query) use ($mulai, $selesai) {
                 $query->whereBetween('tanggal_periksa', [$mulai, $selesai]);
             })
@@ -173,5 +207,4 @@ class RekamMedisController extends Controller
 
         return Excel::download(new RekamMedisExport($data), 'rekam_medis.xlsx');
     }
-
 }

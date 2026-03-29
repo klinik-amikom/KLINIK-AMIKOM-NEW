@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\MasterIdentity;
@@ -17,15 +18,39 @@ class PasienController extends Controller
     public function index(Request $request)
     {
         $search = $request->search;
+        $start  = $request->start_date;
+        $end    = $request->end_date;
 
         $data = Pasien::with('identity')
+
+            // 🔍 SEARCH
             ->when($search, function ($query) use ($search) {
-                $query->where('kode_pasien', 'like', "%$search%")
-                    ->orWhereHas('identity', function ($q) use ($search) {
-                        $q->where('name', 'like', "%$search%")
-                            ->orWhere('identity_number', 'like', "%$search%");
-                    });
+                $query->where(function ($q) use ($search) {
+                    $q->where('kode_pasien', 'like', "%{$search}%")
+                        ->orWhereHas('identity', function ($q2) use ($search) {
+                            $q2->where('name', 'like', "%{$search}%")
+                                ->orWhere('identity_number', 'like', "%{$search}%");
+                        });
+                });
             })
+
+            // 📅 FILTER TANGGAL (FIX TOTAL)
+            ->when($start && $end, function ($query) use ($start, $end) {
+                $query->whereDate('visit_date', '>=', $start)
+                    ->whereDate('visit_date', '<=', $end);
+            })
+
+            ->when($start && !$end, function ($query) use ($start) {
+                $query->whereDate('visit_date', '>=', $start);
+            })
+
+            ->when(!$start && $end, function ($query) use ($end) {
+                $query->whereDate('visit_date', '<=', $end);
+            })
+
+            // 🔽 SORT
+            ->orderBy('visit_date', 'desc')
+
             ->paginate(10)
             ->withQueryString();
 
@@ -53,13 +78,13 @@ class PasienController extends Controller
         }
 
         // 🔢 Generate kode pasien
-        $lastPasien = Pasien::orderBy('id','desc')->first();
+        $lastPasien = Pasien::orderBy('id', 'desc')->first();
 
         $newNumber = ($lastPasien && $lastPasien->kode_pasien)
-            ? (int) substr($lastPasien->kode_pasien,1) + 1
+            ? (int) substr($lastPasien->kode_pasien, 1) + 1
             : 1;
 
-        $kodePasien = 'P' . str_pad($newNumber,3,'0',STR_PAD_LEFT);
+        $kodePasien = 'P' . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
 
         // 🔢 Tentukan tanggal kunjungan (default hari ini)
         $tanggalKunjungan = Carbon::today();
@@ -117,7 +142,7 @@ class PasienController extends Controller
             ->where('poli', $request->poli)
             ->count() + 1;
 
-        $noAntrian = $prefix . '-' . str_pad($jumlah,3,'0',STR_PAD_LEFT);
+        $noAntrian = $prefix . '-' . str_pad($jumlah, 3, '0', STR_PAD_LEFT);
 
         // 💾 Simpan pasien
         $pasien = Pasien::create([
@@ -143,14 +168,14 @@ class PasienController extends Controller
 
             return redirect()
                 ->route($role . '.pasien.index')
-                ->with('success','Pasien berhasil ditambahkan.');
+                ->with('success', 'Pasien berhasil ditambahkan.');
         }
 
         // 🌐 Publik
         return redirect()
             ->route('pasien.form')
-            ->with('success','Pendaftaran berhasil')
-            ->with('pasien_id',$pasien->id);
+            ->with('success', 'Pendaftaran berhasil')
+            ->with('pasien_id', $pasien->id);
     }
 
     public function destroy($id)
@@ -226,7 +251,7 @@ class PasienController extends Controller
             'data'   => $identity,
         ]);
     }
-    
+
     public function downloadPDF($id)
     {
         $pasien = Pasien::with('identity')->findOrFail($id);

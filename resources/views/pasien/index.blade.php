@@ -90,9 +90,42 @@
             <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <i class="fas fa-search text-gray-400"></i>
             </span>
-            <input type="text" id="pasien-search" placeholder="Cari nama, kode, atau No. Identitas..."
+            <input type="text" id="pasien-search" placeholder="Cari nama, kode, atau No. Identitas.dsfdsfsdf.."
                 class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-purple-500 focus:border-purple-500 text-sm">
         </div>
+    </div>
+
+    <div class="mb-4 flex flex-wrap items-end gap-2">
+
+        <!-- Dari -->
+        <div class="flex flex-col text-sm">
+            <label class="text-gray-500 dark:text-gray-400 text-xs mb-1">Dari</label>
+            <input type="date" id="start_date" value="{{ request('start_date') }}"
+                class="px-2 py-1 border rounded-md text-sm w-36
+                   dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+        </div>
+
+        <!-- Sampai -->
+        <div class="flex flex-col text-sm">
+            <label class="text-gray-500 dark:text-gray-400 text-xs mb-1">Sampai</label>
+            <input type="date" id="end_date" value="{{ request('end_date') }}"
+                class="px-2 py-1 border rounded-md text-sm w-36
+                   dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+        </div>
+
+        <!-- Button -->
+        <div class="flex gap-2">
+            <button onclick="filterTanggal()"
+                class="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-sm rounded-md">
+                Filter
+            </button>
+
+            <a href="{{ route($prefix . '.pasien.index') }}"
+                class="px-3 py-1.5 bg-gray-400 hover:bg-gray-500 text-white text-sm rounded-md">
+                Reset
+            </a>
+        </div>
+
     </div>
 
     <div class="bg-white dark:bg-gray-800 shadow-sm rounded-xl border border-gray-200 dark:border-gray-700">
@@ -226,8 +259,8 @@
 
                                     {{-- ADMIN ONLY --}}
                                     @if (auth()->user()->isAdmin())
-                                        <form action="{{ route($prefix . '.pasien.destroy', $pasien->id) }}" method="POST"
-                                            class="inline" onsubmit="return confirm('Hapus data ini?')">
+                                        <form action="{{ route($prefix . '.pasien.destroy', $pasien->id) }}"
+                                            method="POST" class="inline" onsubmit="return confirm('Hapus data ini?')">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="text-red-600 hover:text-red-900">
@@ -519,6 +552,46 @@
 
                 });
 
+            });
+
+            function formatTanggal(tanggal) {
+                return tanggal.replaceAll('/', '-');
+            }
+
+            function filterTanggal() {
+                let start = document.getElementById('start_date').value;
+                let end = document.getElementById('end_date').value;
+
+                if (start) start = formatTanggal(start);
+                if (end) end = formatTanggal(end);
+
+                if (start && end && start > end) {
+                    alert('Tanggal mulai tidak boleh lebih besar dari tanggal akhir');
+                    return;
+                }
+
+                let url = new URL(window.location.href);
+
+                url.searchParams.delete('page');
+
+                if (start) {
+                    url.searchParams.set('start_date', start);
+                } else {
+                    url.searchParams.delete('start_date');
+                }
+
+                if (end) {
+                    url.searchParams.set('end_date', end);
+                } else {
+                    url.searchParams.delete('end_date');
+                }
+
+                window.location.href = url.toString();
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                document.getElementById('start_date').addEventListener('change', filterTanggal);
+                document.getElementById('end_date').addEventListener('change', filterTanggal);
             });
         </script>
     @endsection
