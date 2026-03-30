@@ -233,7 +233,7 @@
                             <div class="step-info">
                                 <span class="step-number" style="color: #e3a127">Langkah 03</span>
                                 <h3>Tunggu Konfirmasi</h3>
-                                <p>Setelah pendaftaran, Anda akan menerima konfirmasi dan nomor antrian dari pihak
+                                <p>Setelah pendaftaran, Anda akan menerima konfirmasi dan nomor antrian beserta estimasi waktu kedatangan dari pihak
                                     klinik melalui email.</p>
                             </div>
                         </div>
@@ -348,147 +348,6 @@
             </table>
         </section>
 
-        <!-- Testimonials Section -->
-        <section id="testimonials" class="testimonials section light-background">
-
-            <!-- Section Title -->
-            <div class="container section-title" data-aos="fade-up">
-                <h2>Testimoni</h2>
-                <div><span>Testimoni</span> <span class="description-title">Klinik Amikom</span></div>
-            </div><!-- End Section Title -->
-
-            <div class="container" data-aos="fade-up" data-aos-delay="100">
-
-                <div class="testimonials-slider swiper init-swiper">
-                    <script type="application/json" class="swiper-config">
-            {
-              "slidesPerView": 1,
-              "loop": true,
-              "speed": 600,
-              "autoplay": {
-                "delay": 5000
-              },
-              "navigation": {
-                "nextEl": ".swiper-button-next",
-                "prevEl": ".swiper-button-prev"
-              }
-            }
-          </script>
-
-                    <div class="swiper-wrapper">
-
-                        <div class="swiper-slide">
-                            <div class="testimonial-item">
-                                <div class="row">
-                                    <div class="col-lg-8">
-                                        <h2>Pelayanan Ramah dan Cepat</h2>
-                                        <p style="text-align: justify;">
-                                            Saya datang ke Klinik Amikom saat sedang merasa tidak enak badan di tengah
-                                            padatnya jadwal kuliah. Ternyata proses pendaftarannya sangat cepat, dan
-                                            dokter serta perawatnya ramah sekali. Saya merasa sangat terbantu.
-                                        </p>
-                                        <p style="text-align: justify;">
-                                            Obat yang diberikan pun efektif, dan penjelasan dari dokter sangat mudah
-                                            dipahami. Klinik ini sangat cocok untuk mahasiswa seperti saya yang butuh
-                                            pelayanan cepat dan nyaman.
-                                        </p>
-                                        <div class="profile d-flex align-items-center">
-                                            <img src="{{ asset('landingpage') }}/img/person/person-m-7.webp"
-                                                class="profile-img" alt="">
-                                            <div class="profile-info">
-                                                <h3>Rizky Santosa</h3>
-                                                <span style="color: #e3a127">Mahasiswa</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4 d-none d-lg-block">
-                                        <div class="featured-img-wrapper">
-                                            <img src="{{ asset('landingpage') }}/img/person/person-m-7.webp"
-                                                class="featured-img" alt="">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div><!-- End Testimonial Item -->
-
-                        <div class="swiper-slide">
-                            <div class="testimonial-item">
-                                <div class="row">
-                                    <div class="col-lg-8">
-                                        <h2>Tenaga Medis Profesional dan Informatif</h2>
-                                        <p style="text-align: justify;">
-                                            Sebagai dosen, saya menghargai kejelasan informasi dalam proses pengobatan.
-                                            Saat berobat ke Klinik Amikom, saya merasa dilayani dengan sangat
-                                            profesional. Diagnosa disampaikan dengan rinci, dan saya diberi beberapa
-                                            opsi pengobatan yang sesuai.
-                                        </p>
-                                        <p style="text-align: justify;">
-                                            Fasilitas kliniknya bersih dan tertata dengan baik. Ini menjadi contoh
-                                            pelayanan kesehatan kampus yang ideal.
-                                        </p>
-                                        <div class="profile d-flex align-items-center">
-                                            <img src="{{ asset('landingpage') }}/img/person/person-f-8.webp"
-                                                class="profile-img" alt="">
-                                            <div class="profile-info">
-                                                <h3>Dr. Alya Nurhaliza</h3>
-                                                <span style="color: #e3a127">Dosen</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4 d-none d-lg-block">
-                                        <div class="featured-img-wrapper">
-                                            <img src="{{ asset('landingpage') }}/img/person/person-f-8.webp"
-                                                class="featured-img" alt="">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div><!-- End Testimonial Item -->
-
-                        <div class="swiper-slide">
-                            <div class="testimonial-item">
-                                <div class="row">
-                                    <div class="col-lg-8">
-                                        <h2>
-                                            Solusi Kesehatan yang Praktis dan Efisien
-                                        </h2>
-                                        <p style="text-align: justify;">
-                                            Saya bekerja di lingkungan kampus dan sering tidak punya banyak waktu untuk
-                                            ke luar kampus hanya untuk periksa. Untungnya, Klinik Amikom sangat
-                                            membantu. Pelayanannya efisien, antrian tidak lama, dan obat bisa langsung
-                                            diambil setelah konsultasi.
-                                        </p>
-                                        <p style="text-align: justify;">
-                                            Sangat direkomendasikan untuk rekan-rekan karyawan yang ingin pemeriksaan
-                                            rutin tanpa mengganggu jam kerja.
-                                        </p>
-                                        <div class="profile d-flex align-items-center">
-                                            <img src="{{ asset('landingpage') }}/img/person/person-m-9.webp"
-                                                class="profile-img" alt="">
-                                            <div class="profile-info">
-                                                <h3>Andi Prasetyo</h3>
-                                                <span style="color: #e3a127">Karyawan</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4 d-none d-lg-block">
-                                        <div class="featured-img-wrapper">
-                                            <img src="{{ asset('landingpage') }}/img/person/person-m-9.webp"
-                                                class="featured-img" alt="">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div><!-- End Testimonial Item -->
-                    </div>
-                    <div class="swiper-navigation w-100 d-flex align-items-center justify-content-center">
-                        <div class="swiper-button-prev"></div>
-                        <div class="swiper-button-next"></div>
-                    </div>
-                </div>
-            </div>
-        </section><!-- /Testimonials Section -->
-
         <!-- Team Section -->
         <section id="team" class="team section light-background">
 
@@ -546,72 +405,6 @@
                             </div>
                         </div>
                     </div><!-- End Team Member -->
-
-                    <div class="col-lg-6" data-aos="fade-up" data-aos-delay="300">
-                        <div class="team-member d-flex">
-                            <div class="member-img">
-                                <img src="{{ asset('landingpage') }}/img/person/person-m-6.webp" class="img-fluid"
-                                    alt="" loading="lazy">
-                            </div>
-                            <div class="member-info flex-grow-1">
-                                <h4 style="color: #e3a127">William Anderson, S.Farm., Apt</h4>
-                                <span>Apoteker Klinik</span>
-                                <p style="text-align: justify;">Mengelola penyediaan obat, meracik resep dokter, dan
-                                    memberikan informasi penggunaan
-                                    obat kepada pasien dengan aman dan tepat.</p>
-                                <div class="social">
-                                    <a href=""><i class="bi bi-facebook"></i></a>
-                                    <a href=""><i class="bi bi-twitter-x"></i></a>
-                                    <a href=""><i class="bi bi-linkedin"></i></a>
-                                    <a href=""><i class="bi bi-youtube"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div><!-- End Team Member -->
-
-                    <div class="col-lg-6" data-aos="fade-up" data-aos-delay="400">
-                        <div class="team-member d-flex">
-                            <div class="member-img">
-                                <img src="{{ asset('landingpage') }}/img/person/person-f-4.webp" class="img-fluid"
-                                    alt="" loading="lazy">
-                            </div>
-                            <div class="member-info flex-grow-1">
-                                <h4 style="color: #e3a127">Amanda Jepson</h4>
-                                <span>Administrator Klinik</span>
-                                <p style="text-align: justify;">Mengatur jadwal pelayanan, mencatat data pasien, dan
-                                    memastikan proses administratif
-                                    berjalan lancar dan efisien.</p>
-                                <div class="social">
-                                    <a href=""><i class="bi bi-facebook"></i></a>
-                                    <a href=""><i class="bi bi-twitter-x"></i></a>
-                                    <a href=""><i class="bi bi-linkedin"></i></a>
-                                    <a href=""><i class="bi bi-youtube"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div><!-- End Team Member -->
-
-                    <div class="col-lg-6" data-aos="fade-up" data-aos-delay="500">
-                        <div class="team-member d-flex">
-                            <div class="member-img">
-                                <img src="{{ asset('landingpage') }}/img/person/person-m-12.webp" class="img-fluid"
-                                    alt="" loading="lazy">
-                            </div>
-                            <div class="member-info flex-grow-1">
-                                <h4 style="color: #e3a127">dr. Brian Doe</h4>
-                                <span>Kepala Klinik Amikom</span>
-                                <p style="text-align: justify;">Bertanggung jawab atas pengawasan dan manajemen
-                                    keseluruhan layanan klinik,
-                                    memastikan kualitas dan kenyamanan pelayanan kesehatan.</p>
-                                <div class="social">
-                                    <a href=""><i class="bi bi-facebook"></i></a>
-                                    <a href=""><i class="bi bi-twitter-x"></i></a>
-                                    <a href=""><i class="bi bi-linkedin"></i></a>
-                                    <a href=""><i class="bi bi-youtube"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div><!-- End Team Member -->
                 </div>
             </div>
         </section><!-- /Team Section -->
@@ -636,7 +429,7 @@
                             </div>
                             <div class="info-content">
                                 <h4>Alamat Kami</h4>
-                                <p>Universitas Amikom Yogyakarta</p>
+                                <p>Jl. Ring Road Utara, Ngringin, Condongcatur, Kec. Depok, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55281</p>
                             </div>
                         </div>
                     </div>
@@ -648,7 +441,7 @@
                             </div>
                             <div class="info-content">
                                 <h4>Email</h4>
-                                <p>klinikamikom@example.com</p>
+                                <p>klinikamikom@gmail.com</p>
                             </div>
                         </div>
                     </div>
@@ -733,9 +526,9 @@
 
                 <div class="col-lg-3 col-md-12 footer-contact text-center text-md-start">
                     <h4>Kontak Kami</h4>
-                    <p>Jl. Ring Road Utara, Condong Catur, Sleman, Yogyakarta</p>
+                    <p>Jl. Ring Road Utara, Ngringin, Condongcatur, Kec. Depok, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55281</p>
                     <p class="mt-4"><strong>No.Telp:</strong> <span>+62 87890876543</span></p>
-                    <p><strong>Email:</strong> <span>klinikamikom@example.com</span></p>
+                    <p><strong>Email:</strong> <span>klinikamikom@gmail.com</span></p>
                 </div>
 
             </div>

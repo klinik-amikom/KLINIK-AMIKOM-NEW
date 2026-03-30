@@ -137,6 +137,44 @@ class DashboardController extends Controller
             ->take(10) // ambil 10 terbaru saja
             ->get();
 
+        // ===============================
+        // 🔥 KUNJUNGAN HARI INI VS KEMARIN
+        // ===============================
+        $kunjunganHariIni = RekamMedis::whereDate('tanggal_periksa', today())->count();
+        $kunjunganKemarin = RekamMedis::whereDate('tanggal_periksa', today()->subDay())->count();
+
+        $persenKunjungan = 0;
+        if ($kunjunganKemarin > 0) {
+            $persenKunjungan = (($kunjunganHariIni - $kunjunganKemarin) / $kunjunganKemarin) * 100;
+        }
+
+        // ===============================
+        // 🔥 RATA-RATA WAKTU HARI INI
+        // ===============================
+        $rataHariIni = Pasien::whereDate('created_at', today())
+            ->where('status', 'selesai')
+            ->get()
+            ->map(fn($p) => Carbon::parse($p->created_at)->diffInMinutes($p->updated_at));
+
+        // ===============================
+        // 🔥 RATA-RATA WAKTU KEMARIN
+        // ===============================
+        $rataKemarin = Pasien::whereDate('created_at', today()->subDay())
+            ->where('status', 'selesai')
+            ->get()
+            ->map(fn($p) => Carbon::parse($p->created_at)->diffInMinutes($p->updated_at));
+
+        $rataRataHariIni = $rataHariIni->count() ? round($rataHariIni->avg()) : 0;
+        $rataRataKemarin = $rataKemarin->count() ? round($rataKemarin->avg()) : 0;
+
+        // ===============================
+        // 🔥 PERSEN PERUBAHAN WAKTU
+        // ===============================
+        $persenWaktu = 0;
+        if ($rataRataKemarin > 0) {
+            $persenWaktu = (($rataRataHariIni - $rataRataKemarin) / $rataRataKemarin) * 100;
+        }
+
         // Pastikan view tersedia di folder: resources/views/{role}/dashboard/index.blade.php
         return view('.dashboard.index', compact(
             'rekamMedisData',
@@ -160,6 +198,10 @@ class DashboardController extends Controller
             'kunjunganBulanan',
             'rataRataWaktu',
             'aktivitas',
+            'kunjunganHariIni',
+            'persenKunjungan',
+            'rataRataHariIni',
+            'persenWaktu',
         ));
     }
 

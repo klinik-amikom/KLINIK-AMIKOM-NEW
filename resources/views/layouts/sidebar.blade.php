@@ -102,6 +102,7 @@
             </a>
         @endif
 
+        @if (auth()->user()->position_id == 1)
         <div x-data="{ open: {{ Request::routeIs('jadwal_dokter.*') || Request::routeIs('jadwal_klinik.*') ? 'true' : 'false' }} }" class="w-full">
 
             <button @click="open = !open"
@@ -144,6 +145,7 @@
             </div>
 
         </div>
+        @endif
 
         <!-- Divider -->
         <div class="border-t border-gray-200 dark:border-gray-700 my-4"></div>

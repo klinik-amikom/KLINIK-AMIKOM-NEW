@@ -51,15 +51,22 @@
                     <i class="fas fa-user-shield text-white text-xl"></i> {{-- Mengubah ikon --}}
                 </div>
                 <span class="text-2xl font-bold text-gray-900 dark:text-white">
-                    {{ $jumlahKunjunganHariIni }}
+                    {{ $kunjunganHariIni }}
                 </span>
             </div>
             <h3 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
                 Jumlah Kunjungan Pasien Hari Ini {{-- Mengubah teks judul --}}
             </h3>
-            <p class="text-xs text-gray-500 dark:text-gray-400">
-                Pasien hari ini
-            </p>
+<p class="text-xs 
+    {{ $persenKunjungan >= 0 ? 'text-green-600' : 'text-red-600' }} 
+    flex items-center">
+
+    <i class="fas 
+        {{ $persenKunjungan >= 0 ? 'fa-arrow-up' : 'fa-arrow-down' }} 
+        mr-1"></i>
+
+    {{ abs(round($persenKunjungan,1)) }}% dibanding kemarin
+</p>
         </div>
 
         <!-- Pasien Aktif Saat Ini -->
@@ -98,15 +105,21 @@
                     <i class="fas fa-chart-line text-white text-xl"></i>
                 </div>
                 <span class="text-2xl font-bold text-gray-900 dark:text-white">
-                    {{ $rataRataWaktu }} menit
+                    {{ $rataRataHariIni }} menit
                 </span>
             </div>
             <h3 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
                 Rata-rata Waktu Pelayanan
             </h3>
-            <p class="text-xs text-green-600 flex items-center">
-                <i class="fas fa-clock mr-1"></i>
-                --
+            <p class="text-xs 
+                {{ $persenWaktu <= 0 ? 'text-green-600' : 'text-red-600' }} 
+                flex items-center">
+
+                <i class="fas 
+                    {{ $persenWaktu <= 0 ? 'fa-arrow-down' : 'fa-arrow-up' }} 
+                    mr-1"></i>
+
+                {{ abs(round($persenWaktu,1)) }}% dibanding kemarin
             </p>
         </div>
     </div>

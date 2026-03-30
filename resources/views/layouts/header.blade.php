@@ -74,45 +74,6 @@
                                 </p>
                             </div>
                         </div>
-                        
-                        <!-- Quick Stats in Dropdown -->
-                        <div class="grid grid-cols-2 gap-2 text-xs">
-                            <div class="bg-green-50 dark:bg-green-900/20 p-2 rounded-lg">
-                                <div class="text-green-600 dark:text-green-400 font-semibold">Total Merchant</div>
-                                <div class="text-gray-900 dark:text-white font-bold">127</div>
-                            </div>
-                            <div class="bg-green-50 dark:bg-green-900/20 p-2 rounded-lg">
-                                <div class="text-green-600 dark:text-green-400 font-semibold">Transaksi Hari Ini</div>
-                                <div class="text-gray-900 dark:text-white font-bold">856</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Menu Items -->
-                    <div class="py-1">
-                        <a href="#" 
-                           class="dropdown-item flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white transition-colors duration-200">
-                            <i class="fas fa-user-shield mr-3 text-gray-400 dark:text-gray-500"></i>
-                            Profil Admin
-                        </a>
-                        
-                        <a href="#" 
-                           class="dropdown-item flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white transition-colors duration-200">
-                            <i class="fas fa-cog mr-3 text-gray-400 dark:text-gray-500"></i>
-                            Pengaturan Sistem
-                        </a>
-
-                        <a href="#" 
-                           class="dropdown-item flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white transition-colors duration-200">
-                            <i class="fas fa-chart-line mr-3 text-gray-400 dark:text-gray-500"></i>
-                            Laporan Sistem
-                        </a>
-
-                        <a href="#" 
-                           class="dropdown-item flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white transition-colors duration-200">
-                            <i class="fas fa-shield-alt mr-3 text-gray-400 dark:text-gray-500"></i>
-                            Audit Log
-                        </a>
                     </div>
 
                     <!-- Divider -->

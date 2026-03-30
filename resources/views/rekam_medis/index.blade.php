@@ -43,14 +43,14 @@
             </div>
         </div>
 
-        <div class="mb-4 flex flex-wrap items-end gap-2">
+        <div class="mb-4 flex flex-wrap items-end gap-3">
 
             <!-- Dari -->
             <div class="flex flex-col text-sm">
                 <label class="text-gray-500 dark:text-gray-400 text-xs mb-1">Dari</label>
                 <input type="date" id="start_date" value="{{ request('start_date') }}"
                     class="px-2 py-1 border rounded-md text-sm w-36
-                   dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    dark:bg-gray-700 dark:border-gray-600 dark:text-white">
             </div>
 
             <!-- Sampai -->
@@ -58,10 +58,37 @@
                 <label class="text-gray-500 dark:text-gray-400 text-xs mb-1">Sampai</label>
                 <input type="date" id="end_date" value="{{ request('end_date') }}"
                     class="px-2 py-1 border rounded-md text-sm w-36
-                   dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    dark:bg-gray-700 dark:border-gray-600 dark:text-white">
             </div>
 
-            <!-- Button -->
+            <!-- STATUS -->
+            <div class="flex flex-col text-sm">
+                <label class="text-gray-500 dark:text-gray-400 text-xs mb-1">Status</label>
+                <select id="status_filter" name="status"
+                    class="px-3 py-1.5 border rounded-md text-sm w-48
+                    dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+
+                    <option value="">Semua</option>
+
+                    <option value="menunggu_pemeriksaan" {{ request('status') == 'menunggu_pemeriksaan' ? 'selected' : '' }}>
+                        Menunggu Pemeriksaan
+                    </option>
+
+                    <option value="diperiksa" {{ request('status') == 'diperiksa' ? 'selected' : '' }}>
+                        Sedang Diperiksa
+                    </option>
+
+                    <option value="menunggu_obat" {{ request('status') == 'menunggu_obat' ? 'selected' : '' }}>
+                        Menunggu Obat
+                    </option>
+
+                    <option value="selesai" {{ request('status') == 'selesai' ? 'selected' : '' }}>
+                        Selesai
+                    </option>
+                </select>
+            </div>
+
+            <!-- BUTTON -->
             <div class="flex gap-2">
                 <button onclick="filterTanggal()"
                     class="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-sm rounded-md">
@@ -74,34 +101,6 @@
                 </a>
             </div>
 
-        </div>
-
-        <!-- STATUS -->
-        <div class="flex flex-col text-sm">
-            <label class="text-gray-500 dark:text-gray-400 text-xs mb-1">Status</label>
-            <select id="status_filter" name="status"
-                class="px-3 py-2 border rounded-md text-sm w-60
-    dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-
-                <option value="">Semua</option>
-
-                <option value="menunggu_pemeriksaan" {{ request('status') == 'menunggu_pemeriksaan' ? 'selected' : '' }}>
-                    Menunggu Pemeriksaan
-                </option>
-
-                <option value="diperiksa" {{ request('status') == 'diperiksa' ? 'selected' : '' }}>
-                    Sedang Diperiksa
-                </option>
-
-                <option value="menunggu_obat" {{ request('status') == 'menunggu_obat' ? 'selected' : '' }}>
-                    Menunggu Obat
-                </option>
-
-                <option value="selesai" {{ request('status') == 'selesai' ? 'selected' : '' }}>
-                    Selesai
-                </option>
-            </select>
-            </select>
         </div>
     </div>
 

@@ -31,10 +31,12 @@
                 obat.</p>
         </div>
         <div class="w-full sm:w-auto">
-            <button onclick="openCreateObatModal()"
-                class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg shadow-sm transition-colors duration-200">
-                <i class="fas fa-plus mr-2"></i> Tambah Obat
-            </button>
+            @if(auth()->user()->isApoteker())
+                <button onclick="openCreateObatModal()"
+                    class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg shadow-sm transition-colors duration-200">
+                    <i class="fas fa-plus mr-2"></i> Tambah Obat
+                </button>
+            @endif
         </div>
     </div>
 
@@ -62,7 +64,9 @@
                         <th class="px-6 py-4">Stok</th>
                         <th class="px-6 py-4">Deskripsi</th>
                         <th class="px-6 py-4">Kadaluarsa</th>
-                        <th class="px-6 py-4 text-right">Aksi</th>
+                        @if(auth()->user()->isApoteker())
+                            <th class="px-6 py-4 text-right">Aksi</th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
@@ -90,18 +94,22 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4 text-right space-x-3">
-                                <button onclick="editObat({{ json_encode($obat) }})"
-                                    class="text-purple-600 hover:text-purple-900">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <form action="{{ route('admin.obat.destroy', $obat->id) }}" method="POST"
-                                    class="inline shadow-none m-0" onsubmit="return confirm('Hapus data obat ini?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="text-red-600 hover:text-red-900">
-                                        <i class="fas fa-trash"></i>
+                                @if(auth()->user()->isApoteker())
+                                    <button onclick="editObat({{ json_encode($obat) }})"
+                                        class="text-purple-600 hover:text-purple-900">
+                                        <i class="fas fa-edit"></i>
                                     </button>
-                                </form>
+
+                                    <form action="{{ route('admin.obat.destroy', $obat->id) }}" method="POST"
+                                        class="inline shadow-none m-0"
+                                        onsubmit="return confirm('Hapus data obat ini?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-red-600 hover:text-red-900">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                @endif
                             </td>
                         </tr>
 
