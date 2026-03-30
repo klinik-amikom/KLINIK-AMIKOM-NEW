@@ -24,6 +24,7 @@ class RekamMedisExport implements FromCollection, WithHeadings, ShouldAutoSize, 
             'Kode Rekam',
             'Tanggal Periksa',
             'Pasien',
+            'Poli',
             'Dokter',
             'Obat',
             'Diagnosis',
@@ -52,6 +53,7 @@ class RekamMedisExport implements FromCollection, WithHeadings, ShouldAutoSize, 
                 $rekam->kode_rekam_medis,
                 $rekam->tanggal_periksa,
                 $rekam->pasien->identity->name ?? '-',
+                $rekam->pasien->poli ?? '-',
                 $rekam->dokter->name ?? '-',
                 $obat,
                 $rekam->diagnosis ?? '-',
@@ -72,11 +74,11 @@ class RekamMedisExport implements FromCollection, WithHeadings, ShouldAutoSize, 
                 $sheet->insertNewRowBefore(1, 3);
 
                 // Judul utama
-                $sheet->mergeCells('A1:H1');
+                $sheet->mergeCells('A1:I1');
                 $sheet->setCellValue('A1', 'LAPORAN REKAM MEDIS');
 
                 // Sub judul
-                $sheet->mergeCells('A2:H2');
+                $sheet->mergeCells('A2:I2');
                 $sheet->setCellValue('A2', 'KLINIK AMIKOM YOGYAKARTA');
 
                 // Style judul
@@ -85,7 +87,7 @@ class RekamMedisExport implements FromCollection, WithHeadings, ShouldAutoSize, 
                 $sheet->getStyle('A1:A2')->getAlignment()->setHorizontal('center');
 
                 // STYLE HEADER BARIS 4
-                $sheet->getStyle('A4:H4')->applyFromArray([
+                $sheet->getStyle('A4:I4')->applyFromArray([
                     'font' => [
                         'bold' => true,
                         'color' => ['rgb' => 'FFFFFF']

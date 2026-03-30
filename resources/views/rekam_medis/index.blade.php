@@ -70,7 +70,8 @@
 
                     <option value="">Semua</option>
 
-                    <option value="menunggu_pemeriksaan" {{ request('status') == 'menunggu_pemeriksaan' ? 'selected' : '' }}>
+                    <option value="menunggu_pemeriksaan"
+                        {{ request('status') == 'menunggu_pemeriksaan' ? 'selected' : '' }}>
                         Menunggu Pemeriksaan
                     </option>
 
@@ -132,7 +133,9 @@
                             <th class="px-4 py-3 text-center">Periksa</th>
                         @endif
 
-                        <th class="px-4 py-3 text-center">Aksi</th>
+                        @if (auth()->user()->role == 'dokter' || auth()->user()->role == 'apoteker')
+                            <th class="px-4 py-3 text-center">Aksi</th>
+                        @endif
                     </tr>
                 </thead>
 
@@ -256,48 +259,52 @@
                             @endif
 
                             {{-- AKSI --}}
-                            <td class="px-4 py-3 border border-gray-200">
-                                <div class="flex justify-end space-x-3">
+                            @if (auth()->user()->role == 'dokter' || auth()->user()->role == 'apoteker')
+                                <td class="px-4 py-3 border border-gray-200">
+                                    <div class="flex justify-end space-x-3">
 
-                                    {{-- KHUSUS APOTEKER --}}
-                                    @if (auth()->user()->role == 'apoteker')
-                                        @if ($item->status == 'menunggu_obat')
-                                            <form action="{{ route('rekammedis.selesai', $item->id) }}" method="POST">
+                                        {{-- ✅ KHUSUS APOTEKER --}}
+                                        @if (auth()->user()->role == 'apoteker')
+                                            @if ($item->status == 'menunggu_obat')
+                                                <form action="{{ route('rekammedis.selesai', $item->id) }}" method="POST">
+                                                    @csrf
+                                                    <button type="submit"
+                                                        class="bg-green-600 text-white text-xs px-3 py-1 rounded hover:bg-green-700">
+                                                        Konfirmasi Obat
+                                                    </button>
+                                                </form>
+                                            @elseif($item->status == 'selesai')
+                                                <span
+                                                    class="bg-gray-300 text-gray-600 text-xs px-3 py-1 rounded inline-block w-full text-center">
+                                                    Sudah Diberikan
+                                                </span>
+                                            @else
+                                                <span class="text-gray-400 text-xs">
+                                                    Menunggu Dokter
+                                                </span>
+                                            @endif
+                                        @endif
+
+                                        {{-- ✅ KHUSUS DOKTER --}}
+                                        @if (auth()->user()->role == 'dokter')
+                                            <a href="{{ route('rekammedis.show', $item->id) }}"
+                                                class="text-blue-600 hover:text-blue-800">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+
+                                            <form action="{{ route('rekammedis.destroy', $item->id) }}" method="POST"
+                                                onsubmit="return confirm('Yakin ingin menghapus data ini?')">
                                                 @csrf
-                                                <button type="submit"
-                                                    class="bg-green-600 text-white text-xs px-3 py-1 rounded hover:bg-green-700">
-                                                    Konfirmasi Obat
+                                                @method('DELETE')
+                                                <button type="submit" class="text-red-600 hover:text-red-800">
+                                                    <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
-                                        @elseif($item->status == 'selesai')
-                                            <span
-                                                class="bg-gray-300 text-gray-600 text-xs px-3 py-1 rounded inline-block w-full text-center">
-                                                Sudah Diberikan
-                                            </span>
-                                        @else
-                                            <span class="text-gray-400 text-xs">
-                                                Menunggu Dokter
-                                            </span>
                                         @endif
-                                    @else
-                                        {{-- AKSI UNTUK ROLE LAIN --}}
-                                        <a href="{{ route('rekammedis.show', $item->id) }}"
-                                            class="text-blue-600 hover:text-blue-800">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
 
-                                        <form action="{{ route('rekammedis.destroy', $item->id) }}" method="POST"
-                                            onsubmit="return confirm('Yakin ingin menghapus data ini?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="text-red-600 hover:text-red-800">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
-                                    @endif
-
-                                </div>
-                            </td>
+                                    </div>
+                                </td>
+                            @endif
 
                         </tr>
                         @empty

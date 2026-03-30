@@ -91,6 +91,7 @@
                 <th>Kode Rekam</th>
                 <th>Tanggal Periksa</th>
                 <th>Pasien</th>
+                <th>Poli</th>
                 <th>Dokter</th>
                 <th>Obat</th>
                 <th>Diagnosis</th>
@@ -104,6 +105,7 @@
                     <td>{{ $rekam->kode_rekam_medis }}</td>
                     <td>{{ $rekam->tanggal_periksa }}</td>
                     <td>{{ $rekam->pasien->identity->name ?? '-' }}</td>
+                    <td>{{ $rekam->pasien->poli ?? '-' }}</td> 
 
                     <td>{{ $rekam->dokter->name ?? '-' }}</td>
 
