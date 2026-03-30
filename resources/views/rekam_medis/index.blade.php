@@ -75,6 +75,34 @@
             </div>
 
         </div>
+
+        <!-- STATUS -->
+        <div class="flex flex-col text-sm">
+            <label class="text-gray-500 dark:text-gray-400 text-xs mb-1">Status</label>
+            <select id="status_filter" name="status"
+                class="px-3 py-2 border rounded-md text-sm w-60
+    dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+
+                <option value="">Semua</option>
+
+                <option value="menunggu_pemeriksaan" {{ request('status') == 'menunggu_pemeriksaan' ? 'selected' : '' }}>
+                    Menunggu Pemeriksaan
+                </option>
+
+                <option value="diperiksa" {{ request('status') == 'diperiksa' ? 'selected' : '' }}>
+                    Sedang Diperiksa
+                </option>
+
+                <option value="menunggu_obat" {{ request('status') == 'menunggu_obat' ? 'selected' : '' }}>
+                    Menunggu Obat
+                </option>
+
+                <option value="selesai" {{ request('status') == 'selesai' ? 'selected' : '' }}>
+                    Selesai
+                </option>
+            </select>
+            </select>
+        </div>
     </div>
 
     {{-- ================= TABLE ================= --}}
@@ -401,8 +429,9 @@
             function filterTanggal() {
                 let start = document.getElementById('start_date').value;
                 let end = document.getElementById('end_date').value;
+                let status = document.getElementById('status_filter').value; // ✅ tambahan
 
-                // ✅ VALIDASI
+                // ✅ VALIDASI (TETAP)
                 if (start && end && start > end) {
                     alert('Tanggal mulai tidak boleh lebih besar dari tanggal akhir');
                     return;
@@ -410,31 +439,39 @@
 
                 let url = new URL(window.location.href);
 
-                // 🔄 RESET PAGINATION
+                // 🔄 RESET PAGINATION (TETAP)
                 url.searchParams.delete('page');
 
-                // 📅 START DATE
+                // 📅 START DATE (TETAP)
                 if (start) {
                     url.searchParams.set('start_date', start);
                 } else {
                     url.searchParams.delete('start_date');
                 }
 
-                // 📅 END DATE
+                // 📅 END DATE (TETAP)
                 if (end) {
                     url.searchParams.set('end_date', end);
                 } else {
                     url.searchParams.delete('end_date');
                 }
 
-                // 🚀 REDIRECT
+                // ✅ STATUS (DITAMBAHKAN TANPA GANGGU YANG LAIN)
+                if (status) {
+                    url.searchParams.set('status', status);
+                } else {
+                    url.searchParams.delete('status');
+                }
+
+                // 🚀 REDIRECT (TETAP)
                 window.location.href = url.toString();
             }
 
-            // ✅ AUTO FILTER SAAT PILIH
+            // ✅ AUTO FILTER (DITAMBAH STATUS SAJA)
             document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('start_date').addEventListener('change', filterTanggal);
                 document.getElementById('end_date').addEventListener('change', filterTanggal);
+                document.getElementById('status_filter').addEventListener('change', filterTanggal); // ✅ tambahan
             });
         </script>
     @endsection

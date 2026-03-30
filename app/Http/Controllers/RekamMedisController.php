@@ -11,11 +11,13 @@ use Carbon\Carbon;
 
 class RekamMedisController extends Controller
 {
+
     public function index(Request $request)
     {
         $search = $request->cari;
+        $status = $request->status;
 
-        // ✅ FORMAT TANGGAL (BIAR AMAN)
+        // ✅ FORMAT TANGGAL (AMAN)
         $start = $request->start_date
             ? Carbon::parse($request->start_date)->format('Y-m-d')
             : null;
@@ -38,7 +40,7 @@ class RekamMedisController extends Controller
                 });
             })
 
-            // 📅 FILTER TANGGAL (FIX TOTAL)
+            // 📅 FILTER TANGGAL
             ->when($start && $end, function ($query) use ($start, $end) {
                 $query->whereBetween('tanggal_periksa', [$start, $end]);
             })
@@ -51,10 +53,15 @@ class RekamMedisController extends Controller
                 $query->whereDate('tanggal_periksa', '<=', $end);
             })
 
-            // 🔽 URUTKAN
+            // ✅ FILTER STATUS (INI YANG DITAMBAHKAN)
+            ->when($status, function ($query, $status) {
+                $query->where('status', $status);
+            })
+
+            // 🔽 SORTING
             ->orderBy('tanggal_periksa', 'desc')
 
-            // ✅ PAKAI PAGINATION BIAR SAMA KAYAK PASIEN
+            // ✅ PAGINATION + SIMPAN QUERY
             ->paginate(10)
             ->withQueryString();
 
