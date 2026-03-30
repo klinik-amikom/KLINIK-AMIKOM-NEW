@@ -121,6 +121,7 @@
                         <th class="px-4 py-3 text-center border border-gray-200">Kode</th>
                         <th class="px-4 py-3 text-center border border-gray-200">NIK</th>
                         <th class="px-4 py-3 text-center border border-gray-200">Nama Pasien</th>
+                        <th class="px-4 py-3 text-center border border-gray-200">Poli</th>
                         <th class="px-4 py-3 text-center border border-gray-200">Tanggal</th>
                         <th class="px-4 py-3 text-center border border-gray-200">Dokter</th>
                         <th class="px-4 py-3 text-center border border-gray-200">Obat</th>
@@ -156,6 +157,9 @@
                                 {{ $item->pasien->identity->name ?? '-' }}
                             </td>
 
+                            <td class="px-4 py-3 border border-gray-200 text-center">
+                                {{ $item->pasien->poli ?? '-' }}
+                            </td>
                             <td class="px-4 py-3 border border-gray-200">
                                 {{ \Carbon\Carbon::parse($item->tanggal_periksa)->format('d-m-Y') }}
                             </td>
@@ -298,7 +302,7 @@
                         </tr>
                         @empty
                             <tr>
-                                <td colspan="10" class="text-center py-8 text-gray-500">
+                                <td colspan="11" class="text-center py-8 text-gray-500">
                                     Data rekam medis belum tersedia
                                 </td>
                             </tr>

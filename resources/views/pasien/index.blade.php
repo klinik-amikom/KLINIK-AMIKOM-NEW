@@ -137,7 +137,8 @@
                             class="bg-gray-50 dark:bg-gray-700 text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
                             <th class="px-6 py-3">#</th>
                             <th class="px-6 py-3">Kode Pasien</th>
-                            <th class="px-6 py-3">No Identitas</th>
+                            <th class="px-6 py-3">No Antrian</th>
+                            <th class="px-6 py-3">NIK</th>
                             <th class="px-6 py-3">Nama</th>
                             <th class="px-6 py-3">Kategori</th>
                             <th class="px-6 py-3">TTL</th>
@@ -156,6 +157,10 @@
 
                                 <td class="px-6 py-4 font-bold text-purple-600">
                                     {{ $pasien->kode_pasien }}
+                                </td>
+
+                                <td class="px-6 py-4 text-sm font-semibold text-blue-600">
+                                    {{ $pasien->queue_number ?? '-' }}
                                 </td>
 
                                 <td class="px-6 py-4 text-sm">
@@ -298,33 +303,39 @@
                         class="p-6 space-y-4">
                         @csrf
 
+                        <input type="hidden" name="identity_type" id="hidden_identity_type">
+                        <input type="hidden" name="gender" id="hidden_gender">
+
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
                             <div class="sm:col-span-2">
-                                <label class="block text-sm font-medium">No Identitas *</label>
-                                <input type="text" name="identity_number" required
+                                <label class="block text-sm font-medium">NIK *</label>
+                                <input type="text" name="identity_number" id="nikInput" required
                                     class="w-full px-3 py-2 border rounded-lg">
                             </div>
 
                             <div class="sm:col-span-2">
                                 <label class="block text-sm font-medium">Nama Lengkap *</label>
-                                <input type="text" name="nama_pasien" required class="w-full px-3 py-2 border rounded-lg">
+                                <input type="text" name="nama_pasien" id="namaInput" readonly
+                                    class="w-full px-3 py-2 border rounded-lg bg-gray-100">
                             </div>
 
                             <div>
                                 <label class="block text-sm font-medium">Tanggal Lahir *</label>
-                                <input type="date" name="tanggal_lahir" required
-                                    class="w-full px-3 py-2 border rounded-lg">
+                                <input type="date" name="tanggal_lahir" id="tglInput" readonly
+                                    class="w-full px-3 py-2 border rounded-lg bg-gray-100">
                             </div>
 
                             <div>
                                 <label class="block text-sm font-medium">No Telepon *</label>
-                                <input type="text" name="no_telp" required class="w-full px-3 py-2 border rounded-lg">
+                                <input type="text" name="no_telp" id="telpInput" readonly
+                                    class="w-full px-3 py-2 border rounded-lg bg-gray-100">
                             </div>
 
                             <div>
                                 <label class="block text-sm font-medium">Kategori *</label>
-                                <select name="identity_type" required class="w-full px-3 py-2 border rounded-lg">
+                                <select name="identity_type" id="kategoriInput" disabled
+                                    class="w-full px-3 py-2 border rounded-lg bg-gray-100">
                                     <option value="mahasiswa">Mahasiswa</option>
                                     <option value="dosen">Dosen</option>
                                     <option value="karyawan">Karyawan</option>
@@ -333,7 +344,8 @@
 
                             <div>
                                 <label class="block text-sm font-medium">Jenis Kelamin *</label>
-                                <select name="gender" required class="w-full px-3 py-2 border rounded-lg">
+                                <select name="gender" id="genderInput" disabled
+                                    class="w-full px-3 py-2 border rounded-lg bg-gray-100">
                                     <option value="L">Laki-laki</option>
                                     <option value="P">Perempuan</option>
                                 </select>
@@ -341,12 +353,14 @@
 
                             <div class="sm:col-span-2">
                                 <label class="block text-sm font-medium">Alamat *</label>
-                                <textarea name="alamat" rows="2" required class="w-full px-3 py-2 border rounded-lg"></textarea>
+                                <textarea name="alamat" id="alamatInput" rows="2" readonly
+                                    class="w-full px-3 py-2 border rounded-lg bg-gray-100"></textarea>
                             </div>
 
                             <div class="sm:col-span-2">
                                 <label class="block text-sm font-medium">Poli *</label>
                                 <select name="poli" required class="w-full px-3 py-2 border rounded-lg">
+                                    <option value="" disabled selected>Pilih Poli</option>
                                     <option value="Poli Umum">Poli Umum</option>
                                     <option value="Poli Gigi">Poli Gigi</option>
                                 </select>
@@ -379,7 +393,7 @@
 
                             <div class="sm:col-span-2">
                                 <label class="block text-sm font-medium text-gray-500">
-                                    No Identitas
+                                    NIK
                                 </label>
                                 <input type="text" name="identity_number" id="edit-identity-number"
                                     class="w-full px-3 py-2 border rounded-lg">
@@ -457,25 +471,86 @@
         </div>
 
         <script>
+            function showNikNotFound() {
+                // hapus notif lama kalau ada
+                const old = document.getElementById('nik-alert');
+                if (old) old.remove();
+
+                const notif = document.createElement('div');
+                notif.id = 'nik-alert';
+                notif.className = "mb-4 px-4 py-3 rounded-lg bg-red-100 text-red-700 text-sm";
+
+                notif.innerHTML = `
+        <strong>NIK tidak ditemukan!</strong><br>
+        Silakan tambahkan data pasien di <b>Kelola Civitas Akademik</b>.
+    `;
+
+                const form = document.getElementById('create-pasien-form');
+                form.prepend(notif);
+
+                // auto hilang
+                setTimeout(() => {
+                    notif.remove();
+                }, 5000);
+            }
             document.querySelector('input[name="identity_number"]').addEventListener('blur', function() {
                 let nik = this.value;
 
                 if (nik.length === 16) {
-                    fetch(`/${@json($prefix)}/pasien/identity/${nik}`)
+                    fetch(`{{ route('cek.nik', '') }}/${nik}`)
                         .then(res => res.json())
                         .then(res => {
 
                             if (res.status) {
                                 let data = res.data;
 
+                                // isi field
                                 document.querySelector('input[name="nama_pasien"]').value = data.name ?? '';
                                 document.querySelector('input[name="tanggal_lahir"]').value = data.birth_date ?? '';
                                 document.querySelector('input[name="no_telp"]').value = data.no_telp ?? '';
+                                document.querySelector('textarea[name="alamat"]').value = data.address ?? '';
+
                                 document.querySelector('select[name="identity_type"]').value = data.identity_type ??
                                     '';
                                 document.querySelector('select[name="gender"]').value = data.gender ?? '';
-                                document.querySelector('textarea[name="alamat"]').value = data.address ?? '';
+
+                                // 🔒 LOCK FIELD (readonly / disabled)
+                                document.querySelector('input[name="nama_pasien"]').readOnly = true;
+                                document.querySelector('input[name="tanggal_lahir"]').readOnly = true;
+                                document.querySelector('input[name="no_telp"]').readOnly = true;
+                                document.querySelector('textarea[name="alamat"]').readOnly = true;
+
+                                document.querySelector('select[name="identity_type"]').disabled = true;
+                                document.querySelector('select[name="gender"]').disabled = true;
+
+                                // 🔥 SYNC KE HIDDEN (biar tetap ke-submit)
+                                document.getElementById('hidden_identity_type').value = data.identity_type ?? '';
+                                document.getElementById('hidden_gender').value = data.gender ?? '';
+
+                            } else {
+                                showNikNotFound();
+
+                                // 🔄 RESET FIELD
+                                document.querySelector('input[name="nama_pasien"]').value = '';
+                                document.querySelector('input[name="tanggal_lahir"]').value = '';
+                                document.querySelector('input[name="no_telp"]').value = '';
+                                document.querySelector('textarea[name="alamat"]').value = '';
+
+                                document.querySelector('select[name="identity_type"]').value = '';
+                                document.querySelector('select[name="gender"]').value = '';
+
+                                // 🔓 buka lagi kalau gagal
+                                document.querySelector('input[name="nama_pasien"]').readOnly = false;
+                                document.querySelector('input[name="tanggal_lahir"]').readOnly = false;
+                                document.querySelector('input[name="no_telp"]').readOnly = false;
+                                document.querySelector('textarea[name="alamat"]').readOnly = false;
+
+                                document.querySelector('select[name="identity_type"]').disabled = false;
+                                document.querySelector('select[name="gender"]').disabled = false;
                             }
+                        })
+                        .catch(() => {
+                            alert("Terjadi kesalahan saat mengambil data.");
                         });
                 }
             });
