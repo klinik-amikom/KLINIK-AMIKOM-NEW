@@ -13,10 +13,11 @@
     <link href="{{ asset('landingpage') }}/img/apple-touch-icon.png" rel="apple-touch-icon">
 
     <!-- Fonts -->
+    <!-- Fonts (HANYA 2 FONT) -->
     <link href="https://fonts.googleapis.com" rel="preconnect">
     <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Nunito+Sans:ital,wght@0,200;0,300;0,400;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,600;1,700;1,800;1,900&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Raleway:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
 
     <!-- Vendor CSS Files -->
@@ -36,6 +37,52 @@
   * Author: BootstrapMade.com
   * License: https://bootstrapmade.com/license/
   ======================================================== -->
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            font-weight: 400;
+            line-height: 1.6;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        .sitename,
+        .section-title h2,
+        .section-title span,
+        .main-heading h1 {
+            font-family: 'Raleway', sans-serif;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        p {
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .btn,
+        .btn-getstarted {
+            font-family: 'Raleway', sans-serif;
+            font-weight: 600;
+        }
+
+        .navmenu a {
+            font-family: 'Raleway', sans-serif;
+            font-weight: 500;
+        }
+
+        table {
+            font-family: 'Roboto', sans-serif;
+        }
+
+        th {
+            font-family: 'Raleway', sans-serif;
+            font-weight: 600;
+        }
+    </style>
 </head>
 
 <body class="index-page">

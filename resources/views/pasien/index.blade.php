@@ -95,14 +95,14 @@
         </div>
     </div>
 
-    <div class="mb-4 flex flex-wrap items-end gap-2">
+    <div class="mb-2 flex flex-wrap items-end gap-2">
 
         <!-- Dari -->
         <div class="flex flex-col text-sm">
             <label class="text-gray-500 dark:text-gray-400 text-xs mb-1">Dari</label>
             <input type="date" id="start_date" value="{{ request('start_date') }}"
                 class="px-2 py-1 border rounded-md text-sm w-36
-                   dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+               dark:bg-gray-700 dark:border-gray-600 dark:text-white">
         </div>
 
         <!-- Sampai -->
@@ -110,7 +110,7 @@
             <label class="text-gray-500 dark:text-gray-400 text-xs mb-1">Sampai</label>
             <input type="date" id="end_date" value="{{ request('end_date') }}"
                 class="px-2 py-1 border rounded-md text-sm w-36
-                   dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+               dark:bg-gray-700 dark:border-gray-600 dark:text-white">
         </div>
 
         <!-- Button -->
@@ -124,6 +124,39 @@
                 class="px-3 py-1.5 bg-gray-400 hover:bg-gray-500 text-white text-sm rounded-md">
                 Reset
             </a>
+        </div>
+
+    </div>
+
+    <div class="mb-4 flex flex-wrap items-end gap-2">
+
+        <!-- Filter Poli -->
+        <div class="flex flex-col text-sm">
+            <label class="text-gray-500 dark:text-gray-400 text-xs mb-1">Poli</label>
+            <select id="filter_poli"
+                class="px-2 py-1 border rounded-md text-sm w-40
+                   dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                <option value="">Semua</option>
+                <option value="Poli Umum" {{ request('poli') == 'Poli Umum' ? 'selected' : '' }}>Poli Umum</option>
+                <option value="Poli Gigi" {{ request('poli') == 'Poli Gigi' ? 'selected' : '' }}>Poli Gigi</option>
+            </select>
+        </div>
+
+        <!-- Filter Status -->
+        <div class="flex flex-col text-sm">
+            <label class="text-gray-500 dark:text-gray-400 text-xs mb-1">Status</label>
+            <select id="filter_status"
+                class="px-2 py-1 border rounded-md text-sm w-44
+                   dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                <option value="">Semua</option>
+                <option value="menunggu_konfirmasi" {{ request('status') == 'menunggu_konfirmasi' ? 'selected' : '' }}>
+                    Menunggu</option>
+                <option value="terdaftar" {{ request('status') == 'terdaftar' ? 'selected' : '' }}>Terdaftar</option>
+                <option value="diperiksa" {{ request('status') == 'diperiksa' ? 'selected' : '' }}>Diperiksa</option>
+                <option value="menunggu_obat" {{ request('status') == 'menunggu_obat' ? 'selected' : '' }}>Menunggu Obat
+                </option>
+                <option value="selesai" {{ request('status') == 'selesai' ? 'selected' : '' }}>Selesai</option>
+            </select>
         </div>
 
     </div>
@@ -470,203 +503,234 @@
             </div>
         </div>
 
-        <script>
-            function showNikNotFound() {
-                // hapus notif lama kalau ada
-                const old = document.getElementById('nik-alert');
-                if (old) old.remove();
+        @push('scripts')
+            <script>
+                function showNikNotFound() {
+                    // hapus notif lama kalau ada
+                    const old = document.getElementById('nik-alert');
+                    if (old) old.remove();
 
-                const notif = document.createElement('div');
-                notif.id = 'nik-alert';
-                notif.className = "mb-4 px-4 py-3 rounded-lg bg-red-100 text-red-700 text-sm";
+                    const notif = document.createElement('div');
+                    notif.id = 'nik-alert';
+                    notif.className = "mb-4 px-4 py-3 rounded-lg bg-red-100 text-red-700 text-sm";
 
-                notif.innerHTML = `
+                    notif.innerHTML = `
         <strong>NIK tidak ditemukan!</strong><br>
         Silakan tambahkan data pasien di <b>Kelola Civitas Akademik</b>.
     `;
 
-                const form = document.getElementById('create-pasien-form');
-                form.prepend(notif);
+                    const form = document.getElementById('create-pasien-form');
+                    form.prepend(notif);
 
-                // auto hilang
-                setTimeout(() => {
-                    notif.remove();
-                }, 5000);
-            }
-            document.querySelector('input[name="identity_number"]').addEventListener('blur', function() {
-                let nik = this.value;
-
-                if (nik.length === 16) {
-                    fetch(`{{ route('cek.nik', '') }}/${nik}`)
-                        .then(res => res.json())
-                        .then(res => {
-
-                            if (res.status) {
-                                let data = res.data;
-
-                                // isi field
-                                document.querySelector('input[name="nama_pasien"]').value = data.name ?? '';
-                                document.querySelector('input[name="tanggal_lahir"]').value = data.birth_date ?? '';
-                                document.querySelector('input[name="no_telp"]').value = data.no_telp ?? '';
-                                document.querySelector('textarea[name="alamat"]').value = data.address ?? '';
-
-                                document.querySelector('select[name="identity_type"]').value = data.identity_type ??
-                                    '';
-                                document.querySelector('select[name="gender"]').value = data.gender ?? '';
-
-                                // 🔒 LOCK FIELD (readonly / disabled)
-                                document.querySelector('input[name="nama_pasien"]').readOnly = true;
-                                document.querySelector('input[name="tanggal_lahir"]').readOnly = true;
-                                document.querySelector('input[name="no_telp"]').readOnly = true;
-                                document.querySelector('textarea[name="alamat"]').readOnly = true;
-
-                                document.querySelector('select[name="identity_type"]').disabled = true;
-                                document.querySelector('select[name="gender"]').disabled = true;
-
-                                // 🔥 SYNC KE HIDDEN (biar tetap ke-submit)
-                                document.getElementById('hidden_identity_type').value = data.identity_type ?? '';
-                                document.getElementById('hidden_gender').value = data.gender ?? '';
-
-                            } else {
-                                showNikNotFound();
-
-                                // 🔄 RESET FIELD
-                                document.querySelector('input[name="nama_pasien"]').value = '';
-                                document.querySelector('input[name="tanggal_lahir"]').value = '';
-                                document.querySelector('input[name="no_telp"]').value = '';
-                                document.querySelector('textarea[name="alamat"]').value = '';
-
-                                document.querySelector('select[name="identity_type"]').value = '';
-                                document.querySelector('select[name="gender"]').value = '';
-
-                                // 🔓 buka lagi kalau gagal
-                                document.querySelector('input[name="nama_pasien"]').readOnly = false;
-                                document.querySelector('input[name="tanggal_lahir"]').readOnly = false;
-                                document.querySelector('input[name="no_telp"]').readOnly = false;
-                                document.querySelector('textarea[name="alamat"]').readOnly = false;
-
-                                document.querySelector('select[name="identity_type"]').disabled = false;
-                                document.querySelector('select[name="gender"]').disabled = false;
-                            }
-                        })
-                        .catch(() => {
-                            alert("Terjadi kesalahan saat mengambil data.");
-                        });
+                    // auto hilang
+                    setTimeout(() => {
+                        notif.remove();
+                    }, 5000);
                 }
-            });
+                document.querySelector('input[name="identity_number"]').addEventListener('blur', function() {
+                    let nik = this.value;
 
-            function openCreatePasienModal() {
-                document.getElementById('create-pasien-modal').classList.remove('hidden');
-            }
+                    if (nik.length === 16) {
+                        fetch(`{{ route('cek.nik', '') }}/${nik}`)
+                            .then(res => res.json())
+                            .then(res => {
 
-            function closeCreatePasienModal() {
-                document.getElementById('create-pasien-modal').classList.add('hidden');
-                document.getElementById('create-pasien-form').reset();
-            }
+                                if (res.status) {
+                                    let data = res.data;
 
-            function closeEditPasienModal() {
-                document.getElementById('edit-pasien-modal').classList.add('hidden');
-            }
+                                    // isi field
+                                    document.querySelector('input[name="nama_pasien"]').value = data.name ?? '';
+                                    document.querySelector('input[name="tanggal_lahir"]').value = data.birth_date ?? '';
+                                    document.querySelector('input[name="no_telp"]').value = data.no_telp ?? '';
+                                    document.querySelector('textarea[name="alamat"]').value = data.address ?? '';
 
-            function editPasien(id, data) {
+                                    document.querySelector('select[name="identity_type"]').value = data.identity_type ??
+                                        '';
+                                    document.querySelector('select[name="gender"]').value = data.gender ?? '';
 
-                document.getElementById('edit-pasien-form')
-                    .action = `{{ url($prefix . '/pasien') }}/${id}`;
+                                    // 🔒 LOCK FIELD (readonly / disabled)
+                                    document.querySelector('input[name="nama_pasien"]').readOnly = true;
+                                    document.querySelector('input[name="tanggal_lahir"]').readOnly = true;
+                                    document.querySelector('input[name="no_telp"]').readOnly = true;
+                                    document.querySelector('textarea[name="alamat"]').readOnly = true;
 
-                document.getElementById('edit-identity-number').value = data.identity_number ?? '';
-                document.getElementById('edit-name').value = data.name ?? '';
-                document.getElementById('edit-birth-date').value = data.birth_date ?? '';
-                document.getElementById('edit-no-telp').value = data.no_telp ?? '';
-                document.getElementById('edit-identity-type').value = data.identity_type ?? '';
-                document.getElementById('edit-gender').value = data.gender ?? '';
-                document.getElementById('edit-address').value = data.address ?? '';
-                document.getElementById('edit-poli').value = data.poli ?? '';
-                document.getElementById('edit-status').value = data.status ?? '';
+                                    document.querySelector('select[name="identity_type"]').disabled = true;
+                                    document.querySelector('select[name="gender"]').disabled = true;
 
-                document.getElementById('edit-pasien-modal')
-                    .classList.remove('hidden');
-            }
-            document.addEventListener('DOMContentLoaded', function() {
+                                    // 🔥 SYNC KE HIDDEN (biar tetap ke-submit)
+                                    document.getElementById('hidden_identity_type').value = data.identity_type ?? '';
+                                    document.getElementById('hidden_gender').value = data.gender ?? '';
 
-                const input = document.getElementById('pasien-search');
-                const rows = document.querySelectorAll('.pasien-row');
-                const tbody = document.querySelector('tbody');
+                                } else {
+                                    showNikNotFound();
 
-                // membuat row "data tidak ditemukan"
-                const emptyRow = document.createElement('tr');
-                emptyRow.style.display = 'none';
+                                    // 🔄 RESET FIELD
+                                    document.querySelector('input[name="nama_pasien"]').value = '';
+                                    document.querySelector('input[name="tanggal_lahir"]').value = '';
+                                    document.querySelector('input[name="no_telp"]').value = '';
+                                    document.querySelector('textarea[name="alamat"]').value = '';
 
-                emptyRow.innerHTML = `
+                                    document.querySelector('select[name="identity_type"]').value = '';
+                                    document.querySelector('select[name="gender"]').value = '';
+
+                                    // 🔓 buka lagi kalau gagal
+                                    document.querySelector('input[name="nama_pasien"]').readOnly = false;
+                                    document.querySelector('input[name="tanggal_lahir"]').readOnly = false;
+                                    document.querySelector('input[name="no_telp"]').readOnly = false;
+                                    document.querySelector('textarea[name="alamat"]').readOnly = false;
+
+                                    document.querySelector('select[name="identity_type"]').disabled = false;
+                                    document.querySelector('select[name="gender"]').disabled = false;
+                                }
+                            })
+                            .catch(() => {
+                                alert("Terjadi kesalahan saat mengambil data.");
+                            });
+                    }
+                });
+
+                function openCreatePasienModal() {
+                    document.getElementById('create-pasien-modal').classList.remove('hidden');
+                }
+
+                function closeCreatePasienModal() {
+                    document.getElementById('create-pasien-modal').classList.add('hidden');
+                    document.getElementById('create-pasien-form').reset();
+                }
+
+                function closeEditPasienModal() {
+                    document.getElementById('edit-pasien-modal').classList.add('hidden');
+                }
+
+                function editPasien(id, data) {
+
+                    document.getElementById('edit-pasien-form')
+                        .action = `{{ url($prefix . '/pasien') }}/${id}`;
+
+                    document.getElementById('edit-identity-number').value = data.identity_number ?? '';
+                    document.getElementById('edit-name').value = data.name ?? '';
+                    document.getElementById('edit-birth-date').value = data.birth_date ?? '';
+                    document.getElementById('edit-no-telp').value = data.no_telp ?? '';
+                    document.getElementById('edit-identity-type').value = data.identity_type ?? '';
+                    document.getElementById('edit-gender').value = data.gender ?? '';
+                    document.getElementById('edit-address').value = data.address ?? '';
+                    document.getElementById('edit-poli').value = data.poli ?? '';
+                    document.getElementById('edit-status').value = data.status ?? '';
+
+                    document.getElementById('edit-pasien-modal')
+                        .classList.remove('hidden');
+                }
+                document.addEventListener('DOMContentLoaded', function() {
+
+                    const input = document.getElementById('pasien-search');
+                    const rows = document.querySelectorAll('.pasien-row');
+                    const tbody = document.querySelector('tbody');
+
+                    // membuat row "data tidak ditemukan"
+                    const emptyRow = document.createElement('tr');
+                    emptyRow.style.display = 'none';
+
+                    emptyRow.innerHTML = `
         <td colspan="12" class="px-6 py-10 text-center text-gray-500">
             Data pasien tidak ditemukan.
         </td>
     `;
 
-                tbody.appendChild(emptyRow);
+                    tbody.appendChild(emptyRow);
 
-                input.addEventListener('input', function() {
+                    input.addEventListener('input', function() {
 
-                    const keyword = this.value.toLowerCase().trim();
-                    let visibleCount = 0;
+                        const keyword = this.value.toLowerCase().trim();
+                        let visibleCount = 0;
 
-                    rows.forEach(row => {
+                        rows.forEach(row => {
 
-                        const match = row.innerText.toLowerCase().includes(keyword);
+                            const match = row.innerText.toLowerCase().includes(keyword);
 
-                        row.style.display = match ? '' : 'none';
+                            row.style.display = match ? '' : 'none';
 
-                        if (match) visibleCount++;
+                            if (match) visibleCount++;
+                        });
+
+                        // logika jika tidak ada hasil
+                        if (keyword !== '' && visibleCount === 0) {
+                            emptyRow.style.display = '';
+                        } else {
+                            emptyRow.style.display = 'none';
+                        }
+
                     });
-
-                    // logika jika tidak ada hasil
-                    if (keyword !== '' && visibleCount === 0) {
-                        emptyRow.style.display = '';
-                    } else {
-                        emptyRow.style.display = 'none';
-                    }
 
                 });
 
-            });
-
-            function formatTanggal(tanggal) {
-                return tanggal.replaceAll('/', '-');
-            }
-
-            function filterTanggal() {
-                let start = document.getElementById('start_date').value;
-                let end = document.getElementById('end_date').value;
-
-                if (start) start = formatTanggal(start);
-                if (end) end = formatTanggal(end);
-
-                if (start && end && start > end) {
-                    alert('Tanggal mulai tidak boleh lebih besar dari tanggal akhir');
-                    return;
+                function formatTanggal(tanggal) {
+                    return tanggal.replaceAll('/', '-');
                 }
 
-                let url = new URL(window.location.href);
+                function filterTanggal() {
+                    let start = document.getElementById('start_date').value;
+                    let end = document.getElementById('end_date').value;
 
-                url.searchParams.delete('page');
+                    if (start) start = formatTanggal(start);
+                    if (end) end = formatTanggal(end);
 
-                if (start) {
-                    url.searchParams.set('start_date', start);
-                } else {
-                    url.searchParams.delete('start_date');
+                    if (start && end && start > end) {
+                        alert('Tanggal mulai tidak boleh lebih besar dari tanggal akhir');
+                        return;
+                    }
+
+                    let url = new URL(window.location.href);
+
+                    url.searchParams.delete('page');
+
+                    if (start) {
+                        url.searchParams.set('start_date', start);
+                    } else {
+                        url.searchParams.delete('start_date');
+                    }
+
+                    if (end) {
+                        url.searchParams.set('end_date', end);
+                    } else {
+                        url.searchParams.delete('end_date');
+                    }
+
+                    window.location.href = url.toString();
                 }
 
-                if (end) {
-                    url.searchParams.set('end_date', end);
-                } else {
-                    url.searchParams.delete('end_date');
+                function applyFilter() {
+                    let poli = document.getElementById('filter_poli').value;
+                    let status = document.getElementById('filter_status').value;
+
+                    let url = new URL(window.location.href);
+
+                    url.searchParams.delete('page');
+
+                    // poli
+                    if (poli) {
+                        url.searchParams.set('poli', poli);
+                    } else {
+                        url.searchParams.delete('poli');
+                    }
+
+                    // status
+                    if (status) {
+                        url.searchParams.set('status', status);
+                    } else {
+                        url.searchParams.delete('status');
+                    }
+
+                    window.location.href = url.toString();
                 }
 
-                window.location.href = url.toString();
-            }
 
-            document.addEventListener('DOMContentLoaded', function() {
-                document.getElementById('start_date').addEventListener('change', filterTanggal);
-                document.getElementById('end_date').addEventListener('change', filterTanggal);
-            });
-        </script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    document.getElementById('start_date').addEventListener('change', filterTanggal);
+                    document.getElementById('end_date').addEventListener('change', filterTanggal);
+                    document.getElementById('filter_poli').addEventListener('change', applyFilter);
+                    document.getElementById('filter_status').addEventListener('change', applyFilter);
+                });
+            </script>
+        @endpush
+
     @endsection

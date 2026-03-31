@@ -7,13 +7,13 @@
 @section('content')
     <!-- Welcome Section -->
     <div class="animate-fade-in">
-        <div class="bg-gradient-to-r from-purple-500 to-purple-600 rounded-2xl p-6 text-white mb-8">
+        <div class="bg-[#8151B1] rounded-2xl p-6 text-white mb-8">
             <div class="flex flex-col md:flex-row items-center justify-between">
                 <div class="mb-4 md:mb-0">
                     <h1 class="text-2xl md:text-3xl font-bold mb-2">
                         Selamat datang, Admin!
                     </h1>
-                    <p class="text-purple-100 text-lg">
+                    <p class="text-white/80 text-lg">
                         Pantau seluruh sistem dan kelola operasional Klinik Amikom
                     </p>
                 </div>
@@ -47,7 +47,7 @@
         <div
             class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
             <div class="flex items-center justify-between mb-4">
-                <div class="p-3 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl">
+                <div class="p-3 bg-[#8151B1] rounded-xl">
                     <i class="fas fa-user-shield text-white text-xl"></i> {{-- Mengubah ikon --}}
                 </div>
                 <span class="text-2xl font-bold text-gray-900 dark:text-white">
@@ -136,7 +136,7 @@
                     </h2>
                     <div class="flex space-x-2">
                         <button id="btnDailyVisits"
-                            class="text-xs px-3 py-1 bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400 rounded-full">
+                            class="text-xs px-3 py-1 bg-[#A78BFA]/20 text-[#6D28D9] dark:bg-[#7C3AED]/20 dark:text-[#A78BFA] rounded-full">
                             Harian
                         </button>
                         <button id="btnWeeklyVisits"
@@ -309,9 +309,9 @@
 
                     <!-- Menunggu Obat -->
                     <div
-                        class="flex items-center justify-between p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
+                        class="flex items-center justify-between p-3 bg-[#A78BFA]/20 dark:bg-purple-900/20 rounded-lg border border-[#A78BFA] dark:border-purple-800">
                         <div class="flex items-center space-x-3">
-                            <div class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-white">
+                            <div class="w-8 h-8 bg-[#7C3AED] rounded-full flex items-center justify-center text-white">
                                 <i class="fas fa-pills"></i>
                             </div>
                             <div>
@@ -323,8 +323,7 @@
                                 </p>
                             </div>
                         </div>
-                        <button
-                            class="text-xs px-3 py-1 bg-purple-600 hover:bg-purple-700 text-white rounded-md transition">
+                        <button class="text-xs px-3 py-1 bg-[#6D28D9] hover:bg-[#5B21B6] text-white rounded-md transition">
                             Cek
                         </button>
                     </div>
@@ -397,7 +396,7 @@
                     <div class="flex items-center space-x-3">
                         <div class="flex-shrink-0">
                             <div
-                                class="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center text-white font-bold text-sm">
+                                class="w-8 h-8 bg-[#7C3AED] rounded-lg flex items-center justify-center text-white font-bold text-sm">
                                 <i class="fas fa-user-tie"></i> {{-- Icon untuk Staff --}}
                             </div>
                         </div>
@@ -543,14 +542,14 @@
 
                 buttons.forEach(btn => {
                     const el = document.getElementById(`btn${btn}Visits`);
-                    el.classList.remove('bg-purple-100', 'text-purple-800', 'dark:bg-purple-900/30',
-                        'dark:text-purple-400');
+                    el.classList.remove('bg-[#A78BFA]/20', 'text-[#6D28D9]', 'dark:bg-[#7C3AED]/20',
+                        'dark:text-[#A78BFA]');
                     el.classList.add('text-gray-500', 'dark:text-gray-400');
                 });
 
                 const active = document.getElementById(`btn${type}Visits`);
-                active.classList.add('bg-purple-100', 'text-purple-800', 'dark:bg-purple-900/30',
-                    'dark:text-purple-400');
+                active.classList.add('bg-[#A78BFA]/20', 'text-[#6D28D9]', 'dark:bg-[#7C3AED]/20',
+                    'dark:text-[#A78BFA]');
             }
 
         });

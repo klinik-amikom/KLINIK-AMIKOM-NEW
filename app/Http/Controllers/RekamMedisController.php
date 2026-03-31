@@ -16,8 +16,8 @@ class RekamMedisController extends Controller
     {
         $search = $request->cari;
         $status = $request->status;
+        $poli = $request->poli; // ✅ TAMBAHAN
 
-        // ✅ FORMAT TANGGAL (AMAN)
         $start = $request->start_date
             ? Carbon::parse($request->start_date)->format('Y-m-d')
             : null;
@@ -28,7 +28,6 @@ class RekamMedisController extends Controller
 
         $dataRekamMedis = RekamMedis::with(['pasien.identity', 'dokter', 'resepObat.obat'])
 
-            // 🔍 SEARCH (WAJIB DI GROUPING)
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('kode_rekam_medis', 'like', "%{$search}%")
@@ -40,7 +39,6 @@ class RekamMedisController extends Controller
                 });
             })
 
-            // 📅 FILTER TANGGAL
             ->when($start && $end, function ($query) use ($start, $end) {
                 $query->whereBetween('tanggal_periksa', [$start, $end]);
             })
@@ -53,15 +51,18 @@ class RekamMedisController extends Controller
                 $query->whereDate('tanggal_periksa', '<=', $end);
             })
 
-            // ✅ FILTER STATUS (INI YANG DITAMBAHKAN)
             ->when($status, function ($query, $status) {
                 $query->where('status', $status);
             })
 
-            // 🔽 SORTING
-            ->orderBy('tanggal_periksa', 'desc')
+            // ✅ FILTER POLI
+            ->when($poli, function ($query, $poli) {
+                $query->whereHas('pasien', function ($q) use ($poli) {
+                    $q->where('poli', $poli);
+                });
+            })
 
-            // ✅ PAGINATION + SIMPAN QUERY
+            ->orderBy('tanggal_periksa', 'desc')
             ->paginate(10)
             ->withQueryString();
 
