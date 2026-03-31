@@ -350,6 +350,9 @@
 
                     </tbody>
                 </table>
+                <div class="p-4">
+                    {{ $dataRekamMedis->links() }}
+                </div>
             </div>
         </div>
 
