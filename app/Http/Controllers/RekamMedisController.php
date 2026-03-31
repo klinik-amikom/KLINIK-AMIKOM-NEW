@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\RekamMedis;
+use App\Models\Obat;
+use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
@@ -16,8 +18,8 @@ class RekamMedisController extends Controller
     {
         $search = $request->cari;
         $status = $request->status;
-        $poli = $request->poli; // ✅ TAMBAHAN
 
+        // ✅ FORMAT TANGGAL (AMAN)
         $start = $request->start_date
             ? Carbon::parse($request->start_date)->format('Y-m-d')
             : null;
@@ -28,6 +30,7 @@ class RekamMedisController extends Controller
 
         $dataRekamMedis = RekamMedis::with(['pasien.identity', 'dokter', 'resepObat.obat'])
 
+            // 🔍 SEARCH (WAJIB DI GROUPING)
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('kode_rekam_medis', 'like', "%{$search}%")
@@ -39,6 +42,7 @@ class RekamMedisController extends Controller
                 });
             })
 
+            // 📅 FILTER TANGGAL
             ->when($start && $end, function ($query) use ($start, $end) {
                 $query->whereBetween('tanggal_periksa', [$start, $end]);
             })
@@ -51,18 +55,15 @@ class RekamMedisController extends Controller
                 $query->whereDate('tanggal_periksa', '<=', $end);
             })
 
+            // ✅ FILTER STATUS (INI YANG DITAMBAHKAN)
             ->when($status, function ($query, $status) {
                 $query->where('status', $status);
             })
 
-            // ✅ FILTER POLI
-            ->when($poli, function ($query, $poli) {
-                $query->whereHas('pasien', function ($q) use ($poli) {
-                    $q->where('poli', $poli);
-                });
-            })
-
+            // 🔽 SORTING
             ->orderBy('tanggal_periksa', 'desc')
+
+            // ✅ PAGINATION + SIMPAN QUERY
             ->paginate(10)
             ->withQueryString();
 
@@ -171,17 +172,44 @@ class RekamMedisController extends Controller
 
     public function selesai($id)
     {
-        $rekam = RekamMedis::with('pasien')->findOrFail($id);
+        DB::beginTransaction();
 
-        $rekam->update([
-            'status' => 'selesai',
-        ]);
+        try {
+            $rekam = RekamMedis::with(['pasien', 'resepObat.obat'])->findOrFail($id);
 
-        $rekam->pasien->update([
-            'status' => 'selesai',
-        ]);
+            // ❗ Tambahan: cegah double klik
+            if ($rekam->status === 'selesai') {
+                return back()->with('error', 'Obat sudah diberikan sebelumnya.');
+            }
 
-        return back()->with('success', 'Obat telah diberikan, pasien selesai.');
+            // ✅ Tambahan: kurangi stok obat
+            foreach ($rekam->resepObat as $item) {
+                $obat = $item->obat;
+
+                if ($obat->stok < $item->jumlah) {
+                    throw new \Exception("Stok {$obat->nama_obat} tidak mencukupi!");
+                }
+
+                $obat->decrement('stok', $item->jumlah);
+            }
+
+            // 🔹 LOGIC ASLI KAMU (TIDAK DIUBAH)
+            $rekam->update([
+                'status' => 'selesai',
+            ]);
+
+            $rekam->pasien->update([
+                'status' => 'selesai',
+            ]);
+
+            DB::commit();
+
+            return back()->with('success', 'Obat telah diberikan, stok diperbarui.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', $e->getMessage());
+        }
     }
 
     public function exportPDF(Request $request)

@@ -124,6 +124,9 @@
                 </tbody>
 
             </table>
+            <div class="p-4">
+                {{ $dataObat->links() }}
+            </div>
         </div>
 
         <div class="md:hidden divide-y divide-gray-200 dark:divide-gray-700">
@@ -138,7 +141,7 @@
                         <div class="flex space-x-2">
                             <button onclick="editObat({{ json_encode($obat) }})" class="p-2 text-purple-600"><i
                                     class="fas fa-edit"></i></button>
-                            <form action="{{ route('admin.obat.destroy', $obat->id) }}" method="POST"
+                            <form action="{{ route(auth()->user()->role . '.obat.destroy', $obat->id) }}" method="POST"
                                 class="inline shadow-none">
                                 @csrf @method('DELETE')
                                 <button type="submit" class="p-2 text-red-600"><i class="fas fa-trash"></i></button>
@@ -165,7 +168,7 @@
                 <button onclick="closeCreateObatModal()" class="text-gray-400 hover:text-gray-600"><i
                         class="fas fa-times"></i></button>
             </div>
-            <form action="{{ route('admin.obat.store') }}" method="POST" class="p-6 space-y-4">
+            <form action="{{ route(auth()->user()->role . '.obat.store') }}" method="POST" class="p-6 space-y-4">
                 @csrf
                 <div class="grid grid-cols-2 gap-4">
                     <div>
@@ -278,7 +281,7 @@
 
         function editObat(data) {
             const form = document.getElementById('edit-obat-form');
-            form.action = `/admin/obat/${data.id}`;
+            form.action = `/${"{{ auth()->user()->role }}"}/obat/${data.id}`;
 
             document.getElementById('edit-kode_obat').value = data.kode_obat;
             document.getElementById('edit-nama_obat').value = data.nama_obat;

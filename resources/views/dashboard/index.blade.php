@@ -130,33 +130,6 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <!-- Chart Section -->
         <div class="lg:col-span-2 space-y-6">
-
-            <!-- Bar Chart Kunjungan Pasien -->
-            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-                <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
-                        Statistik Kunjungan Pasien
-                    </h2>
-                    <div class="flex space-x-2">
-                        <button id="btnDailyVisits"
-                            class="text-xs px-3 py-1 bg-[#A78BFA]/20 text-[#6D28D9] dark:bg-[#7C3AED]/20 dark:text-[#A78BFA] rounded-full">
-                            Harian
-                        </button>
-                        <button id="btnWeeklyVisits"
-                            class="text-xs px-3 py-1 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
-                            Mingguan
-                        </button>
-                        <button id="btnMonthlyVisits"
-                            class="text-xs px-3 py-1 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
-                            Bulanan
-                        </button>
-                    </div>
-                </div>
-                <div class="h-80">
-                    <canvas id="patientVisitsChart" class="w-full h-full"></canvas>
-                </div>
-            </div>
-
             <!-- Recent Activity -->
             <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
                 <div class="flex items-center justify-between mb-4">
@@ -234,6 +207,7 @@
                     @endforelse
                 </div>
             </div>
+
             <!-- Bar Chart Kunjungan Pasien -->
             <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
                 <div class="flex items-center justify-between mb-6">
@@ -242,7 +216,7 @@
                     </h2>
                     <div class="flex space-x-2">
                         <button id="btnDailyVisits"
-                            class="text-xs px-3 py-1 bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400 rounded-full">
+                            class="text-xs px-3 py-1 bg-[#A78BFA]/20 text-[#6D28D9] dark:bg-[#7C3AED]/20 dark:text-[#A78BFA] rounded-full">
                             Harian
                         </button>
                         <button id="btnWeeklyVisits"

@@ -33,7 +33,9 @@ class ObatController extends Controller
     {
         try {
             // Mengambil data obat dengan pengurutan numerik pada kode_obat
-            $dataObat = Obat::orderByRaw("CAST(SUBSTRING(kode_obat, 2) AS UNSIGNED) ASC")->get();
+            $dataObat = Obat::orderByRaw("CAST(SUBSTRING(kode_obat, 2) AS UNSIGNED) ASC")
+            ->paginate(10)
+            ->withQueryString();
             return view($this->getViewPath('index'), compact('dataObat'));
         } catch (Exception $e) {
             return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
@@ -122,7 +124,7 @@ class ObatController extends Controller
             $obat = Obat::findOrFail($id);
 
             DB::beginTransaction();
-            $obat->delete();
+            $obat->forceDelete();
             DB::commit();
 
             return $this->redirectIndex()->with('success', 'Data obat berhasil dihapus.');
