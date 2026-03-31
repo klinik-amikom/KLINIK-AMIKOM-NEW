@@ -144,11 +144,12 @@
                 <thead class="bg-gray-50 dark:bg-gray-700 text-xs uppercase divide-x dark:divide-gray-600">
                     <tr class="odd:bg-white even:bg-gray-50 dark:odd:bg-gray-800 dark:even:bg-gray-700 hover:bg-gray-100">
                         <th class="px-4 py-3 text-center">#</th>
+                        <th class="px-4 py-3 text-center border border-gray-200">Tgl Daftar</th>
+                        <th class="px-4 py-3 text-center border border-gray-200">Jam Daftar</th>
                         <th class="px-4 py-3 text-center border border-gray-200">Kode</th>
                         <th class="px-4 py-3 text-center border border-gray-200">NIK</th>
                         <th class="px-4 py-3 text-center border border-gray-200">Nama Pasien</th>
                         <th class="px-4 py-3 text-center border border-gray-200">Poli</th>
-                        <th class="px-4 py-3 text-center border border-gray-200">Tanggal</th>
                         <th class="px-4 py-3 text-center border border-gray-200">Dokter</th>
                         <th class="px-4 py-3 text-center border border-gray-200">Obat</th>
                         <th class="px-4 py-3 text-center border border-gray-200">Diagnosis</th>
@@ -171,6 +172,14 @@
                             class="rekammedis-row odd:bg-white even:bg-gray-50 dark:odd:bg-gray-800 dark:even:bg-gray-700 hover:bg-gray-100">
                             <td class="px-4 py-3 border border-gray-200">{{ $loop->iteration }}</td>
 
+                            <td class="px-4 py-3 border border-gray-200">
+                                {{ \Carbon\Carbon::parse($item->tanggal_periksa)->format('d-m-Y') }}
+                            </td>
+
+                            <td class="px-4 py-3 border border-gray-200">
+                                {{ $item->pasien->created_at->format('H:i') }}
+                            </td>
+                            
                             <td class="px-4 py-3 font-semibold text-purple-600">
                                 {{ $item->kode_rekam_medis }}
                             </td>
@@ -188,9 +197,7 @@
                             <td class="px-4 py-3 border border-gray-200 text-center">
                                 {{ $item->pasien->poli ?? '-' }}
                             </td>
-                            <td class="px-4 py-3 border border-gray-200">
-                                {{ \Carbon\Carbon::parse($item->tanggal_periksa)->format('d-m-Y') }}
-                            </td>
+
 
                             <td class="px-4 py-3 border border-gray-200">
                                 {{ $item->dokter->name ?? '-' }}

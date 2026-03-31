@@ -1,15 +1,14 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use App\Models\RekamMedis;
-use App\Models\Obat;
-use Illuminate\Support\Facades\DB;
-use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Http\Request;
-use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\RekamMedisExport;
+use App\Models\Obat;
+use App\Models\RekamMedis;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class RekamMedisController extends Controller
 {
@@ -30,7 +29,7 @@ class RekamMedisController extends Controller
 
         $dataRekamMedis = RekamMedis::with(['pasien.identity', 'dokter', 'resepObat.obat'])
 
-            // 🔍 SEARCH (WAJIB DI GROUPING)
+        // 🔍 SEARCH (WAJIB DI GROUPING)
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('kode_rekam_medis', 'like', "%{$search}%")
@@ -42,28 +41,31 @@ class RekamMedisController extends Controller
                 });
             })
 
-            // 📅 FILTER TANGGAL
+        // 📅 FILTER TANGGAL
             ->when($start && $end, function ($query) use ($start, $end) {
                 $query->whereBetween('tanggal_periksa', [$start, $end]);
             })
 
-            ->when($start && !$end, function ($query) use ($start) {
+            ->when($start && ! $end, function ($query) use ($start) {
                 $query->whereDate('tanggal_periksa', '>=', $start);
             })
 
-            ->when(!$start && $end, function ($query) use ($end) {
-                $query->whereDate('tanggal_periksa', '<=', $end);
+            // 📅 DEFAULT: HANYA HARI INI
+            ->when(! $start && ! $end, function ($query) {
+                $query->whereDate('tanggal_periksa', Carbon::today());
             })
 
-            // ✅ FILTER STATUS (INI YANG DITAMBAHKAN)
+        // ✅ FILTER STATUS (INI YANG DITAMBAHKAN)
             ->when($status, function ($query, $status) {
-                $query->where('status', $status);
+                $query->whereHas('pasien', function ($q) use ($status) {
+                    $q->where('status', $status);
+                });
             })
 
-            // 🔽 SORTING
+        // 🔽 SORTING
             ->orderBy('tanggal_periksa', 'desc')
 
-            // ✅ PAGINATION + SIMPAN QUERY
+        // ✅ PAGINATION + SIMPAN QUERY
             ->paginate(10)
             ->withQueryString();
 
@@ -214,7 +216,7 @@ class RekamMedisController extends Controller
 
     public function exportPDF(Request $request)
     {
-        $mulai = $request->tanggal_mulai;
+        $mulai   = $request->tanggal_mulai;
         $selesai = $request->tanggal_selesai;
 
         $rekamMedis = RekamMedis::with(['pasien.identity', 'dokter', 'resepObat.obat'])
@@ -232,7 +234,7 @@ class RekamMedisController extends Controller
 
     public function exportExcel(Request $request)
     {
-        $mulai = $request->tanggal_mulai;
+        $mulai   = $request->tanggal_mulai;
         $selesai = $request->tanggal_selesai;
 
         $data = RekamMedis::with(['pasien.identity', 'dokter', 'resepObat.obat'])

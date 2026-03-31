@@ -171,6 +171,8 @@
                             <th class="px-6 py-3">#</th>
                             <th class="px-6 py-3">Kode Pasien</th>
                             <th class="px-6 py-3">No Antrian</th>
+                            <th class="px-6 py-3">Tgl Daftar</th>
+                            <th class="px-6 py-3">Jam Daftar</th>
                             <th class="px-6 py-3">NIK</th>
                             <th class="px-6 py-3">Nama</th>
                             <th class="px-6 py-3">Kategori</th>
@@ -196,6 +198,14 @@
                                     {{ $pasien->queue_number ?? '-' }}
                                 </td>
 
+                                <td class="px-6 py-4 text-sm">
+                                    {{ \Carbon\Carbon::parse($pasien->created_at)->format('d-m-Y') }}
+                                </td>
+
+                                <td class="px-6 py-4 text-sm">
+                                    {{ \Carbon\Carbon::parse($pasien->created_at)->format('H:i') }}
+                                </td>
+                                
                                 <td class="px-6 py-4 text-sm">
                                     {{ $pasien->identity->identity_number ?? '-' }}
                                 </td>

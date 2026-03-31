@@ -261,10 +261,10 @@
                                 </p>
                             </div>
                         </div>
-                        <button
+                        <a href="{{ route('rekammedis.index', ['status' => 'menunggu_konfirmasi']) }}"
                             class="text-xs px-3 py-1 bg-yellow-600 hover:bg-yellow-700 text-white rounded-md transition">
                             Cek
-                        </button>
+                        </a>
                     </div>
 
                     <!-- Terdaftar -->
@@ -283,9 +283,10 @@
                                 </p>
                             </div>
                         </div>
-                        <button class="text-xs px-3 py-1 bg-green-600 hover:bg-green-700 text-white rounded-md transition">
+                        <a href="{{ route('rekammedis.index', ['status' => 'terdaftar']) }}"
+                            class="text-xs px-3 py-1 bg-green-600 hover:bg-green-700 text-white rounded-md transition">
                             Cek
-                        </button>
+                        </a>
                     </div>
 
                     <!-- Diperiksa -->
@@ -304,9 +305,10 @@
                                 </p>
                             </div>
                         </div>
-                        <button class="text-xs px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition">
+                        <a href="{{ route('rekammedis.index', ['status' => 'diperiksa']) }}"
+                            class="text-xs px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition">
                             Cek
-                        </button>
+                        </a>
                     </div>
 
                     <!-- Menunggu Obat -->
@@ -325,9 +327,10 @@
                                 </p>
                             </div>
                         </div>
-                        <button class="text-xs px-3 py-1 bg-[#6D28D9] hover:bg-[#5B21B6] text-white rounded-md transition">
+                        <a href="{{ route('rekammedis.index', ['status' => 'menunggu_obat']) }}"
+                            class="text-xs px-3 py-1 bg-purple-600 hover:bg-purple-700 text-white rounded-md transition">
                             Cek
-                        </button>
+                        </a>
                     </div>
 
                     <!-- Selesai -->
@@ -346,9 +349,10 @@
                                 </p>
                             </div>
                         </div>
-                        <button class="text-xs px-3 py-1 bg-gray-600 hover:bg-gray-700 text-white rounded-md transition">
+                        <a href="{{ route('rekammedis.index', ['status' => 'selesai']) }}"
+                            class="text-xs px-3 py-1 bg-gray-600 hover:bg-gray-700 text-white rounded-md transition">
                             Cek
-                        </button>
+                        </a>
                     </div>
 
                 </div>
