@@ -61,12 +61,49 @@
                     dark:bg-gray-700 dark:border-gray-600 dark:text-white">
             </div>
 
+            <!-- BUTTON -->
+            <div class="flex gap-2">
+                <button onclick="filterTanggal()"
+                    class="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-sm rounded-md">
+                    Filter
+                </button>
+
+                <a href="{{ route('rekammedis.index') }}"
+                    class="px-3 py-1.5 bg-gray-400 hover:bg-gray-500 text-white text-sm rounded-md">
+                    Reset
+                </a>
+            </div>
+
+        </div>
+
+        <div class="flex gap-4 items-end mb-4">
+
+            <!-- POLI -->
+            <div class="flex flex-col text-sm">
+                <label class="text-gray-500 dark:text-gray-400 text-xs mb-1">Poli</label>
+                <select id="poli_filter" name="poli"
+                    class="px-2 py-1 border rounded-md text-sm w-44
+            dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+
+                    <option value="">Semua</option>
+
+                    <option value="Poli Umum" {{ request('poli') == 'Poli Umum' ? 'selected' : '' }}>
+                        Poli Umum
+                    </option>
+
+                    <option value="Poli Gigi" {{ request('poli') == 'Poli Gigi' ? 'selected' : '' }}>
+                        Poli Gigi
+                    </option>
+
+                </select>
+            </div>
+
             <!-- STATUS -->
             <div class="flex flex-col text-sm">
                 <label class="text-gray-500 dark:text-gray-400 text-xs mb-1">Status</label>
                 <select id="status_filter" name="status"
-                    class="px-3 py-1.5 border rounded-md text-sm w-48
-                    dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    class="px-2 py-1 border rounded-md text-sm w-56
+            dark:bg-gray-700 dark:border-gray-600 dark:text-white">
 
                     <option value="">Semua</option>
 
@@ -86,20 +123,8 @@
                     <option value="selesai" {{ request('status') == 'selesai' ? 'selected' : '' }}>
                         Selesai
                     </option>
+
                 </select>
-            </div>
-
-            <!-- BUTTON -->
-            <div class="flex gap-2">
-                <button onclick="filterTanggal()"
-                    class="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-sm rounded-md">
-                    Filter
-                </button>
-
-                <a href="{{ route('rekammedis.index') }}"
-                    class="px-3 py-1.5 bg-gray-400 hover:bg-gray-500 text-white text-sm rounded-md">
-                    Reset
-                </a>
             </div>
 
         </div>
@@ -266,7 +291,8 @@
                                         {{-- ✅ KHUSUS APOTEKER --}}
                                         @if (auth()->user()->role == 'apoteker')
                                             @if ($item->status == 'menunggu_obat')
-                                                <form action="{{ route('rekammedis.selesai', $item->id) }}" method="POST">
+                                                <form action="{{ route('rekammedis.selesai', $item->id) }}"
+                                                    method="POST">
                                                     @csrf
                                                     <button type="submit"
                                                         class="bg-green-600 text-white text-xs px-3 py-1 rounded hover:bg-green-700">
@@ -378,6 +404,7 @@
         <script>
             document.addEventListener('DOMContentLoaded', function() {
 
+                // ================= SEARCH =================
                 const input = document.getElementById('rekammedis-search');
                 const rows = document.querySelectorAll('.rekammedis-row');
                 const tbody = document.querySelector('table tbody');
@@ -394,32 +421,31 @@
                 tbody.appendChild(emptyRow);
 
                 input.addEventListener('input', function() {
-
                     const keyword = this.value.toLowerCase().trim();
                     let visibleCount = 0;
 
                     rows.forEach(row => {
-
                         const match = row.innerText.toLowerCase().includes(keyword);
-
                         row.style.display = match ? '' : 'none';
 
                         if (match) visibleCount++;
-
                     });
 
-                    if (keyword !== '' && visibleCount === 0) {
-                        emptyRow.style.display = '';
-                    } else {
-                        emptyRow.style.display = 'none';
-                    }
-
+                    emptyRow.style.display = (keyword !== '' && visibleCount === 0) ? '' : 'none';
                 });
+
+
+                // ================= AUTO FILTER =================
+                document.getElementById('start_date')?.addEventListener('change', filterTanggal);
+                document.getElementById('end_date')?.addEventListener('change', filterTanggal);
+                document.getElementById('status_filter')?.addEventListener('change', filterTanggal);
+                document.getElementById('poli_filter')?.addEventListener('change', filterTanggal);
 
             });
 
-            function openExportModal(type) {
 
+            // ================= EXPORT =================
+            function openExportModal(type) {
                 let form = document.getElementById('export-form');
 
                 if (type === 'pdf') {
@@ -436,12 +462,15 @@
                 document.getElementById('export-modal').classList.add('hidden');
             }
 
-            function filterTanggal() {
-                let start = document.getElementById('start_date').value;
-                let end = document.getElementById('end_date').value;
-                let status = document.getElementById('status_filter').value; // ✅ tambahan
 
-                // ✅ VALIDASI (TETAP)
+            // ================= FILTER =================
+            function filterTanggal() {
+
+                let start = document.getElementById('start_date')?.value;
+                let end = document.getElementById('end_date')?.value;
+                let status = document.getElementById('status_filter')?.value;
+                let poli = document.getElementById('poli_filter')?.value;
+
                 if (start && end && start > end) {
                     alert('Tanggal mulai tidak boleh lebih besar dari tanggal akhir');
                     return;
@@ -449,39 +478,21 @@
 
                 let url = new URL(window.location.href);
 
-                // 🔄 RESET PAGINATION (TETAP)
                 url.searchParams.delete('page');
 
-                // 📅 START DATE (TETAP)
-                if (start) {
-                    url.searchParams.set('start_date', start);
-                } else {
-                    url.searchParams.delete('start_date');
-                }
+                if (start) url.searchParams.set('start_date', start);
+                else url.searchParams.delete('start_date');
 
-                // 📅 END DATE (TETAP)
-                if (end) {
-                    url.searchParams.set('end_date', end);
-                } else {
-                    url.searchParams.delete('end_date');
-                }
+                if (end) url.searchParams.set('end_date', end);
+                else url.searchParams.delete('end_date');
 
-                // ✅ STATUS (DITAMBAHKAN TANPA GANGGU YANG LAIN)
-                if (status) {
-                    url.searchParams.set('status', status);
-                } else {
-                    url.searchParams.delete('status');
-                }
+                if (status) url.searchParams.set('status', status);
+                else url.searchParams.delete('status');
 
-                // 🚀 REDIRECT (TETAP)
+                if (poli) url.searchParams.set('poli', poli);
+                else url.searchParams.delete('poli');
+
                 window.location.href = url.toString();
             }
-
-            // ✅ AUTO FILTER (DITAMBAH STATUS SAJA)
-            document.addEventListener('DOMContentLoaded', function() {
-                document.getElementById('start_date').addEventListener('change', filterTanggal);
-                document.getElementById('end_date').addEventListener('change', filterTanggal);
-                document.getElementById('status_filter').addEventListener('change', filterTanggal); // ✅ tambahan
-            });
         </script>
     @endsection

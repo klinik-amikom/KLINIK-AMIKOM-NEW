@@ -20,6 +20,8 @@ class PasienController extends Controller
         $search = $request->search;
         $start  = $request->start_date;
         $end    = $request->end_date;
+        $poli   = $request->poli;
+        $status = $request->status; // ✅ tambahan
 
         $data = Pasien::with('identity')
 
@@ -34,23 +36,32 @@ class PasienController extends Controller
                 });
             })
 
-            // 📅 FILTER TANGGAL (FIX TOTAL)
+            // 📅 FILTER TANGGAL
             ->when($start && $end, function ($query) use ($start, $end) {
                 $query->whereDate('visit_date', '>=', $start)
                     ->whereDate('visit_date', '<=', $end);
             })
-
             ->when($start && !$end, function ($query) use ($start) {
                 $query->whereDate('visit_date', '>=', $start);
             })
-
             ->when(!$start && $end, function ($query) use ($end) {
                 $query->whereDate('visit_date', '<=', $end);
+            })
+
+            // 🏥 FILTER POLI
+            ->when($poli, function ($query) use ($poli) {
+                $query->where('poli', $poli);
+            })
+
+            // 📌 FILTER STATUS
+            ->when($status, function ($query) use ($status) {
+                $query->where('status', $status);
             })
 
             // 🔽 SORT
             ->orderBy('visit_date', 'desc')
 
+            // 📄 PAGINATION
             ->paginate(10)
             ->withQueryString();
 

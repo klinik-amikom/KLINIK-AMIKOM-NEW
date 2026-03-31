@@ -100,9 +100,8 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('dokter', UserController::class)->parameters(['dokter' => 'id']);
         Route::resource('apoteker', UserController::class)->parameters(['apoteker' => 'id']);
 
-        Route::get('pasien/identity/{number}', [PasienController::class, 'getIdentity'])
+        Route::get('pasien/identity/{nik}', [PasienController::class, 'cekNik'])
             ->name('pasien.getIdentity');
-
         Route::resource('pasien', PasienController::class);
         Route::resource('obat', ObatController::class);
     });
