@@ -40,15 +40,117 @@
         </div>
     </div>
 
-    <div class="mb-6">
-        <div class="relative max-w-md">
-            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+    <div class="mb-6 flex flex-col sm:flex-row gap-3 sm:items-center">
+        <!-- SEARCH -->
+        <div class="relative max-w-md w-full">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
                 <i class="fas fa-search"></i>
             </span>
             <input type="text" id="obat-search" placeholder="Cari kode, nama, atau deskripsi..."
-                class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 transition-all text-sm">
+                class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 text-sm">
+        </div>
+        <!-- FILTER -->
+        <form method="GET">
+            <select name="filter" onchange="this.form.submit()"
+                class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500">
+
+                <option value="">Urutkan</option>
+
+                <option value="stok_terkecil" {{ request('filter') == 'stok_terkecil' ? 'selected' : '' }}>
+                    Stok Paling Sedikit
+                </option>
+
+                <option value="stok_terbesar" {{ request('filter') == 'stok_terbesar' ? 'selected' : '' }}>
+                    Stok Paling Banyak
+                </option>
+
+            </select>
+        </form>
+    </div>
+
+    @if($obatMenipis->count() > 0)
+    <div class="bg-white dark:bg-gray-800 shadow-sm rounded-xl border border-red-200 dark:border-red-800 mb-6">
+
+        <!-- Header -->
+        <div class="p-4 sm:p-6 border-b border-red-200 dark:border-red-800 flex justify-between items-center">
+            <div>
+                <h3 class="text-base sm:text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                    <span class="w-7 h-7 bg-red-500 rounded-full flex items-center justify-center text-white">
+                        <i class="fas fa-exclamation-triangle text-xs"></i>
+                    </span>
+                    Obat Stok Menipis
+                </h3>
+                <p class="text-xs text-gray-500 dark:text-gray-400">
+                    Obat dengan stok ≤ 20
+                </p>
+            </div>
+
+            <span class="text-xs px-3 py-1 bg-red-600 text-white rounded-full">
+                {{ $obatMenipis->count() }} obat
+            </span>
+        </div>
+
+        <!-- Table -->
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-red-50 dark:bg-red-900/20 text-xs uppercase text-gray-500 dark:text-gray-300">
+                        <th class="px-6 py-3">Kode</th>
+                        <th class="px-6 py-3">Nama Obat</th>
+                        <th class="px-6 py-3">Stok</th>
+                        <th class="px-6 py-3">Status</th>
+                    </tr>
+                </thead>
+
+                <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+
+                    @foreach($obatMenipis as $obat)
+                        <tr class="hover:bg-red-50/50 dark:hover:bg-red-900/10 transition">
+
+                            <td class="px-6 py-3 font-mono text-purple-600 dark:text-purple-400 font-bold text-sm">
+                                {{ $obat->kode_obat }}
+                            </td>
+
+                            <td class="px-6 py-3 text-sm text-gray-900 dark:text-white">
+                                {{ $obat->nama_obat }}
+                            </td>
+
+                            <td class="px-6 py-3 text-sm font-semibold
+                                @if($obat->stok == 0)
+                                    text-red-600
+                                @elseif($obat->stok <= 5)
+                                    text-red-500
+                                @else
+                                    text-yellow-600
+                                @endif
+                            ">
+                                {{ $obat->stok }}
+                            </td>
+
+                            <td class="px-6 py-3">
+                                @if($obat->stok == 0)
+                                    <span class="px-2 py-1 text-xs bg-red-600 text-white rounded-md">
+                                        Habis
+                                    </span>
+                                @elseif($obat->stok <= 5)
+                                    <span class="px-2 py-1 text-xs bg-red-500 text-white rounded-md">
+                                        Kritis
+                                    </span>
+                                @else
+                                    <span class="px-2 py-1 text-xs bg-yellow-500 text-white rounded-md">
+                                        Menipis
+                                    </span>
+                                @endif
+                            </td>
+
+                        </tr>
+                    @endforeach
+
+                </tbody>
+            </table>
         </div>
     </div>
+    @endif
 
     <div class="bg-white dark:bg-gray-800 shadow-sm rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
         <div class="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">

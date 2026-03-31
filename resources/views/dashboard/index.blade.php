@@ -237,6 +237,86 @@
 
         <!-- Right Sidebar -->
         <div class="space-y-6">
+            <!-- Obat Menipis -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+                
+                <!-- Header -->
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                        Obat Menipis
+                    </h3>
+
+                    <!-- Button lihat lainnya -->
+                    <a href="{{ route(auth()->user()->role . '.obat.index') }}"
+                        class="text-xs px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded-md transition">
+                        Lihat lainnya
+                    </a>
+                </div>
+
+                <!-- List -->
+                <div class="space-y-3">
+
+                    @forelse($obatMenipis->take(5) as $obat)
+                        <div class="flex items-center space-x-3">
+                            
+                            <!-- Icon -->
+                            <div class="flex-shrink-0">
+                                <div class="
+                                    w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-sm
+                                    @if($obat->stok == 0)
+                                        bg-red-600
+                                    @elseif($obat->stok <= 5)
+                                        bg-red-500
+                                    @else
+                                        bg-yellow-500
+                                    @endif
+                                ">
+                                    <i class="fas fa-pills"></i>
+                                </div>
+                            </div>
+
+                            <!-- Nama Obat -->
+                            <div class="flex-1">
+                                <p class="text-sm font-medium text-gray-900 dark:text-white">
+                                    {{ $obat->nama_obat }}
+                                </p>
+
+                                <p class="text-xs text-gray-500 dark:text-gray-400">
+                                    @if($obat->stok == 0)
+                                        Stok habis
+                                    @elseif($obat->stok <= 5)
+                                        Stok kritis
+                                    @else
+                                        Stok menipis
+                                    @endif
+                                </p>
+                            </div>
+
+                            <!-- Jumlah -->
+                            <div class="text-right">
+                                <p class="
+                                    text-sm font-semibold
+                                    @if($obat->stok == 0)
+                                        text-red-600 dark:text-red-400
+                                    @elseif($obat->stok <= 5)
+                                        text-red-500 dark:text-red-400
+                                    @else
+                                        text-yellow-600 dark:text-yellow-400
+                                    @endif
+                                ">
+                                    {{ $obat->stok }}
+                                </p>
+                            </div>
+
+                        </div>
+                    @empty
+                        <p class="text-sm text-gray-500 dark:text-gray-400 text-center">
+                            Semua stok obat aman 👍
+                        </p>
+                    @endforelse
+
+                </div>
+            </div>
             <!-- Pending Actions -->
             <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">

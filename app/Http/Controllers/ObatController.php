@@ -29,16 +29,34 @@ class ObatController extends Controller
         return redirect()->route($role . '.obat.index');
     }
 
-    public function index()
+    public function index(Request $request)
     {
         try {
-            // Mengambil data obat dengan pengurutan numerik pada kode_obat
-            $dataObat = Obat::orderByRaw("CAST(SUBSTRING(kode_obat, 2) AS UNSIGNED) ASC")
-            ->paginate(10)
-            ->withQueryString();
-            return view($this->getViewPath('index'), compact('dataObat'));
+            $filter = $request->get('filter'); // 🔥 ambil filter
+
+            $query = Obat::query();
+
+            // 🔽 FILTER LOGIC
+            if ($filter == 'stok_terkecil') {
+                $query->orderBy('stok', 'asc');
+            } elseif ($filter == 'stok_terbesar') {
+                $query->orderBy('stok', 'desc');
+            } else {
+                // default (urut kode)
+                $query->orderByRaw("CAST(SUBSTRING(kode_obat, 2) AS UNSIGNED) ASC");
+            }
+
+            $dataObat = $query->paginate(10)->withQueryString();
+
+            // 🔔 tetap ambil obat menipis
+            $obatMenipis = Obat::where('stok', '<=', 20)
+                ->orderBy('stok', 'asc')
+                ->get();
+
+            return view($this->getViewPath('index'), compact('dataObat', 'obatMenipis'));
+
         } catch (Exception $e) {
-            return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            return back()->with('error', $e->getMessage());
         }
     }
 

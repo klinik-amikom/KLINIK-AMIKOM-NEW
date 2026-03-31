@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\Pasien;
 use App\Models\RekamMedis;
 use App\Models\User;
+use App\Models\Obat;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -175,6 +176,11 @@ class DashboardController extends Controller
             $persenWaktu = (($rataRataHariIni - $rataRataKemarin) / $rataRataKemarin) * 100;
         }
 
+        // 🔥 WAJIB ADA INI
+        $obatMenipis = Obat::where('stok', '<=', 20)
+            ->orderBy('stok', 'asc')
+            ->get();
+
         // Pastikan view tersedia di folder: resources/views/{role}/dashboard/index.blade.php
         return view('.dashboard.index', compact(
             'rekamMedisData',
@@ -202,6 +208,7 @@ class DashboardController extends Controller
             'persenKunjungan',
             'rataRataHariIni',
             'persenWaktu',
+            'obatMenipis',
         ));
     }
 
