@@ -57,16 +57,16 @@
             <h3 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
                 Jumlah Kunjungan Pasien Hari Ini {{-- Mengubah teks judul --}}
             </h3>
-<p class="text-xs 
+            <p class="text-xs 
     {{ $persenKunjungan >= 0 ? 'text-green-600' : 'text-red-600' }} 
     flex items-center">
 
-    <i class="fas 
+                <i class="fas 
         {{ $persenKunjungan >= 0 ? 'fa-arrow-up' : 'fa-arrow-down' }} 
         mr-1"></i>
 
-    {{ abs(round($persenKunjungan,1)) }}% dibanding kemarin
-</p>
+                {{ abs(round($persenKunjungan, 1)) }}% dibanding kemarin
+            </p>
         </div>
 
         <!-- Pasien Aktif Saat Ini -->
@@ -111,15 +111,17 @@
             <h3 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
                 Rata-rata Waktu Pelayanan
             </h3>
-            <p class="text-xs 
+            <p
+                class="text-xs 
                 {{ $persenWaktu <= 0 ? 'text-green-600' : 'text-red-600' }} 
                 flex items-center">
 
-                <i class="fas 
+                <i
+                    class="fas 
                     {{ $persenWaktu <= 0 ? 'fa-arrow-down' : 'fa-arrow-up' }} 
                     mr-1"></i>
 
-                {{ abs(round($persenWaktu,1)) }}% dibanding kemarin
+                {{ abs(round($persenWaktu, 1)) }}% dibanding kemarin
             </p>
         </div>
     </div>
@@ -128,32 +130,6 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <!-- Chart Section -->
         <div class="lg:col-span-2 space-y-6">
-            <!-- Bar Chart Kunjungan Pasien -->
-            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-                <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
-                        Statistik Kunjungan Pasien
-                    </h2>
-                    <div class="flex space-x-2">
-                        <button id="btnDailyVisits"
-                            class="text-xs px-3 py-1 bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400 rounded-full">
-                            Harian
-                        </button>
-                        <button id="btnWeeklyVisits"
-                            class="text-xs px-3 py-1 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
-                            Mingguan
-                        </button>
-                        <button id="btnMonthlyVisits"
-                            class="text-xs px-3 py-1 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
-                            Bulanan
-                        </button>
-                    </div>
-                </div>
-                <div class="h-80">
-                    <canvas id="patientVisitsChart" class="w-full h-full"></canvas>
-                </div>
-            </div>
-
             <!-- Recent Activity -->
             <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
                 <div class="flex items-center justify-between mb-4">
@@ -229,6 +205,31 @@
                             Belum ada aktivitas hari ini
                         </p>
                     @endforelse
+                </div>
+            </div>
+            <!-- Bar Chart Kunjungan Pasien -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
+                        Statistik Kunjungan Pasien
+                    </h2>
+                    <div class="flex space-x-2">
+                        <button id="btnDailyVisits"
+                            class="text-xs px-3 py-1 bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400 rounded-full">
+                            Harian
+                        </button>
+                        <button id="btnWeeklyVisits"
+                            class="text-xs px-3 py-1 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
+                            Mingguan
+                        </button>
+                        <button id="btnMonthlyVisits"
+                            class="text-xs px-3 py-1 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
+                            Bulanan
+                        </button>
+                    </div>
+                </div>
+                <div class="h-80">
+                    <canvas id="patientVisitsChart" class="w-full h-full"></canvas>
                 </div>
             </div>
         </div>

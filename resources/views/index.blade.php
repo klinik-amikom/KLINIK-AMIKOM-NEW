@@ -348,6 +348,147 @@
             </table>
         </section>
 
+         <!-- Testimonials Section -->
+        <section id="testimonials" class="testimonials section light-background">
+
+            <!-- Section Title -->
+            <div class="container section-title" data-aos="fade-up">
+                <h2>Testimoni</h2>
+                <div><span>Testimoni</span> <span class="description-title">Klinik Amikom</span></div>
+            </div><!-- End Section Title -->
+
+            <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+                <div class="testimonials-slider swiper init-swiper">
+                    <script type="application/json" class="swiper-config">
+            {
+              "slidesPerView": 1,
+              "loop": true,
+              "speed": 600,
+              "autoplay": {
+                "delay": 5000
+              },
+              "navigation": {
+                "nextEl": ".swiper-button-next",
+                "prevEl": ".swiper-button-prev"
+              }
+            }
+          </script>
+
+                    <div class="swiper-wrapper">
+
+                        <div class="swiper-slide">
+                            <div class="testimonial-item">
+                                <div class="row">
+                                    <div class="col-lg-8">
+                                        <h2>Pelayanan Ramah dan Cepat</h2>
+                                        <p>
+                                            Saya datang ke Klinik Amikom saat sedang merasa tidak enak badan di tengah
+                                            padatnya jadwal kuliah. Ternyata proses pendaftarannya sangat cepat, dan
+                                            dokter serta perawatnya ramah sekali. Saya merasa sangat terbantu.
+                                        </p>
+                                        <p>
+                                            Obat yang diberikan pun efektif, dan penjelasan dari dokter sangat mudah
+                                            dipahami. Klinik ini sangat cocok untuk mahasiswa seperti saya yang butuh
+                                            pelayanan cepat dan nyaman.
+                                        </p>
+                                        <div class="profile d-flex align-items-center">
+                                            <img src="{{ asset('landingpage') }}/img/person/person-m-7.webp"
+                                                class="profile-img" alt="">
+                                            <div class="profile-info">
+                                                <h3>Rizky Santosa</h3>
+                                                <span style="color: #e3a127">Mahasiswa</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 d-none d-lg-block">
+                                        <div class="featured-img-wrapper">
+                                            <img src="{{ asset('landingpage') }}/img/person/person-m-7.webp"
+                                                class="featured-img" alt="">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div><!-- End Testimonial Item -->
+
+                        <div class="swiper-slide">
+                            <div class="testimonial-item">
+                                <div class="row">
+                                    <div class="col-lg-8">
+                                        <h2>Tenaga Medis Profesional dan Informatif</h2>
+                                        <p>
+                                            Sebagai dosen, saya menghargai kejelasan informasi dalam proses pengobatan.
+                                            Saat berobat ke Klinik Amikom, saya merasa dilayani dengan sangat
+                                            profesional. Diagnosa disampaikan dengan rinci, dan saya diberi beberapa
+                                            opsi pengobatan yang sesuai.
+                                        </p>
+                                        <p>
+                                            Fasilitas kliniknya bersih dan tertata dengan baik. Ini menjadi contoh
+                                            pelayanan kesehatan kampus yang ideal.
+                                        </p>
+                                        <div class="profile d-flex align-items-center">
+                                            <img src="{{ asset('landingpage') }}/img/person/person-f-8.webp"
+                                                class="profile-img" alt="">
+                                            <div class="profile-info">
+                                                <h3>Dr. Alya Nurhaliza</h3>
+                                                <span style="color: #e3a127">Dosen</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 d-none d-lg-block">
+                                        <div class="featured-img-wrapper">
+                                            <img src="{{ asset('landingpage') }}/img/person/person-f-8.webp"
+                                                class="featured-img" alt="">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div><!-- End Testimonial Item -->
+
+                        <div class="swiper-slide">
+                            <div class="testimonial-item">
+                                <div class="row">
+                                    <div class="col-lg-8">
+                                        <h2>
+                                            Solusi Kesehatan yang Praktis dan Efisien
+                                        </h2>
+                                        <p>
+                                            Saya bekerja di lingkungan kampus dan sering tidak punya banyak waktu untuk
+                                            ke luar kampus hanya untuk periksa. Untungnya, Klinik Amikom sangat
+                                            membantu. Pelayanannya efisien, antrian tidak lama, dan obat bisa langsung
+                                            diambil setelah konsultasi.
+                                        </p>
+                                        <p>
+                                            Sangat direkomendasikan untuk rekan-rekan karyawan yang ingin pemeriksaan
+                                            rutin tanpa mengganggu jam kerja.
+                                        </p>
+                                        <div class="profile d-flex align-items-center">
+                                            <img src="{{ asset('landingpage') }}/img/person/person-m-9.webp"
+                                                class="profile-img" alt="">
+                                            <div class="profile-info">
+                                                <h3>Andi Prasetyo</h3>
+                                                <span style="color: #e3a127">Karyawan</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 d-none d-lg-block">
+                                        <div class="featured-img-wrapper">
+                                            <img src="{{ asset('landingpage') }}/img/person/person-m-9.webp"
+                                                class="featured-img" alt="">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div><!-- End Testimonial Item -->
+                    </div>
+                    <div class="swiper-navigation w-100 d-flex align-items-center justify-content-center">
+                        <div class="swiper-button-prev"></div>
+                        <div class="swiper-button-next"></div>
+                    </div>
+                </div>
+            </div>
+        </section><!-- /Testimonials Section -->
+        
         <!-- Team Section -->
         <section id="team" class="team section light-background">
 
