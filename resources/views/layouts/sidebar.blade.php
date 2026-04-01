@@ -148,9 +148,9 @@
 
         @if (auth()->user()->position_id == 1)
             <!-- Tim Medis Management -->
-            <a href="{{ route('users.index') }}"
+            <a href="{{ route('tim_medis.index') }}"
                 class="nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200
-                {{ Request::routeIs('users.index')
+                {{ Request::routeIs('tim_medis.index')
                     ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 border-r-2 border-purple-500'
                     : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
                 <i class="fas fa-user-tie mr-3 text-gray-400 group-hover:text-gray-500"></i>

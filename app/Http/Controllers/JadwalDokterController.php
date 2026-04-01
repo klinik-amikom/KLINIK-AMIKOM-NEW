@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\JadwalDokter;
 use App\Models\JadwalKlinik;
+use App\Models\TimMedis;
 use Illuminate\Http\Request;
 
 class JadwalDokterController extends Controller
@@ -65,7 +66,7 @@ class JadwalDokterController extends Controller
     {
         $jadwal = JadwalDokter::all();
         $jadwalKlinik = JadwalKlinik::all();
-
+        
         return view('index', compact('jadwal', 'jadwalKlinik'));
     }
 }

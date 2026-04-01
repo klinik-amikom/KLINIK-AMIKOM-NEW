@@ -570,7 +570,8 @@
                                 </div>
                             </div>
                         </div>
-                    </div><!-- End Team Member -->
+                    </div>
+                    <!-- End Team Member -->
 
                     <div class="col-lg-6" data-aos="fade-up" data-aos-delay="200">
                         <div class="team-member d-flex">

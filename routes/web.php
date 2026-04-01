@@ -11,6 +11,7 @@ use App\Http\Controllers\RekamMedisController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\JadwalDokterController;
 use App\Http\Controllers\JadwalKlinikController;
+use App\Http\Controllers\TimMedisController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [JadwalDokterController::class, 'landing']);
@@ -139,6 +140,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::resource('jadwal_dokter', JadwalDokterController::class);
     Route::resource('jadwal_klinik', JadwalKlinikController::class);
+    Route::resource('tim_medis', TimMedisController::class);
 
     Route::get('/cek-pasien-baru', [DashboardController::class, 'cekPasienBaru']);
 });
