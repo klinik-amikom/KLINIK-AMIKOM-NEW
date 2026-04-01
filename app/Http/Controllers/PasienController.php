@@ -100,41 +100,57 @@ class PasienController extends Controller
         // 🔢 Tentukan tanggal kunjungan (default hari ini)
         $tanggalKunjungan = Carbon::today();
 
-        // ⏰ Jam operasional
-        $jamBuka  = Carbon::parse($tanggalKunjungan)->setTime(8, 0);
-        $jamTutup = Carbon::parse($tanggalKunjungan)->setTime(15, 0);
+        $now = Carbon::now();
 
-        // ⏱ durasi per pasien
-        $durasi = 15;
+        // jam operasional (ikut tanggal hari ini)
+        $jamBuka = Carbon::today()->setTime(8, 0);
+        $jamTutup = Carbon::today()->setTime(15, 0);
+
+        // 🔴 FIX 1: Kalau daftar setelah jam tutup → langsung besok
+        if ($now->greaterThanOrEqualTo($jamTutup)) {
+            $tanggalKunjungan = Carbon::tomorrow();
+        } else {
+            $tanggalKunjungan = Carbon::today();
+        }
 
         // 🔎 Ambil pasien terakhir di tanggal tersebut
         $lastPasienHariIni = Pasien::whereDate('visit_date', $tanggalKunjungan)
-            ->where('poli', $request->poli) // 🔥 TAMBAHAN PENTING
+            ->where('poli', $request->poli)
             ->orderBy('estimasi_jam', 'desc')
             ->first();
 
-        if (!$lastPasienHariIni) {
-            // pasien pertama
-            $waktuDaftar = now();
+        $durasi = 15;
 
-            $estimasiJam = $waktuDaftar->lt($jamBuka)
-                ? $jamBuka
-                : $waktuDaftar;
-        } else {
-            // pasien berikutnya
-            $estimasiJam = Carbon::parse($lastPasienHariIni->estimasi_jam)
+        $menit = $now->minute;
+        $sisa = ($durasi - ($menit % $durasi)) % $durasi;
+
+        $nextSlot = $now->copy()->addMinutes($sisa)->second(0);
+
+        // 🔎 Ambil antrian terakhir
+        if ($lastPasienHariIni) {
+            $antrianTerakhir = Carbon::parse($lastPasienHariIni->estimasi_jam)
                 ->addMinutes($durasi);
+
+            // 🔥 Ambil yang paling besar (biar tidak tabrakan)
+            $estimasiJam = $nextSlot->gt($antrianTerakhir)
+                ? $nextSlot
+                : $antrianTerakhir;
+        } else {
+            // pasien pertama
+            $estimasiJam = $nextSlot;
         }
 
-        // 🔁 Jika melebihi jam operasional → pindah ke besok
-        if ($estimasiJam->gt($jamTutup)) {
+        // 🔴 FIX 2: kalau estimasi lewat jam tutup → pindah ke besok
+        if ($estimasiJam->greaterThanOrEqualTo(
+            Carbon::parse($tanggalKunjungan)->setTime(15, 0)
+        )) {
 
             $tanggalKunjungan = Carbon::tomorrow();
 
             $jamBukaBesok = Carbon::parse($tanggalKunjungan)->setTime(8, 0);
 
             $lastBesok = Pasien::whereDate('visit_date', $tanggalKunjungan)
-                ->where('poli', $request->poli) // 🔥 WAJIB
+                ->where('poli', $request->poli)
                 ->orderBy('estimasi_jam', 'desc')
                 ->first();
 
