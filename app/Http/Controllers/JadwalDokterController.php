@@ -66,7 +66,8 @@ class JadwalDokterController extends Controller
     {
         $jadwal = JadwalDokter::all();
         $jadwalKlinik = JadwalKlinik::all();
+        $timMedis = TimMedis::all();
         
-        return view('index', compact('jadwal', 'jadwalKlinik'));
+        return view('index', compact('jadwal', 'jadwalKlinik', 'timMedis'));
     }
 }

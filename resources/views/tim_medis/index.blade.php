@@ -59,15 +59,142 @@
                         <th class="px-6 py-3 text-xs font-medium uppercase">#</th>
                         <th class="px-6 py-3 text-xs font-medium uppercase">Foto</th>
                         <th class="px-6 py-3 text-xs font-medium uppercase">Nama</th>
-                        <th class="px-6 py-3 text-xs font-medium uppercase">Spesialis</th>
                         <th class="px-6 py-3 text-xs font-medium uppercase">Deskripsi</th>
                         <th class="px-6 py-3 text-xs font-medium uppercase text-right">Aksi</th>
                     </tr>
                 </thead>
 
                 <tbody class="divide-y">
+                    @forelse ($data as $index => $item)
+                        <tr>
+                            <td class="px-6 py-4">{{ $index + 1 }}</td>
+
+                            <td class="px-6 py-4">
+                                <img src="{{ asset('storage/' . $item->gambar) }}" class="w-12 h-12 rounded-full object-cover">
+                            </td>
+
+                            <td class="px-6 py-4">{{ $item->name }}</td>
+                            <td class="px-6 py-4">{{ $item->deskripsi }}</td>
+
+                            <td class="px-6 py-4 text-right">
+                                <button onclick='openEditModal(@json($item))'
+                                    class="text-yellow-500 hover:underline">Edit</button>
+
+                                <form action="{{ route('tim_medis.destroy', $item->id) }}" method="POST" class="inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button onclick="return confirm('Yakin hapus?')"
+                                        class="text-red-500 hover:underline ml-2">Hapus</button>
+                                </form>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="6" class="text-center py-4 text-gray-500">
+                                Data belum tersedia
+                            </td>
+                        </tr>
+                    @endforelse
                 </tbody> 
             </table>
         </div>
     </div>
+
+    <!-- Modal Tambah -->
+    <div id="createModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-xl w-full max-w-lg p-6">
+            <h2 class="text-lg font-semibold mb-4">Tambah Tim Medis</h2>
+
+            <form action="{{ route('tim_medis.store') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+
+                <div class="mb-3">
+                    <label class="block text-sm">Nama</label>
+                    <input type="text" name="name" class="w-full border rounded-lg px-3 py-2">
+                </div>
+
+                <div class="mb-3">
+                    <label class="block text-sm">Deskripsi</label>
+                    <textarea name="deskripsi" class="w-full border rounded-lg px-3 py-2"></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label class="block text-sm">Gambar</label>
+                    <input type="file" name="gambar" class="w-full">
+                </div>
+
+                <div class="flex justify-end gap-2">
+                    <button type="button" onclick="closeCreateModal()"
+                        class="px-4 py-2 bg-gray-400 text-white rounded-lg">Batal</button>
+
+                    <button type="submit"
+                        class="px-4 py-2 bg-purple-600 text-white rounded-lg">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Edit -->
+    <div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-xl w-full max-w-lg p-6">
+            <h2 class="text-lg font-semibold mb-4">Edit Tim Medis</h2>
+
+            <form id="editForm" method="POST" enctype="multipart/form-data">
+                @csrf
+                @method('PUT')
+
+                <div class="mb-3">
+                    <label>Nama</label>
+                    <input type="text" name="name" id="edit_name" class="w-full border rounded-lg px-3 py-2">
+                </div>
+
+                <div class="mb-3">
+                    <label>Deskripsi</label>
+                    <textarea name="deskripsi" id="edit_deskripsi" class="w-full border rounded-lg px-3 py-2"></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label>Gambar</label>
+                    <input type="file" name="gambar" class="w-full">
+                </div>
+
+                <div class="flex justify-end gap-2">
+                    <button type="button" onclick="closeEditModal()"
+                        class="px-4 py-2 bg-gray-400 text-white rounded-lg">Batal</button>
+
+                    <button type="submit"
+                        class="px-4 py-2 bg-purple-600 text-white rounded-lg">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openCreateUserModal() {
+            document.getElementById('createModal').classList.remove('hidden');
+            document.getElementById('createModal').classList.add('flex');
+        }
+
+        function closeCreateModal() {
+            document.getElementById('createModal').classList.add('hidden');
+            document.getElementById('createModal').classList.remove('flex');
+        }
+
+        function openEditModal(data) {
+            document.getElementById('editModal').classList.remove('hidden');
+            document.getElementById('editModal').classList.add('flex');
+
+            // isi form
+            document.getElementById('edit_name').value = data.name;
+            document.getElementById('edit_deskripsi').value = data.deskripsi;
+
+            // set action form
+            document.getElementById('editForm').action = '/tim_medis/' + data.id;
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').classList.add('hidden');
+            document.getElementById('editModal').classList.remove('flex');
+        }
+    </script>
 @endsection

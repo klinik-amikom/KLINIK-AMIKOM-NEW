@@ -539,52 +539,23 @@
             <div class="container" data-aos="fade-up" data-aos-delay="100">
 
                 <div class="row gy-4">
+                    @foreach ($timMedis as $item)
+                        <div class="col-lg-6" data-aos="fade-up" data-aos-delay="100">
+                            <div class="team-member d-flex align-items-stretch">
 
-                    <div class="col-lg-6" data-aos="fade-up" data-aos-delay="100">
-                        <div class="team-member d-flex">
-                            <div class="member-img">
-                                <img src="{{ asset('landingpage') }}/img/person/person-m-7.webp" class="img-fluid"
-                                    alt="" loading="lazy">
-                            </div>
-                            <div class="member-info flex-grow-1">
-                                <h4 style="color: #e3a127">dr. Andini Pratama</h4>
-                                <span>Dokter Poli Umum</span>
-                                <p style="text-align: justify;">Memberikan pelayanan pemeriksaan umum, diagnosa ringan,
-                                    serta konsultasi kesehatan
-                                    bagi mahasiswa dan staf Amikom.
-                                </p>
-                                <div class="social">
-                                    <a href=""><i class="bi bi-facebook"></i></a>
-                                    <a href=""><i class="bi bi-twitter-x"></i></a>
-                                    <a href=""><i class="bi bi-linkedin"></i></a>
-                                    <a href=""><i class="bi bi-youtube"></i></a>
+                                <div class="member-img">
+                                    <img src="{{ asset('storage/' . $item->gambar) }}" class="img-fluid">
                                 </div>
+
+                                <div class="member-info flex-grow-1">
+                                    <h4 style="color: #e3a127">{{ $item->name }}</h4>
+                                    <span>Tim Medis</span>
+                                    <p>{{ $item->deskripsi }}</p>
+                                </div>
+
                             </div>
                         </div>
-                    </div>
-                    <!-- End Team Member -->
-
-                    <div class="col-lg-6" data-aos="fade-up" data-aos-delay="200">
-                        <div class="team-member d-flex">
-                            <div class="member-img">
-                                <img src="{{ asset('landingpage') }}/img/person/person-f-8.webp" class="img-fluid"
-                                    alt="" loading="lazy">
-                            </div>
-                            <div class="member-info flex-grow-1">
-                                <h4 style="color: #e3a127">drg. Sarah Jhonson</h4>
-                                <span>Dokter Poli Gigi</span>
-                                <p style="text-align: justify;">Menangani pemeriksaan dan tindakan ringan terkait
-                                    kesehatan gigi dan mulut, seperti
-                                    pembersihan karang gigi dan penanganan nyeri gigi.</p>
-                                <div class="social">
-                                    <a href=""><i class="bi bi-facebook"></i></a>
-                                    <a href=""><i class="bi bi-twitter-x"></i></a>
-                                    <a href=""><i class="bi bi-linkedin"></i></a>
-                                    <a href=""><i class="bi bi-youtube"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div><!-- End Team Member -->
+                    @endforeach
                 </div>
             </div>
         </section><!-- /Team Section -->

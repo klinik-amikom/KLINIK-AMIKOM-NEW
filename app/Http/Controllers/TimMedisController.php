@@ -12,7 +12,9 @@ class TimMedisController extends Controller
      */
     public function index()
     {
-        //
+        $data = TimMedis::all(); // ambil data dari database
+
+        return view('tim_medis.index', compact('data'));
     }
 
     /**
@@ -28,7 +30,21 @@ class TimMedisController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required',
+            'deskripsi' => 'required',
+            'gambar' => 'required|image'
+        ]);
+
+        $gambar = $request->file('gambar')->store('tim_medis', 'public');
+
+        TimMedis::create([
+            'name' => $request->name,
+            'deskripsi' => $request->deskripsi,
+            'gambar' => $gambar,
+        ]);
+
+        return redirect()->back()->with('success', 'Data berhasil ditambahkan');
     }
 
     /**
@@ -52,7 +68,22 @@ class TimMedisController extends Controller
      */
     public function update(Request $request, TimMedis $timMedis)
     {
-        //
+        $request->validate([
+            'name' => 'required',
+            'deskripsi' => 'required',
+        ]);
+
+        if ($request->hasFile('gambar')) {
+            $gambar = $request->file('gambar')->store('tim_medis', 'public');
+            $timMedis->gambar = $gambar;
+        }
+
+        $timMedis->update([
+            'name' => $request->name,
+            'deskripsi' => $request->deskripsi,
+        ]);
+
+        return redirect()->back()->with('success', 'Data berhasil diupdate');
     }
 
     /**
@@ -60,6 +91,8 @@ class TimMedisController extends Controller
      */
     public function destroy(TimMedis $timMedis)
     {
-        //
+        $timMedis->delete();
+
+        return redirect()->back()->with('success', 'Data berhasil dihapus');
     }
 }
