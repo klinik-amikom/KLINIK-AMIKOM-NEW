@@ -86,6 +86,11 @@ class User extends Authenticatable
         return $this->position && $this->position->code === 'APT';
     }
 
+    public function isAdminKlinik(): bool
+    {
+        return $this->position && $this->position->code === 'ADM KL';
+    }
+
     /**
      * Get role name for backward compatibility.
      */

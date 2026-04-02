@@ -185,6 +185,7 @@
                         <option value="1">Admin</option>
                         <option value="2">Dokter</option>
                         <option value="3">Apoteker</option>
+                        <option value="4">Admin Klinik</option>
 
                     </select>
                 </div>
@@ -263,6 +264,7 @@
                         <option value="1">Admin</option>
                         <option value="2">Dokter</option>
                         <option value="3">Apoteker</option>
+                        <option value="3">Admin Klinik</option>
 
                     </select>
                 </div>

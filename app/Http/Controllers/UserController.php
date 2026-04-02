@@ -21,7 +21,7 @@ class UserController extends Controller
     {
         // Ambil role dari URL (admin / dokter / apoteker) hanya untuk judul/logic di view
         $segment = $request->segment(2);
-        $role = in_array($segment, ['admin', 'dokter', 'apoteker']) ? $segment : 'admin';
+        $role = in_array($segment, ['admin', 'dokter', 'apoteker', 'admin_klinik']) ? $segment : 'admin';
 
         // Ambil SEMUA user (tanpa filter dulu supaya data pasti muncul)
         $users = User::with(['position', 'identity'])
@@ -31,6 +31,8 @@ class UserController extends Controller
                     WHEN positions.position = 'Admin' THEN 1
                     WHEN positions.position = 'Dokter' THEN 2
                     WHEN positions.position = 'Apoteker' THEN 3
+                    WHEN positions.position = 'Admin Klinik' THEN 4
+
                 END
             ")
             ->select('users.*')

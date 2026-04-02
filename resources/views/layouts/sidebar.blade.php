@@ -60,15 +60,29 @@
             <span>Dashboard</span>
         </a>
 
-        <!-- Manage Outlet -->
-        <a href="{{ route($prefix . '.pasien.index') }}"
-            class="nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200
-            {{ Request::routeIs($prefix . '.pasien.*')
-                ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 border-r-2 border-purple-500'
-                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
-            <i class="fas fa-bed mr-3 text-gray-400 group-hover:text-gray-500"></i>
-            <span>Data Pasien</span>
-        </a>
+        @if (auth()->user()->position_id == 1)
+            <!-- Master Pasien -->
+            <a href="{{ route($prefix . '.pasien.index') }}"
+                class="nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200
+                {{ Request::routeIs($prefix . '.pasien.*')
+                    ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 border-r-2 border-purple-500'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
+                <i class="fas fa-bed mr-3 text-gray-400 group-hover:text-gray-500"></i>
+                <span>Master Pasien</span>
+            </a>
+        @endif
+
+        @if (auth()->user()->position_id == 4)
+            <!-- Pendaftaran Pasien -->
+            <a href="{{ route($prefix . '.pasien.index') }}"
+                class="nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200
+                {{ Request::routeIs($prefix . '.pasien.*')
+                    ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 border-r-2 border-purple-500'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
+                <i class="fas fa-bed mr-3 text-gray-400 group-hover:text-gray-500"></i>
+                <span>Pendaftaran Pasien</span>
+            </a>
+        @endif
 
         <a href="{{ route($prefix . '.obat.index') }}"
             class="nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200
@@ -79,14 +93,14 @@
             <span>Data Obat</span>
         </a>
 
-        <!-- Menu Management -->
+        <!-- Rekam Medis -->
         <a href="{{ route('rekammedis.index') }}"
             class="nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200
             {{ Request::routeIs($prefix . 'rekammedis.*')
                 ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 border-r-2 border-purple-500'
                 : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
             <i class="fas fa-file-waveform mr-3 text-gray-400 group-hover:text-gray-500"></i>
-            <span>Laporan Rekam Medis</span>
+            <span>Rekam Medis</span>
         </a>
 
         @if (auth()->user()->position_id == 1)

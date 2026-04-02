@@ -47,6 +47,7 @@ class ManageUserController extends Controller
             1 => 1, // Admin
             2 => 2, // Dokter
             3 => 3, // Apoteker
+            4 => 4, // Admin Klinik
             default => 1, // fallback default Admin
         };
 
@@ -97,6 +98,7 @@ class ManageUserController extends Controller
             1 => 1,
             2 => 2,
             3 => 3,
+            4 => 4,
             default => $user->position_id,
         };
 

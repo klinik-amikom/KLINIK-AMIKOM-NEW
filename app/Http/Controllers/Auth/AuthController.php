@@ -74,9 +74,10 @@ class AuthController extends Controller
                 return redirect()->route('dokter.dashboard');
             } elseif ($positionCode === 'APT') {
                 return redirect()->route('apoteker.dashboard');
+            } elseif ($positionCode === 'ADM KL') {
+                return redirect()->route('admin_klinik.dashboard');
             }
         }
-
         // Fallback if no position found
         return redirect('/')->with('error', 'No role assigned to your account.');
     }

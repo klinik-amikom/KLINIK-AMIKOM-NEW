@@ -100,6 +100,7 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('admin', UserController::class)->parameters(['admin' => 'id']);
         Route::resource('dokter', UserController::class)->parameters(['dokter' => 'id']);
         Route::resource('apoteker', UserController::class)->parameters(['apoteker' => 'id']);
+        Route::resource('admin_klinik', UserController::class)->parameters(['admin_klinik' => 'id']);
 
         Route::get('pasien/identity/{nik}', [PasienController::class, 'cekNik'])
             ->name('pasien.getIdentity');
@@ -120,6 +121,14 @@ Route::middleware(['auth'])->group(function () {
 
     // ================= APOTEKER =================
     Route::prefix('apoteker')->name('apoteker.')->middleware('role:apoteker')->group(function () {
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+        Route::resource('pasien', PasienController::class);
+        Route::resource('obat', ObatController::class);
+    });
+
+    //================= ADMIN KLINIK =================
+    Route::prefix('admin_klinik')->name('admin_klinik.')->middleware('role:admin_klinik')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
         Route::resource('pasien', PasienController::class);
