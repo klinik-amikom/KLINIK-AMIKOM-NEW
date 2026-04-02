@@ -1,17 +1,16 @@
 <?php
 
-use App\Http\Controllers\ApotekerController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\JadwalDokterController;
+use App\Http\Controllers\JadwalKlinikController;
 use App\Http\Controllers\ManageUserController;
 use App\Http\Controllers\ObatController;
 use App\Http\Controllers\PasienController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RekamMedisController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\JadwalDokterController;
-use App\Http\Controllers\JadwalKlinikController;
 use App\Http\Controllers\TimMedisController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [JadwalDokterController::class, 'landing']);
@@ -40,7 +39,6 @@ Route::get('/pasien', [PasienController::class, 'form'])
 // ==================================================
 // 2. AUTHENTICATED ROUTES (WAJIB LOGIN)
 // ==================================================
-
 
 Route::middleware(['auth'])->group(function () {
 
@@ -146,10 +144,12 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/rekammedis/{id}/selesai', [RekamMedisController::class, 'selesai'])
         ->name('rekammedis.selesai');
 
-
     Route::resource('jadwal_dokter', JadwalDokterController::class);
     Route::resource('jadwal_klinik', JadwalKlinikController::class);
     Route::resource('tim_medis', TimMedisController::class);
 
     Route::get('/cek-pasien-baru', [DashboardController::class, 'cekPasienBaru']);
+    Route::middleware(['auth'])->group(function () {
+        Route::resource('master-identity', \App\Http\Controllers\MasterIdentityController::class);
+    });
 });

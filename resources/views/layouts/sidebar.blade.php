@@ -61,7 +61,7 @@
         </a>
 
         @if (auth()->user()->position_id == 1)
-            <!-- Master Pasien -->
+            <!-- Pendaftara Pasien -->
             <a href="{{ route($prefix . '.pasien.index') }}"
                 class="nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200
                 {{ Request::routeIs($prefix . '.pasien.*')
@@ -92,14 +92,15 @@
             <span>Rekam Medis</span>
         </a>
 
-        <a href="#"
+       <a href="{{ route('master-identity.index') }}"
             class="nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200
-            {{ Request::routeIs($prefix . '.obat.*')
+            {{ Request::routeIs($prefix . '.master-identity.*')
                 ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 border-r-2 border-purple-500'
                 : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
             <i class="fas fa-users mr-3 text-gray-400 group-hover:text-gray-500"></i>
             <span>Master Pasien</span>
         </a>
+        
         @if (auth()->user()->position_id == 1)
             <!-- User Management -->
             <a href="{{ route('users.index') }}"
