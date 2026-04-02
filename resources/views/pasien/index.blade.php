@@ -75,12 +75,12 @@
         </div>
         <div class="w-full sm:w-auto">
             @auth
-                @if (auth()->user()->isAdmin())
+               
                     <button onclick="openCreatePasienModal()"
                         class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg shadow-sm transition-colors duration-200">
                         <i class="fas fa-plus mr-2"></i> Tambah Pasien
                     </button>
-                @endif
+               
             @endauth
         </div>
     </div>
@@ -205,7 +205,7 @@
                                 </td>
 
                                 <td class="px-6 py-4 text-sm">
-                                    {{ $pasien->identity->gender == 'L' ? 'Laki-laki' : 'Perempuan' }}
+                                    {{ $pasien->identity?->gender == 'L' ? 'Laki-laki' : ($pasien->identity?->gender == 'P' ? 'Perempuan' : '-') }}
                                 </td>
 
                                 <td class="px-6 py-4 text-sm">
@@ -261,23 +261,23 @@
                                 <td class="px-6 py-4 text-right space-x-2">
 
                                     {{-- ADMIN ONLY --}}
-                                    @if (auth()->user()->isAdmin())
+                                   
                                         <button
                                             onclick="editPasien({{ $pasien->id }}, {
-                identity_number: '{{ $pasien->identity->identity_number }}',
-                name: '{{ addslashes($pasien->identity->name) }}',
-                birth_date: '{{ $pasien->identity->birth_date }}',
-                no_telp: '{{ $pasien->identity->no_telp }}',
-                identity_type: '{{ $pasien->identity->identity_type }}',
-                gender: '{{ $pasien->identity->gender }}',
-                address: '{{ addslashes($pasien->identity->address) }}',
-                poli: '{{ $pasien->poli }}',
-                status: '{{ $pasien->status }}'
+                identity_number: '{{ $pasien->identity?->identity_number ?? '' }}',
+                name: '{{ addslashes($pasien->identity?->name ?? '') }}',
+                birth_date: '{{ $pasien->identity->birth_date ?? ''}}',
+                no_telp: '{{ $pasien->identity->no_telp ?? ''}}',
+                identity_type: '{{ $pasien->identity->identity_type ?? '' }}',
+                gender: '{{ $pasien->identity->gender ?? ''}}',
+                address: '{{ addslashes($pasien->identity->address ?? '') }}',
+                poli: '{{ $pasien->poli ?? '' }}',
+                status: '{{ $pasien->status ?? ''}}'
             })"
                                             class="text-purple-600 hover:text-purple-900">
                                             <i class="fas fa-edit"></i>
                                         </button>
-                                    @endif
+                                    
 
 
                                     {{-- SEMUA ROLE BOLEH LIHAT --}}
@@ -287,8 +287,7 @@
                                     </a>
 
 
-                                    {{-- ADMIN ONLY --}}
-                                    @if (auth()->user()->isAdmin())
+                                   
                                         <form action="{{ route($prefix . '.pasien.destroy', $pasien->id) }}"
                                             method="POST" class="inline" onsubmit="return confirm('Hapus data ini?')">
                                             @csrf
@@ -297,7 +296,7 @@
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </form>
-                                    @endif
+                                   
 
                                 </td>
                             </tr>

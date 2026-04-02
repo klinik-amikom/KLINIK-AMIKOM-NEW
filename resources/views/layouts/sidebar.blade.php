@@ -60,7 +60,7 @@
             <span>Dashboard</span>
         </a>
 
-        @if (auth()->user()->position_id == 1)
+        @if (in_array(auth()->user()->position_id, [1, 4]))
             <!-- Pendaftara Pasien -->
             <a href="{{ route($prefix . '.pasien.index') }}"
                 class="nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200
@@ -72,7 +72,7 @@
             </a>
         @endif
 
-
+        @if (in_array(auth()->user()->position_id, [1,2,3]))
         <a href="{{ route($prefix . '.obat.index') }}"
             class="nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200
             {{ Request::routeIs($prefix . '.obat.*')
@@ -81,6 +81,7 @@
             <i class="fas fa- fa-capsules mr-3 text-gray-400 group-hover:text-gray-500"></i>
             <span>Master Obat</span>
         </a>
+        @endif
 
         <!-- Rekam Medis -->
         <a href="{{ route('rekammedis.index') }}"
@@ -92,6 +93,7 @@
             <span>Rekam Medis</span>
         </a>
 
+        @if (auth()->user()->position_id == 1)
        <a href="{{ route('master-identity.index') }}"
             class="nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200
             {{ Request::routeIs($prefix . '.master-identity.*')
@@ -100,6 +102,7 @@
             <i class="fas fa-users mr-3 text-gray-400 group-hover:text-gray-500"></i>
             <span>Master Pasien</span>
         </a>
+        @endif
         
         @if (auth()->user()->position_id == 1)
             <!-- User Management -->
@@ -109,7 +112,7 @@
                     ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 border-r-2 border-purple-500'
                     : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
                 <i class="fas fa-user-cog mr-3 text-gray-400 group-hover:text-gray-500"></i>
-                <span>Kelola User</span>
+                <span>Master User</span>
             </a>
         @endif
 
@@ -120,7 +123,7 @@
                     class="nav-item group w-full flex items-center justify-between px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200
                 {{ Request::routeIs('jadwal_dokter.*') || Request::routeIs('jadwal_klinik.*')
                     ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 border-r-2 border-purple-500'
-                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
+                    : 'text-gray-700 dark:text-gray-3Jadwal00 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
 
                     <div class="flex items-center">
 
