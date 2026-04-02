@@ -38,7 +38,7 @@ class PositionSeeder extends Seeder
             ],
             [
                 'position' => 'Admin Klinik',
-                'code' => 'ADM KL',
+                'code' => 'ADM_KL',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -50,6 +50,6 @@ class PositionSeeder extends Seeder
         $this->command->info('   - Admin (ADM)');
         $this->command->info('   - Dokter (DOK)');
         $this->command->info('   - Apoteker (APT)');
-        $this->command->info('   - Admin Klinik (ADM KL)');
+        $this->command->info('   - Admin Klinik (ADM_KL)');
     }
 }

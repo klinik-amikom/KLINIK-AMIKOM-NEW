@@ -39,6 +39,7 @@ class AuthController extends Controller
             $request->session()->regenerate();
             return $this->redirectBasedOnRole();
         }
+        
 
         return back()->with('error', 'Email or password is incorrect.')->withInput($request->only('email'));
     }
@@ -74,7 +75,7 @@ class AuthController extends Controller
                 return redirect()->route('dokter.dashboard');
             } elseif ($positionCode === 'APT') {
                 return redirect()->route('apoteker.dashboard');
-            } elseif ($positionCode === 'ADM KL') {
+            } elseif ($positionCode === 'ADM_KL') {
                 return redirect()->route('admin_klinik.dashboard');
             }
         }

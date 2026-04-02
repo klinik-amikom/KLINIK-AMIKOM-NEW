@@ -1,13 +1,12 @@
 <?php
-
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\MasterIdentity;
+use App\Models\Position;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use App\Models\MasterIdentity;
-use App\Models\Position;
 
 class User extends Authenticatable
 {
@@ -48,7 +47,7 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'password'          => 'hashed',
         ];
     }
 
@@ -88,7 +87,7 @@ class User extends Authenticatable
 
     public function isAdminKlinik(): bool
     {
-        return $this->position && $this->position->code === 'ADM KL';
+        return $this->position && $this->position->code === 'ADM_KL';
     }
 
     /**
@@ -96,6 +95,16 @@ class User extends Authenticatable
      */
     public function getRoleAttribute(): string
     {
-        return $this->position ? strtolower($this->position->position) : 'unknown';
+        if (! $this->position) {
+            return 'unknown';
+        }
+
+        return match ($this->position->code) {
+            'ADM'    => 'admin',
+            'DOK'    => 'dokter',
+            'APT'    => 'apoteker',
+            'ADM_KL' => 'admin_klinik',
+            default  => 'unknown',
+        };
     }
 }

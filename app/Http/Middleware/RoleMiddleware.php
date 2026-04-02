@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Middleware;
 
 use Closure;
@@ -10,33 +9,43 @@ class RoleMiddleware
 {
     /**
      * Handle an incoming request.
-     * 
+     *
      * Check user role based on position relationship.
      * Accepts role parameter as position name (admin, dokter, apoteker).
      */
     public function handle(Request $request, Closure $next, string $role)
     {
         // 1. Check if user is authenticated
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return redirect()->route('login');
         }
 
         $user = Auth::user();
 
         // Load position if not already loaded
-        if (!$user->relationLoaded('position')) {
+        if (! $user->relationLoaded('position')) {
             $user->load('position');
         }
 
         // 2. Check if user has a position assigned
-        if (!$user->position) {
+        if (! $user->position) {
             Auth::logout();
             return redirect()->route('login')->with('error', 'No role assigned to your account.');
         }
 
         // 3. Check if user's role matches the required role
-        $userRole = strtolower($user->position->position); // 'Admin' -> 'admin'
+        $roleMap = [
+            'ADM'    => 'admin',
+            'DOK'    => 'dokter',
+            'APT'    => 'apoteker',
+            'ADM_KL' => 'admin_klinik',
+        ];
 
+        $userRole = $roleMap[$user->position->code] ?? null;
+
+        if ($userRole === $role) {
+            return $next($request);
+        }
         if ($userRole === $role) {
             return $next($request);
         }
