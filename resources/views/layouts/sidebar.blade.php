@@ -68,21 +68,10 @@
                     ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 border-r-2 border-purple-500'
                     : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
                 <i class="fas fa-bed mr-3 text-gray-400 group-hover:text-gray-500"></i>
-                <span>Master Pasien</span>
-            </a>
-        @endif
-
-        @if (auth()->user()->position_id == 4)
-            <!-- Pendaftaran Pasien -->
-            <a href="{{ route($prefix . '.pasien.index') }}"
-                class="nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200
-                {{ Request::routeIs($prefix . '.pasien.*')
-                    ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 border-r-2 border-purple-500'
-                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
-                <i class="fas fa-bed mr-3 text-gray-400 group-hover:text-gray-500"></i>
                 <span>Pendaftaran Pasien</span>
             </a>
         @endif
+
 
         <a href="{{ route($prefix . '.obat.index') }}"
             class="nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200
@@ -90,7 +79,7 @@
                 ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 border-r-2 border-purple-500'
                 : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
             <i class="fas fa- fa-capsules mr-3 text-gray-400 group-hover:text-gray-500"></i>
-            <span>Data Obat</span>
+            <span>Master Obat</span>
         </a>
 
         <!-- Rekam Medis -->
@@ -99,10 +88,18 @@
             {{ Request::routeIs($prefix . 'rekammedis.*')
                 ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 border-r-2 border-purple-500'
                 : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
-            <i class="fas fa-file-waveform mr-3 text-gray-400 group-hover:text-gray-500"></i>
+            <i class="fas fa-notes-medical mr-3 text-gray-400 group-hover:text-gray-500"></i>
             <span>Rekam Medis</span>
         </a>
 
+        <a href="#"
+            class="nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200
+            {{ Request::routeIs($prefix . '.obat.*')
+                ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 border-r-2 border-purple-500'
+                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
+            <i class="fas fa-users mr-3 text-gray-400 group-hover:text-gray-500"></i>
+            <span>Master Pasien</span>
+        </a>
         @if (auth()->user()->position_id == 1)
             <!-- User Management -->
             <a href="{{ route('users.index') }}"
@@ -110,54 +107,54 @@
                 {{ Request::routeIs('users.index')
                     ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 border-r-2 border-purple-500'
                     : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
-                <i class="fas fa-user-tie mr-3 text-gray-400 group-hover:text-gray-500"></i>
+                <i class="fas fa-user-cog mr-3 text-gray-400 group-hover:text-gray-500"></i>
                 <span>Kelola User</span>
             </a>
         @endif
 
         @if (auth()->user()->position_id == 1)
-        <div x-data="{ open: {{ Request::routeIs('jadwal_dokter.*') || Request::routeIs('jadwal_klinik.*') ? 'true' : 'false' }} }" class="w-full">
+            <div x-data="{ open: {{ Request::routeIs('jadwal_dokter.*') || Request::routeIs('jadwal_klinik.*') ? 'true' : 'false' }} }" class="w-full">
 
-            <button @click="open = !open"
-                class="nav-item group w-full flex items-center justify-between px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200
+                <button @click="open = !open"
+                    class="nav-item group w-full flex items-center justify-between px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200
                 {{ Request::routeIs('jadwal_dokter.*') || Request::routeIs('jadwal_klinik.*')
                     ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 border-r-2 border-purple-500'
                     : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
 
-                <div class="flex items-center">
+                    <div class="flex items-center">
 
-                    <i class="fas fa-calendar-alt mr-3 text-gray-400 group-hover:text-gray-500"></i>
+                        <i class="fas fa-calendar-check mr-3 text-gray-400 group-hover:text-gray-500"></i>
 
-                    <span>Kelola Jadwal</span>
+                        <span>Kelola Jadwal</span>
 
-                </div>
+                    </div>
 
-                <i class="fas fa-chevron-down text-xs transition-transform" :class="{ 'rotate-180': open }"></i>
+                    <i class="fas fa-chevron-down text-xs transition-transform" :class="{ 'rotate-180': open }"></i>
 
-            </button>
+                </button>
 
-            <div x-show="open" x-transition
-                class="ml-6 mt-2 space-y-2 pl-4 border-l-2 border-gray-200 dark:border-gray-700">
+                <div x-show="open" x-transition
+                    class="ml-6 mt-2 space-y-2 pl-4 border-l-2 border-gray-200 dark:border-gray-700">
 
-                <a href="{{ route('jadwal_dokter.index') }}"
-                    class="block px-4 py-2 rounded-lg text-sm transition-all duration-200
+                    <a href="{{ route('jadwal_dokter.index') }}"
+                        class="block px-4 py-2 rounded-lg text-sm transition-all duration-200
                     {{ Request::routeIs('jadwal_dokter.*')
                         ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 font-medium'
                         : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-purple-600' }}">
-                    Jadwal Dokter
-                </a>
+                        Jadwal Dokter
+                    </a>
 
-                <a href="{{ route('jadwal_klinik.index') }}"
-                    class="block px-4 py-2 rounded-lg text-sm transition-all duration-200
+                    <a href="{{ route('jadwal_klinik.index') }}"
+                        class="block px-4 py-2 rounded-lg text-sm transition-all duration-200
                     {{ Request::routeIs('jadwal_klinik.*')
                         ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 font-medium'
                         : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-purple-600' }}">
-                    Jadwal Klinik
-                </a>
+                        Jadwal Klinik
+                    </a>
+
+                </div>
 
             </div>
-
-        </div>
         @endif
 
         @if (auth()->user()->position_id == 1)

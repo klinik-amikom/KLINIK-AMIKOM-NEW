@@ -78,7 +78,7 @@ class PasienController extends Controller
             'identity_type'   => 'required|in:mahasiswa,dosen,karyawan',
             'gender'          => 'required|in:L,P',
             'alamat'          => 'required|string',
-            'poli'            => 'required|in:Poli Umum,Poli Gigi',
+            'poli'            => 'required|in:Poli Umum',
         ]);
 
         // 🔎 Cek identity
@@ -228,7 +228,7 @@ class PasienController extends Controller
             'identity_type'   => 'required|in:mahasiswa,dosen,karyawan',
             'gender'          => 'required|in:L,P',
             'alamat'          => 'required|string',
-            'poli'            => 'required|in:Poli Umum,Poli Gigi',
+            'poli'            => 'required|in:Poli Umum',
             'status'          => 'required',
         ]);
 

@@ -96,7 +96,22 @@
     </div>
 
     <div class="mb-2 flex flex-wrap items-end gap-2">
-
+        <!-- Filter Status -->
+        <div class="flex flex-col text-sm">
+            <label class="text-gray-500 dark:text-gray-400 text-xs mb-1">Status</label>
+            <select id="filter_status"
+                class="px-2 py-1 border rounded-md text-sm w-44
+                   dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                <option value="">Semua</option>
+                <option value="menunggu_konfirmasi" {{ request('status') == 'menunggu_konfirmasi' ? 'selected' : '' }}>
+                    Menunggu</option>
+                <option value="terdaftar" {{ request('status') == 'terdaftar' ? 'selected' : '' }}>Terdaftar</option>
+                <option value="diperiksa" {{ request('status') == 'diperiksa' ? 'selected' : '' }}>Diperiksa</option>
+                <option value="menunggu_obat" {{ request('status') == 'menunggu_obat' ? 'selected' : '' }}>Menunggu Obat
+                </option>
+                <option value="selesai" {{ request('status') == 'selesai' ? 'selected' : '' }}>Selesai</option>
+            </select>
+        </div>
         <!-- Dari -->
         <div class="flex flex-col text-sm">
             <label class="text-gray-500 dark:text-gray-400 text-xs mb-1">Dari</label>
@@ -124,39 +139,6 @@
                 class="px-3 py-1.5 bg-gray-400 hover:bg-gray-500 text-white text-sm rounded-md">
                 Reset
             </a>
-        </div>
-
-    </div>
-
-    <div class="mb-4 flex flex-wrap items-end gap-2">
-
-        <!-- Filter Poli -->
-        <div class="flex flex-col text-sm">
-            <label class="text-gray-500 dark:text-gray-400 text-xs mb-1">Poli</label>
-            <select id="filter_poli"
-                class="px-2 py-1 border rounded-md text-sm w-40
-                   dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                <option value="">Semua</option>
-                <option value="Poli Umum" {{ request('poli') == 'Poli Umum' ? 'selected' : '' }}>Poli Umum</option>
-                <option value="Poli Gigi" {{ request('poli') == 'Poli Gigi' ? 'selected' : '' }}>Poli Gigi</option>
-            </select>
-        </div>
-
-        <!-- Filter Status -->
-        <div class="flex flex-col text-sm">
-            <label class="text-gray-500 dark:text-gray-400 text-xs mb-1">Status</label>
-            <select id="filter_status"
-                class="px-2 py-1 border rounded-md text-sm w-44
-                   dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                <option value="">Semua</option>
-                <option value="menunggu_konfirmasi" {{ request('status') == 'menunggu_konfirmasi' ? 'selected' : '' }}>
-                    Menunggu</option>
-                <option value="terdaftar" {{ request('status') == 'terdaftar' ? 'selected' : '' }}>Terdaftar</option>
-                <option value="diperiksa" {{ request('status') == 'diperiksa' ? 'selected' : '' }}>Diperiksa</option>
-                <option value="menunggu_obat" {{ request('status') == 'menunggu_obat' ? 'selected' : '' }}>Menunggu Obat
-                </option>
-                <option value="selesai" {{ request('status') == 'selesai' ? 'selected' : '' }}>Selesai</option>
-            </select>
         </div>
 
     </div>
@@ -205,7 +187,7 @@
                                 <td class="px-6 py-4 text-sm">
                                     {{ \Carbon\Carbon::parse($pasien->created_at)->format('H:i') }}
                                 </td>
-                                
+
                                 <td class="px-6 py-4 text-sm">
                                     {{ $pasien->identity->identity_number ?? '-' }}
                                 </td>
@@ -402,11 +384,11 @@
 
                             <div class="sm:col-span-2">
                                 <label class="block text-sm font-medium">Poli *</label>
-                                <select name="poli" required class="w-full px-3 py-2 border rounded-lg">
-                                    <option value="" disabled selected>Pilih Poli</option>
-                                    <option value="Poli Umum">Poli Umum</option>
-                                    <option value="Poli Gigi">Poli Gigi</option>
-                                </select>
+
+                                <input type="text" value="Poli Umum"
+                                    class="w-full px-3 py-2 border rounded-lg bg-gray-100" readonly>
+
+                                <input type="hidden" name="poli" value="Poli Umum">
                             </div>
 
                         </div>
@@ -485,10 +467,13 @@
 
                             <div>
                                 <label class="block text-sm font-medium">Poli *</label>
-                                <select name="poli" id="edit-poli" required class="w-full px-3 py-2 border rounded-lg">
-                                    <option value="Poli Umum">Poli Umum</option>
-                                    <option value="Poli Gigi">Poli Gigi</option>
+                                <select name="poli" id="edit-poli"
+                                    class="w-full px-3 py-2 border rounded-lg bg-gray-100 cursor-not-allowed" disabled>
+                                    <option value="Poli Umum" selected>Poli Umum</option>
                                 </select>
+
+                                <!-- supaya tetap terkirim -->
+                                <input type="hidden" name="poli" value="Poli Umum">
                             </div>
 
                             <div>

@@ -143,11 +143,9 @@
                             <div class="description">
                                 <p style="text-align: justify;">
                                     Klinik Amikom adalah fasilitas kesehatan gratis yang disediakan oleh Universitas
-                                    Amikom Yogyakarta.
-                                    Klinik ini memiliki dua layanan utama, yaitu Poli Umum dan Poli Gigi. Berlokasi di
-                                    Gedung 3 Lantai 1,
-                                    klinik ini diperuntukkan bagi seluruh mahasiswa, dosen, dan karyawan Amikom tanpa
-                                    dipungut biaya.
+                                    Amikom Yogyakarta. Klinik ini memiliki layanan utama berupa Poli Umum. Berlokasi di
+                                    Gedung 3 Lantai 1, klinik ini diperuntukkan bagi seluruh mahasiswa, dosen, dan
+                                    karyawan Amikom tanpa dipungut biaya.
                                 </p>
                             </div>
                             <div class="cta-button">
@@ -198,7 +196,7 @@
                                 Universitas Amikom Yogyakarta dalam
                                 menyediakan
                                 fasilitas kesehatan gratis bagi seluruh civitas kampus.</p>
-                            <p style="text-align: justify;">Dengan layanan Poli Umum dan Poli Gigi, klinik ini
+                            <p style="text-align: justify;">Dengan layanan Poli Umum klinik ini
                                 mendukung kenyamanan, produktivitas,
                                 dan kualitas
                                 hidup mahasiswa, dosen, serta karyawan di lingkungan kampus.</p>
@@ -280,7 +278,8 @@
                             <div class="step-info">
                                 <span class="step-number" style="color: #e3a127">Langkah 03</span>
                                 <h3>Tunggu Konfirmasi</h3>
-                                <p>Setelah pendaftaran, Anda akan menerima konfirmasi dan nomor antrian beserta estimasi waktu kedatangan dari pihak
+                                <p>Setelah pendaftaran, Anda akan menerima konfirmasi dan nomor antrian beserta estimasi
+                                    waktu kedatangan dari pihak
                                     klinik melalui email.</p>
                             </div>
                         </div>
@@ -316,15 +315,7 @@
                     </p>
                 </div>
 
-                <!-- Poli Gigi -->
-                <div class="poli-box">
-                    <h3 style="color: #e3a127">Poli Gigi</h3>
-                    <p style="text-align: justify;">
-                        Poli Gigi menyediakan layanan perawatan kesehatan gigi dan mulut seperti pemeriksaan gigi,
-                        pembersihan karang gigi, penambalan, pencabutan, dan konsultasi perawatan gigi lainnya.
-                        Ditangani oleh dokter gigi profesional dengan peralatan yang higienis.
-                    </p>
-                </div>
+
             </div>
         </section>
 
@@ -395,7 +386,7 @@
             </table>
         </section>
 
-         <!-- Testimonials Section -->
+        <!-- Testimonials Section -->
         <section id="testimonials" class="testimonials section light-background">
 
             <!-- Section Title -->
@@ -535,7 +526,7 @@
                 </div>
             </div>
         </section><!-- /Testimonials Section -->
-        
+
         <!-- Team Section -->
         <section id="team" class="team section light-background">
 
@@ -618,7 +609,8 @@
                             </div>
                             <div class="info-content">
                                 <h4>Alamat Kami</h4>
-                                <p>Jl. Ring Road Utara, Ngringin, Condongcatur, Kec. Depok, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55281</p>
+                                <p>Jl. Ring Road Utara, Ngringin, Condongcatur, Kec. Depok, Kabupaten Sleman, Daerah
+                                    Istimewa Yogyakarta 55281</p>
                             </div>
                         </div>
                     </div>
@@ -715,7 +707,8 @@
 
                 <div class="col-lg-3 col-md-12 footer-contact text-center text-md-start">
                     <h4>Kontak Kami</h4>
-                    <p>Jl. Ring Road Utara, Ngringin, Condongcatur, Kec. Depok, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55281</p>
+                    <p>Jl. Ring Road Utara, Ngringin, Condongcatur, Kec. Depok, Kabupaten Sleman, Daerah Istimewa
+                        Yogyakarta 55281</p>
                     <p class="mt-4"><strong>No.Telp:</strong> <span>+62 87890876543</span></p>
                     <p><strong>Email:</strong> <span>klinikamikom@gmail.com</span></p>
                 </div>

@@ -78,26 +78,6 @@
 
         <div class="flex gap-4 items-end mb-4">
 
-            <!-- POLI -->
-            <div class="flex flex-col text-sm">
-                <label class="text-gray-500 dark:text-gray-400 text-xs mb-1">Poli</label>
-                <select id="poli_filter" name="poli"
-                    class="px-2 py-1 border rounded-md text-sm w-44
-            dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-
-                    <option value="">Semua</option>
-
-                    <option value="Poli Umum" {{ request('poli') == 'Poli Umum' ? 'selected' : '' }}>
-                        Poli Umum
-                    </option>
-
-                    <option value="Poli Gigi" {{ request('poli') == 'Poli Gigi' ? 'selected' : '' }}>
-                        Poli Gigi
-                    </option>
-
-                </select>
-            </div>
-
             <!-- STATUS -->
             <div class="flex flex-col text-sm">
                 <label class="text-gray-500 dark:text-gray-400 text-xs mb-1">Status</label>

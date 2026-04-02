@@ -21,10 +21,10 @@
     </style>
 </head>
 
-@if(session('error'))
-<div class="bg-red-100 border border-red-400 text-red-800 px-4 py-3 rounded mb-4">
-    {{ session('error') }}
-</div>
+@if (session('error'))
+    <div class="bg-red-100 border border-red-400 text-red-800 px-4 py-3 rounded mb-4">
+        {{ session('error') }}
+    </div>
 @endif
 
 <body class="bg-gray-100 text-gray-900 font-sans">
@@ -153,12 +153,12 @@
 
                     {{-- Poli --}}
                     <div>
-                        <label for="poli" class="block mb-1 font-medium">Poli Tujuan</label>
-                        <select id="poli" name="poli" class="w-full border rounded-md px-3 py-2">
-                            <option value="">Pilih Poli</option>
-                            <option value="Poli Umum">Poli Umum</option>
-                            <option value="Poli Gigi">Poli Gigi</option>
-                        </select>
+                        <label class="block mb-1 font-medium">Poli Tujuan</label>
+
+                        <input type="text" value="Poli Umum" class="w-full border rounded-md px-3 py-2 bg-gray-100"
+                            readonly>
+
+                        <input type="hidden" name="poli" value="Poli Umum">
                     </div>
 
                     {{-- Submit --}}
@@ -196,7 +196,8 @@
                             res.data.identity_type;
                     } else {
                         alert(
-                            '❌ NIK tidak terdaftar!\n\nAnda belum termasuk civitas akademik AMIKOM.\nSilakan hubungi admin di nomor: 0123456789');
+                            '❌ NIK tidak terdaftar!\n\nAnda belum termasuk civitas akademik AMIKOM.\nSilakan hubungi admin di nomor: 0123456789'
+                            );
 
                         // kosongkan field biar tidak misleading
                         document.getElementById('nama_pasien').value = '';
