@@ -37,10 +37,10 @@ class PasienController extends Controller
                 });
             })
             // 📅 FILTER TANGGAL
-            ->when(!$lihatSemua, function($query) {
+          //  ->when(!$lihatSemua, function($query) {
                 // jika lihat semua tidak dicentang, tampilkan pasien hari ini saja
-                $query->whereDate('visit_date', now());
-            })
+           //     $query->whereDate('visit_date', now());
+          //  })
             ->when($start && $end, function ($query) use ($start, $end) {
                 $query->whereDate('visit_date', '>=', $start)
                     ->whereDate('visit_date', '<=', $end);

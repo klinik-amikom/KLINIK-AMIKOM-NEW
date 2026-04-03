@@ -106,7 +106,7 @@
                                 class="bi bi-chevron-down toggle-dropdown"></i></a>
                         <ul>
                             <li><a href="#">Layanan Klinik</a></li>
-                            <li><a href="#info-poli">Informasi Poli Umum & Gigi</a></li>
+                            <li><a href="#info-poli">Informasi Poli Umum</a></li>
                             <li class="dropdown">
                                 <a href="#"><span>Jadwal</span>
                                     <i class="bi bi-chevron-down toggle-dropdown"></i>
@@ -315,7 +315,6 @@
                     </p>
                 </div>
 
-
             </div>
         </section>
 
@@ -338,7 +337,7 @@
                             <tr>
                                 <td>{{ $j->nama_dokter }}</td>
                                 <td>Poli {{ $j->poli }}</td>
-                                <td>{{ $j->hari_praktik }}</td>
+                                <td>{{ $j->hari }}</td>
                                 <td>{{ $j->jam_praktik }}</td>
                             </tr>
                         @empty
@@ -386,14 +385,14 @@
             </table>
         </section>
 
-        <!-- Testimonials Section -->
-        <section id="testimonials" class="testimonials section light-background">
+        <!-- Fasilitas Section -->
+        <section id="fasilitas" class="testimonials section light-background">
 
             <!-- Section Title -->
             <div class="container section-title" data-aos="fade-up">
-                <h2>Testimoni</h2>
-                <div><span>Testimoni</span> <span class="description-title">Klinik Amikom</span></div>
-            </div><!-- End Section Title -->
+                <h2>Fasilitas</h2>
+                <div><span>Fasilitas</span> <span class="description-title">Klinik Amikom</span></div>
+            </div>
 
             <div class="container" data-aos="fade-up" data-aos-delay="100">
 
@@ -411,121 +410,193 @@
                 "prevEl": ".swiper-button-prev"
               }
             }
-          </script>
+            </script>
 
                     <div class="swiper-wrapper">
 
+                        <!-- Tampak Depan Poli Umum -->
                         <div class="swiper-slide">
                             <div class="testimonial-item">
                                 <div class="row">
                                     <div class="col-lg-8">
-                                        <h2>Pelayanan Ramah dan Cepat</h2>
+                                        <h2>Tampak Depan Poli Umum</h2>
                                         <p>
-                                            Saya datang ke Klinik Amikom saat sedang merasa tidak enak badan di tengah
-                                            padatnya jadwal kuliah. Ternyata proses pendaftarannya sangat cepat, dan
-                                            dokter serta perawatnya ramah sekali. Saya merasa sangat terbantu.
+                                            Tampilan depan Poli Umum Klinik Amikom yang bersih dan tertata rapi,
+                                            memberikan kenyamanan bagi pasien saat pertama kali datang.
                                         </p>
-                                        <p>
-                                            Obat yang diberikan pun efektif, dan penjelasan dari dokter sangat mudah
-                                            dipahami. Klinik ini sangat cocok untuk mahasiswa seperti saya yang butuh
-                                            pelayanan cepat dan nyaman.
-                                        </p>
-                                        <div class="profile d-flex align-items-center">
-                                            <img src="{{ asset('landingpage') }}/img/person/person-m-7.webp"
-                                                class="profile-img" alt="">
-                                            <div class="profile-info">
-                                                <h3>Rizky Santosa</h3>
-                                                <span style="color: #e3a127">Mahasiswa</span>
-                                            </div>
-                                        </div>
                                     </div>
                                     <div class="col-lg-4 d-none d-lg-block">
                                         <div class="featured-img-wrapper">
-                                            <img src="{{ asset('landingpage') }}/img/person/person-m-7.webp"
+                                            <img src="{{ asset('landingpage/img/person/ruangDepan.jpg') }}"
                                                 class="featured-img" alt="">
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div><!-- End Testimonial Item -->
+                        </div>
 
+                        <!-- Kursi Roda -->
                         <div class="swiper-slide">
                             <div class="testimonial-item">
                                 <div class="row">
                                     <div class="col-lg-8">
-                                        <h2>Tenaga Medis Profesional dan Informatif</h2>
+                                        <h2>Kursi Roda</h2>
                                         <p>
-                                            Sebagai dosen, saya menghargai kejelasan informasi dalam proses pengobatan.
-                                            Saat berobat ke Klinik Amikom, saya merasa dilayani dengan sangat
-                                            profesional. Diagnosa disampaikan dengan rinci, dan saya diberi beberapa
-                                            opsi pengobatan yang sesuai.
+                                            Klinik menyediakan kursi roda untuk membantu pasien dengan keterbatasan
+                                            mobilitas
+                                            agar tetap dapat mengakses layanan kesehatan dengan nyaman dan aman.
                                         </p>
-                                        <p>
-                                            Fasilitas kliniknya bersih dan tertata dengan baik. Ini menjadi contoh
-                                            pelayanan kesehatan kampus yang ideal.
-                                        </p>
-                                        <div class="profile d-flex align-items-center">
-                                            <img src="{{ asset('landingpage') }}/img/person/person-f-8.webp"
-                                                class="profile-img" alt="">
-                                            <div class="profile-info">
-                                                <h3>Dr. Alya Nurhaliza</h3>
-                                                <span style="color: #e3a127">Dosen</span>
-                                            </div>
-                                        </div>
                                     </div>
                                     <div class="col-lg-4 d-none d-lg-block">
                                         <div class="featured-img-wrapper">
-                                            <img src="{{ asset('landingpage') }}/img/person/person-f-8.webp"
+                                            <img src="{{ asset('landingpage/img/person/kursiRoda.jpg') }}"
                                                 class="featured-img" alt="">
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div><!-- End Testimonial Item -->
+                        </div>
 
+                        <!-- Ranjang Pasien -->
                         <div class="swiper-slide">
                             <div class="testimonial-item">
                                 <div class="row">
                                     <div class="col-lg-8">
-                                        <h2>
-                                            Solusi Kesehatan yang Praktis dan Efisien
-                                        </h2>
+                                        <h2>Ranjang Pasien</h2>
                                         <p>
-                                            Saya bekerja di lingkungan kampus dan sering tidak punya banyak waktu untuk
-                                            ke luar kampus hanya untuk periksa. Untungnya, Klinik Amikom sangat
-                                            membantu. Pelayanannya efisien, antrian tidak lama, dan obat bisa langsung
-                                            diambil setelah konsultasi.
+                                            Ranjang pasien yang nyaman tersedia untuk pemeriksaan maupun istirahat
+                                            sementara
+                                            selama proses perawatan di klinik.
                                         </p>
-                                        <p>
-                                            Sangat direkomendasikan untuk rekan-rekan karyawan yang ingin pemeriksaan
-                                            rutin tanpa mengganggu jam kerja.
-                                        </p>
-                                        <div class="profile d-flex align-items-center">
-                                            <img src="{{ asset('landingpage') }}/img/person/person-m-9.webp"
-                                                class="profile-img" alt="">
-                                            <div class="profile-info">
-                                                <h3>Andi Prasetyo</h3>
-                                                <span style="color: #e3a127">Karyawan</span>
-                                            </div>
-                                        </div>
                                     </div>
                                     <div class="col-lg-4 d-none d-lg-block">
                                         <div class="featured-img-wrapper">
-                                            <img src="{{ asset('landingpage') }}/img/person/person-m-9.webp"
+                                            <img src="{{ asset('landingpage/img/person/ranjangPasien.jpg') }}"
                                                 class="featured-img" alt="">
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div><!-- End Testimonial Item -->
+                        </div>
+
+                        <!-- Komputer Klinik -->
+                        <div class="swiper-slide">
+                            <div class="testimonial-item">
+                                <div class="row">
+                                    <div class="col-lg-8">
+                                        <h2>Komputer Klinik</h2>
+                                        <p>
+                                            Komputer klinik digunakan untuk pencatatan data pasien, pengisian form
+                                            kunjungan,
+                                            serta pengelolaan administrasi secara digital dan terintegrasi.
+                                        </p>
+                                    </div>
+                                    <div class="col-lg-4 d-none d-lg-block">
+                                        <div class="featured-img-wrapper">
+                                            <img src="{{ asset('landingpage/img/person/formKunjungan.jpg') }}"
+                                                class="featured-img" alt="">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Kruk -->
+                        <div class="swiper-slide">
+                            <div class="testimonial-item">
+                                <div class="row">
+                                    <div class="col-lg-8">
+                                        <h2>Kruk</h2>
+                                        <p>
+                                            Kruk tersedia untuk membantu pasien yang mengalami cedera kaki agar tetap
+                                            dapat
+                                            berjalan dengan aman selama masa pemulihan.
+                                        </p>
+                                    </div>
+                                    <div class="col-lg-4 d-none d-lg-block">
+                                        <div class="featured-img-wrapper">
+                                            <img src="{{ asset('landingpage/img/person/kruk.jpg') }}"
+                                                class="featured-img" alt="">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Kartu Status Pasien -->
+                        <div class="swiper-slide">
+                            <div class="testimonial-item">
+                                <div class="row">
+                                    <div class="col-lg-8">
+                                        <h2>Kartu Status Pasien</h2>
+                                        <p>
+                                            Setiap pasien memiliki kartu status yang digunakan untuk mencatat riwayat
+                                            pemeriksaan dan mempermudah proses pelayanan di kunjungan berikutnya.
+                                        </p>
+                                    </div>
+                                    <div class="col-lg-4 d-none d-lg-block">
+                                        <div class="featured-img-wrapper">
+                                            <img src="{{ asset('landingpage/img/person/kartuStatusPasien.jpg') }}"
+                                                class="featured-img" alt="">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Oksigen -->
+                        <div class="swiper-slide">
+                            <div class="testimonial-item">
+                                <div class="row">
+                                    <div class="col-lg-8">
+                                        <h2>Oksigen</h2>
+                                        <p>
+                                            Tabung oksigen tersedia untuk penanganan pasien dengan gangguan pernapasan
+                                            atau
+                                            kondisi darurat lainnya.
+                                        </p>
+                                    </div>
+                                    <div class="col-lg-4 d-none d-lg-block">
+                                        <div class="featured-img-wrapper">
+                                            <img src="{{ asset('landingpage/img/person/oksigen.jpg') }}"
+                                                class="featured-img" alt="">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Konsultasi -->
+                        <div class="swiper-slide">
+                            <div class="testimonial-item">
+                                <div class="row">
+                                    <div class="col-lg-8">
+                                        <h2>Konsultasi</h2>
+                                        <p>
+                                            Layanan konsultasi dengan tenaga medis profesional untuk membantu pasien
+                                            mendapatkan diagnosa dan penanganan yang tepat.
+                                        </p>
+                                    </div>
+                                    <div class="col-lg-4 d-none d-lg-block">
+                                        <div class="featured-img-wrapper">
+                                            <img src="{{ asset('landingpage/img/person/konsultasi.jpg') }}"
+                                                class="featured-img" alt="">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
+
                     <div class="swiper-navigation w-100 d-flex align-items-center justify-content-center">
                         <div class="swiper-button-prev"></div>
                         <div class="swiper-button-next"></div>
                     </div>
+
                 </div>
             </div>
-        </section><!-- /Testimonials Section -->
+        </section>
 
         <!-- Team Section -->
         <section id="team" class="team section light-background">
@@ -646,7 +717,7 @@
                     <a href="index.html" class="logo d-flex align-items-center">
                         <span class="sitename">Klinik Amikom</span>
                     </a>
-                    <p>Klinik Amikom Yogyakarta menyediakan layanan kesehatan seperti Poli Umum dan Poli Gigi untuk
+                    <p>Klinik Amikom Yogyakarta menyediakan layanan kesehatan seperti Poli Umum untuk
                         seluruh
                         sivitas akademika dan masyarakat umum dengan pelayanan profesional dan ramah.</p>
                     <div class="social-links d-flex mt-4">
@@ -672,7 +743,6 @@
                     <h4>Layanan Klinik</h4>
                     <ul>
                         <li><a href="#">Poli Umum</a></li>
-                        <li><a href="#">Poli Gigi</a></li>
                     </ul>
                 </div>
 

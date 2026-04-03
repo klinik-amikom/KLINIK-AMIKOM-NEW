@@ -23,10 +23,13 @@
     <div class="max-w-7xl mx-auto px-4 py-6">
 
         {{-- TOMBOL BACK --}}
-        <div class="mb-4">
+        <div class="mb-4 flex justify-between items-center">
+            <h2 class="text-xl font-bold">Detail Pasien</h2>
+
+            {{-- tombol konsisten --}}
             <a href="{{ route(auth()->user()->role . '.pasien.index') }}"
-                class="inline-flex items-center px-4 py-2 bg-gray-200 hover:bg-gray-300 text-sm rounded-lg transition">
-                <i class="fas fa-arrow-left mr-2"></i> Kembali ke Data Pasien
+                class="inline-flex items-center px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white text-sm rounded transition">
+                ← Kembali ke Data Pasien
             </a>
         </div>
 
@@ -58,7 +61,8 @@
 
                 <div class="flex">
                     <span class="w-40 font-semibold">Estimasi Kedatangan</span>
-                    <span>: {{ $pasien->estimasi_jam ? \Carbon\Carbon::parse($pasien->estimasi_jam)->format('H:i') : '-' }}</span>
+                    <span>:
+                        {{ $pasien->estimasi_jam ? \Carbon\Carbon::parse($pasien->estimasi_jam)->format('H:i') : '-' }}</span>
                 </div>
 
                 <div class="flex">
@@ -78,7 +82,8 @@
 
                 <div class="flex">
                     <span class="w-40 font-semibold">Tanggal Lahir</span>
-                    <span>: {{ $pasien->identity->birth_date ? \Carbon\Carbon::parse($pasien->identity->birth_date)->format('d M Y') : '-' }}</span>
+                    <span>:
+                        {{ $pasien->identity->birth_date ? \Carbon\Carbon::parse($pasien->identity->birth_date)->format('d M Y') : '-' }}</span>
                 </div>
 
                 <div class="flex">

@@ -45,9 +45,8 @@
                             <td class="px-6 py-4">{{ $loop->iteration }}</td>
                             <td class="px-6 py-4">{{ $j->nama_dokter }}</td>
                             <td class="px-6 py-4">{{ $j->poli }}</td>
-                            <td class="px-6 py-4">{{ $j->hari_praktik }}</td>
-                            <td class="px-6 py-4">{{ $j->jam_praktik }}</td>
-
+                            <td class="px-6 py-4">{{ $j->hari }}</td>
+                            <td>{{ $j->jam_mulai }} - {{ $j->jam_selesai }}</td>
                             <td class="px-6 py-4 text-right">
 
                                 <div class="flex justify-end space-x-3">
@@ -57,8 +56,8 @@
                                         '{{ $j->id_jadwal }}',
                                         '{{ $j->nama_dokter }}',
                                         '{{ $j->poli }}',
-                                        '{{ $j->hari_praktik }}',
-                                        '{{ $j->jam_praktik }}'
+                                        '{{ $j->hari }}',
+                                        '{{ $j->jam_mulai }} - {{ $j->jam_selesai }}'
                                         )"
                                         class="text-purple-600 hover:text-purple-800">
 
@@ -66,8 +65,8 @@
 
                                     </button>
 
-                                    <form action="{{ route('jadwal_dokter.destroy', $j->id_jadwal) }}" method="POST"
-                                        onsubmit="return confirm('Yakin ingin menghapus jadwal ini?')">
+                                    <form action="{{ route('jadwal_dokter.destroy', $j->id) }}" method="POST"
+                                        method="POST" onsubmit="return confirm('Yakin ingin menghapus jadwal ini?')">
 
                                         @csrf
                                         @method('DELETE')
@@ -130,18 +129,14 @@
 
 
                 <!-- POLI -->
+                <!-- kirim ke backend -->
+                <input type="hidden" name="poli" value="Umum">
+
+                <!-- tampilan -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">
-                        Poli
-                    </label>
-
-                    <select name="poli" class="w-full px-3 py-2 border rounded-lg">
-
-                        <option value="">Pilih Poli</option>
-                        <option value="Umum">Poli Umum</option>
-                        <option value="Gigi">Poli Gigi</option>
-
-                    </select>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Poli</label>
+                    <input type="text" value="Poli Umum" readonly
+                        class="w-full px-3 py-2 border rounded-lg bg-gray-100 text-gray-700">
                 </div>
 
 
@@ -154,37 +149,37 @@
                     <div class="grid grid-cols-2 gap-2">
 
                         <label class="flex items-center gap-2">
-                            <input type="checkbox" name="hari_praktik[]" value="Senin">
+                            <input type="checkbox" name="hari[]" value="Senin">
                             <span>Senin</span>
                         </label>
 
                         <label class="flex items-center gap-2">
-                            <input type="checkbox" name="hari_praktik[]" value="Selasa">
+                            <input type="checkbox" name="hari[]" value="Selasa">
                             <span>Selasa</span>
                         </label>
 
                         <label class="flex items-center gap-2">
-                            <input type="checkbox" name="hari_praktik[]" value="Rabu">
+                            <input type="checkbox" name="hari[]" value="Rabu">
                             <span>Rabu</span>
                         </label>
 
                         <label class="flex items-center gap-2">
-                            <input type="checkbox" name="hari_praktik[]" value="Kamis">
+                            <input type="checkbox" name="hari[]" value="Kamis">
                             <span>Kamis</span>
                         </label>
 
                         <label class="flex items-center gap-2">
-                            <input type="checkbox" name="hari_praktik[]" value="Jumat">
+                            <input type="checkbox" name="hari[]" value="Jumat">
                             <span>Jumat</span>
                         </label>
 
                         <label class="flex items-center gap-2">
-                            <input type="checkbox" name="hari_praktik[]" value="Sabtu">
+                            <input type="checkbox" name="hari[]" value="Sabtu">
                             <span>Sabtu</span>
                         </label>
 
                         <label class="flex items-center gap-2">
-                            <input type="checkbox" name="hari_praktik[]" value="Minggu">
+                            <input type="checkbox" name="hari[]" value="Minggu">
                             <span>Minggu</span>
                         </label>
 
@@ -254,13 +249,14 @@
                     <input id="edit-nama" name="nama_dokter" class="w-full px-3 py-2 border rounded-lg">
                 </div>
 
-                <!-- POLI -->
+                <!-- kirim ke backend -->
+                <input type="hidden" name="poli" value="Umum">
+
+                <!-- tampilan -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Poli</label>
-                    <select id="edit-poli" name="poli" class="w-full px-3 py-2 border rounded-lg">
-                        <option value="Umum">Poli Umum</option>
-                        <option value="Gigi">Poli Gigi</option>
-                    </select>
+                    <input type="text" value="Poli Umum" readonly
+                        class="w-full px-3 py-2 border rounded-lg bg-gray-100 text-gray-700">
                 </div>
 
                 <!-- HARI PRAKTIK -->
@@ -268,32 +264,25 @@
                     <label class="block text-sm font-medium text-gray-700 mb-2">Hari Praktik</label>
                     <div class="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto p-2 border rounded-lg">
                         <label class="flex items-center gap-2">
-                            <input type="checkbox" name="hari_praktik[]" value="Senin"
-                                class="edit-hari"><span>Senin</span>
+                            <input type="checkbox" name="hari[]" value="Senin" class="edit-hari"><span>Senin</span>
                         </label>
                         <label class="flex items-center gap-2">
-                            <input type="checkbox" name="hari_praktik[]" value="Selasa"
-                                class="edit-hari"><span>Selasa</span>
+                            <input type="checkbox" name="hari[]" value="Selasa" class="edit-hari"><span>Selasa</span>
                         </label>
                         <label class="flex items-center gap-2">
-                            <input type="checkbox" name="hari_praktik[]" value="Rabu"
-                                class="edit-hari"><span>Rabu</span>
+                            <input type="checkbox" name="hari[]" value="Rabu" class="edit-hari"><span>Rabu</span>
                         </label>
                         <label class="flex items-center gap-2">
-                            <input type="checkbox" name="hari_praktik[]" value="Kamis"
-                                class="edit-hari"><span>Kamis</span>
+                            <input type="checkbox" name="hari[]" value="Kamis" class="edit-hari"><span>Kamis</span>
                         </label>
                         <label class="flex items-center gap-2">
-                            <input type="checkbox" name="hari_praktik[]" value="Jumat"
-                                class="edit-hari"><span>Jumat</span>
+                            <input type="checkbox" name="hari[]" value="Jumat" class="edit-hari"><span>Jumat</span>
                         </label>
                         <label class="flex items-center gap-2">
-                            <input type="checkbox" name="hari_praktik[]" value="Sabtu"
-                                class="edit-hari"><span>Sabtu</span>
+                            <input type="checkbox" name="hari[]" value="Sabtu" class="edit-hari"><span>Sabtu</span>
                         </label>
                         <label class="flex items-center gap-2">
-                            <input type="checkbox" name="hari_praktik[]" value="Minggu"
-                                class="edit-hari"><span>Minggu</span>
+                            <input type="checkbox" name="hari[]" value="Minggu" class="edit-hari"><span>Minggu</span>
                         </label>
                     </div>
                 </div>
@@ -342,23 +331,29 @@
             document.getElementById('edit-modal').classList.add('hidden');
         }
 
-        function editJadwal(id, nama, poli, hari, jam) {
-            let form = document.getElementById('edit-form');
-            form.action = "/jadwal_dokter/" + id;
+    function editJadwal(id, nama, poli, hari, jam) {
+        let form = document.getElementById('edit-form');
+        form.action = "/jadwal_dokter/" + id; // route update
 
-            document.getElementById('edit-nama').value = nama;
-            document.getElementById('edit-poli').value = poli;
+        // Nama dokter
+        document.getElementById('edit-nama').value = nama;
 
-            // pecah hari
-            let hariArray = hari.split(', ');
-            document.querySelectorAll('.edit-hari').forEach(cb => cb.checked = hariArray.includes(cb.value));
+        // Poli (hidden input)
+        form.querySelector('input[name="poli"]').value = poli;
 
-            // pecah jam
-            let jamArray = jam.split(' - ');
-            document.getElementById('edit-jam-mulai').value = jamArray[0] || '';
-            document.getElementById('edit-jam-selesai').value = jamArray[1] || '';
+        // Hari checkbox
+        let hariArray = hari.split(',').map(h => h.trim());
+        document.querySelectorAll('.edit-hari').forEach(cb => {
+            cb.checked = hariArray.includes(cb.value);
+        });
 
-            openEditModal();
-        }
+        // Jam
+        let jamArray = jam.split(' - ');
+        document.getElementById('edit-jam-mulai').value = jamArray[0] || '';
+        document.getElementById('edit-jam-selesai').value = jamArray[1] || '';
+
+        // Buka modal
+        openEditModal();
+    }
     </script>
 @endpush

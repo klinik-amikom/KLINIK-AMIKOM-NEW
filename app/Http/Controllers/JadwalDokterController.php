@@ -22,39 +22,55 @@ class JadwalDokterController extends Controller
 
     public function store(Request $request)
     {
+        $request->validate([
+            'nama_dokter' => 'required',
+            'hari' => 'required|array|min:1',
+            'jam_mulai' => 'required',
+            'jam_selesai' => 'required',
+        ]);
+
         $data = $request->all();
 
-        $data['hari_praktik'] = implode(', ', $request->hari_praktik);
+        $data['hari'] = implode(', ', $request->input('hari', []));
 
-        $data['jam_praktik'] = $request->jam_mulai . ' - ' . $request->jam_selesai;
+        $data['jam_mulai'] = $request->jam_mulai;
+        $data['jam_selesai'] = $request->jam_selesai;
+
+        $data['poli'] = 'Umum';
 
         JadwalDokter::create($data);
 
         return redirect()->route('jadwal_dokter.index')
             ->with('success', 'Data berhasil ditambahkan');
     }
-
     public function edit($id)
     {
         $jadwal = JadwalDokter::findOrFail($id);
         return view('jadwal_dokter.edit', compact('jadwal'));
     }
 
-    public function update(Request $request, $id)
-    {
-        $jadwal = JadwalDokter::findOrFail($id);
+public function update(Request $request, $id)
+{
+    $jadwal = JadwalDokter::findOrFail($id);
 
-        $data = $request->all();
+    $request->validate([
+        'nama_dokter' => 'required',
+        'hari' => 'required|array|min:1',
+        'jam_mulai' => 'required',
+        'jam_selesai' => 'required',
+    ]);
 
-        $data['hari_praktik'] = implode(', ', $request->hari_praktik);
+    $jadwal->update([
+        'nama_dokter' => $request->nama_dokter,
+        'hari' => implode(', ', $request->hari),
+        'jam_mulai' => $request->jam_mulai,
+        'jam_selesai' => $request->jam_selesai,
+        'poli' => 'Umum',
+    ]);
 
-        $data['jam_praktik'] = $request->jam_mulai . ' - ' . $request->jam_selesai;
-
-        $jadwal->update($data);
-
-        return redirect()->route('jadwal_dokter.index')
-            ->with('success', 'Data berhasil diupdate');
-    }
+    return redirect()->route('jadwal_dokter.index')
+        ->with('success', 'Data berhasil diupdate');
+}
 
     public function destroy($id)
     {
@@ -67,7 +83,7 @@ class JadwalDokterController extends Controller
         $jadwal = JadwalDokter::all();
         $jadwalKlinik = JadwalKlinik::all();
         $timMedis = TimMedis::all();
-        
+
         return view('index', compact('jadwal', 'jadwalKlinik', 'timMedis'));
     }
 }

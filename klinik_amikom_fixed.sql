@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 30, 2026 at 04:05 PM
+-- Generation Time: Apr 03, 2026 at 05:09 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -162,10 +162,12 @@ CREATE TABLE `master_identity` (
 --
 
 INSERT INTO `master_identity` (`id`, `identity_number`, `identity_type`, `name`, `birth_date`, `gender`, `no_telp`, `email`, `address`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, '1985010120101234', 'karyawan', 'Ahmad Fauzi', '1986-02-14', 'L', '082135224733', 'devisetya559@gmail.com', 'Jl. Ringroad Utara, Yogyakarta', '2026-02-01 22:57:38', '2026-02-01 22:57:38', NULL),
+(1, '1985010120101234', 'karyawan', 'Ahmad Fauzi', '1986-02-14', 'L', '082135224733', 'devisetya559@gmail.com', 'Jl. Ringroad Utara, Yogyakarta', '2026-02-01 22:57:38', '2026-04-02 13:19:02', '2026-04-02 13:19:02'),
 (2, '1982031519981234', 'dosen', 'Dr. Siti Nurhaliza', '2006-03-24', 'P', '082135224733', 'rasyythaya@gmail.com', 'Jl. Kaliurang KM 14, Sleman', '2026-02-01 22:57:38', '2026-02-01 22:57:38', NULL),
-(3, '1987072020054567', 'dosen', 'drg. Budi Santoso', '1987-02-03', 'L', NULL, NULL, 'Jl. Seturan Raya, Sleman', '2026-02-01 22:57:38', '2026-02-01 22:57:38', NULL),
-(4, '1990010520153216', 'karyawan', 'Apt. Dewi Lestari', '1998-03-04', 'P', '082134567891', 'rasyythaya@gmail.com', 'Jl. Affandi, Yogyakarta', '2026-02-01 22:57:38', '2026-02-01 22:57:38', NULL);
+(3, '1987072020054567', 'dosen', 'drg. Budi Santoso', '1987-02-03', 'L', NULL, NULL, 'Jl. Seturan Raya, Sleman', '2026-02-01 22:57:38', '2026-04-02 13:28:37', '2026-04-02 13:28:37'),
+(4, '1990010520153216', 'karyawan', 'Apt. Dewi Lestari', '1998-03-04', 'P', '082134567891', 'rasyythaya@gmail.com', 'Jl. Affandi, Yogyakarta', '2026-02-01 22:57:38', '2026-02-01 22:57:38', NULL),
+(5, '3404123456768912', 'mahasiswa', 'Rasya Asya', '2004-12-24', 'P', '082135224733', 'rasya24dezukra@gmail.com', 'Prambanan', NULL, NULL, NULL),
+(6, '1111112343234545', 'mahasiswa', 'Devi Setyo we', NULL, 'P', '082135224733', 'devisetya@gmail.com', 'test', '2026-04-02 13:26:09', '2026-04-02 13:28:30', NULL);
 
 -- --------------------------------------------------------
 
@@ -210,7 +212,9 @@ CREATE TABLE `obat` (
 --
 
 INSERT INTO `obat` (`id`, `kode_obat`, `nama_obat`, `stok`, `harga`, `tanggal_kadaluarsa`, `deskripsi`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 'OBT001', 'Paracetamol', 65, 0.00, '2030-11-28', 'Untuk demam dan migrain', '2026-02-23 08:39:58', '2026-02-23 08:39:58', NULL);
+(1, 'OBT001', 'Paracetamol', 53, 0.00, '2030-11-28', 'Untuk demam dan migrain', '2026-02-23 08:39:58', '2026-03-31 07:51:03', NULL),
+(2, 'OBT002', 'Amoxcillin', 20, 0.00, '2030-10-31', 'Antibiotik', '2026-03-31 07:23:39', '2026-03-31 07:51:03', NULL),
+(3, 'OBT003', 'Ibu Profen', 93, 0.00, '2030-10-31', 'Pereda nyeri kepala dan haid', '2026-03-31 07:24:23', '2026-03-31 07:24:23', NULL);
 
 -- --------------------------------------------------------
 
@@ -222,11 +226,15 @@ CREATE TABLE `pasien` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `identity_id` bigint(20) UNSIGNED NOT NULL,
   `kode_pasien` varchar(10) NOT NULL,
-  `poli` enum('Poli Umum','Poli Gigi') NOT NULL,
+  `poli` enum('Poli Umum') NOT NULL,
   `queue_number` varchar(11) DEFAULT NULL,
   `estimasi_jam` time DEFAULT NULL,
   `visit_date` datetime DEFAULT NULL,
   `status` enum('menunggu_konfirmasi','terdaftar','diperiksa','menunggu_obat','selesai') DEFAULT 'menunggu_konfirmasi',
+  `tensi` varchar(20) DEFAULT NULL,
+  `berat_badan` int(11) DEFAULT NULL,
+  `tinggi_badan` int(11) DEFAULT NULL,
+  `keluhan` text DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -235,9 +243,36 @@ CREATE TABLE `pasien` (
 -- Dumping data for table `pasien`
 --
 
-INSERT INTO `pasien` (`id`, `identity_id`, `kode_pasien`, `poli`, `queue_number`, `estimasi_jam`, `visit_date`, `status`, `created_at`, `updated_at`) VALUES
-(62, 4, 'P001', 'Poli Umum', 'PU-001', '13:26:57', '2026-03-30 00:00:00', 'selesai', '2026-03-30 06:26:57', '2026-03-30 06:48:00'),
-(63, 1, 'P002', 'Poli Gigi', 'PG-001', '13:29:06', '2026-03-30 00:00:00', 'selesai', '2026-03-30 06:29:06', '2026-03-30 06:42:42');
+INSERT INTO `pasien` (`id`, `identity_id`, `kode_pasien`, `poli`, `queue_number`, `estimasi_jam`, `visit_date`, `status`, `tensi`, `berat_badan`, `tinggi_badan`, `keluhan`, `created_at`, `updated_at`) VALUES
+(62, 4, 'P001', 'Poli Umum', 'PU-001', '13:26:57', '2026-03-30 00:00:00', 'selesai', NULL, NULL, NULL, NULL, '2026-03-30 06:26:57', '2026-03-30 06:48:00'),
+(63, 1, 'P002', '', 'PG-001', '13:29:06', '2026-03-30 00:00:00', 'selesai', NULL, NULL, NULL, NULL, '2026-03-30 06:29:06', '2026-03-30 06:42:42'),
+(64, 2, 'P003', '', 'PG-001', '08:00:00', '2026-03-31 00:00:00', 'selesai', NULL, NULL, NULL, NULL, '2026-03-31 00:58:57', '2026-03-31 01:07:47'),
+(65, 5, 'P004', '', 'PG-002', '08:15:00', '2026-03-31 00:00:00', 'selesai', NULL, NULL, NULL, NULL, '2026-03-31 07:48:07', '2026-03-31 07:51:03'),
+(66, 5, 'P005', 'Poli Umum', 'PU-001', '08:00:00', '2026-04-01 00:00:00', 'terdaftar', '120/80', 45, 150, 'kepala pusing', '2026-03-31 20:32:22', '2026-04-02 15:04:57'),
+(67, 5, 'P006', '', 'PG-001', '04:00:00', '2026-04-01 00:00:00', 'terdaftar', '120/80', 45, 150, 'ww', '2026-03-31 20:54:00', '2026-04-03 02:50:27'),
+(68, 5, 'P007', '', 'PG-002', '04:15:00', '2026-04-01 00:00:00', 'menunggu_konfirmasi', NULL, NULL, NULL, NULL, '2026-03-31 20:56:35', '2026-03-31 20:56:35'),
+(69, 5, 'P008', '', 'PG-003', '11:15:00', '2026-04-01 00:00:00', 'menunggu_konfirmasi', NULL, NULL, NULL, NULL, '2026-04-01 04:01:07', '2026-04-01 04:01:07'),
+(70, 5, 'P009', '', 'PG-004', '11:30:00', '2026-04-01 00:00:00', 'menunggu_konfirmasi', NULL, NULL, NULL, NULL, '2026-04-01 04:01:34', '2026-04-01 04:01:34');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `poli`
+--
+
+CREATE TABLE `poli` (
+  `id` bigint(20) NOT NULL,
+  `nama_poli` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `poli`
+--
+
+INSERT INTO `poli` (`id`, `nama_poli`, `created_at`, `updated_at`) VALUES
+(1, 'Poli Umum', '2026-04-01 06:07:27', '2026-04-01 06:07:27');
 
 -- --------------------------------------------------------
 
@@ -260,7 +295,8 @@ CREATE TABLE `positions` (
 INSERT INTO `positions` (`id`, `position`, `code`, `created_at`, `updated_at`) VALUES
 (1, 'Admin', 'ADM', '2026-02-01 22:57:37', '2026-02-01 22:57:37'),
 (2, 'Dokter', 'DOK', '2026-02-01 22:57:37', '2026-02-01 22:57:37'),
-(3, 'Apoteker', 'APT', '2026-02-01 22:57:37', '2026-02-01 22:57:37');
+(3, 'Apoteker', 'APT', '2026-02-01 22:57:37', '2026-02-01 22:57:37'),
+(4, 'Admin Klinik', 'ADM_KL', '2026-04-01 09:34:30', '2026-04-01 09:34:30');
 
 -- --------------------------------------------------------
 
@@ -289,7 +325,11 @@ CREATE TABLE `rekam_medis` (
 
 INSERT INTO `rekam_medis` (`id`, `kode_rekam_medis`, `pasien_id`, `dokter_id`, `tanggal_periksa`, `diagnosis`, `catatan`, `biaya_pemeriksaan`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES
 (6, 'RM001', 62, 1, '2026-03-30', 'BAPIL', NULL, 0.00, 'selesai', '2026-03-30 06:27:11', '2026-03-30 06:48:00', NULL),
-(7, 'RM002', 63, 1, '2026-03-30', 'PILEK', NULL, 0.00, 'selesai', '2026-03-30 06:29:21', '2026-03-30 06:42:42', NULL);
+(7, 'RM002', 63, 1, '2026-03-30', 'PILEK', NULL, 0.00, 'selesai', '2026-03-30 06:29:21', '2026-03-30 06:42:42', NULL),
+(8, 'RM003', 64, 1, '2026-03-31', 'Sakit kepala', NULL, 0.00, 'selesai', '2026-03-31 01:04:41', '2026-03-31 01:07:47', NULL),
+(9, 'RM004', 65, 1, '2026-03-31', 'Gigi tumbuh', NULL, 0.00, 'selesai', '2026-03-31 07:49:18', '2026-03-31 07:51:03', NULL),
+(10, 'RM005', 66, 1, '2026-04-02', '-', NULL, 0.00, 'menunggu_pemeriksaan', '2026-04-02 15:04:57', '2026-04-02 15:04:57', NULL),
+(11, 'RM006', 67, 1, '2026-04-03', '-', NULL, 0.00, 'menunggu_pemeriksaan', '2026-04-03 02:50:27', '2026-04-03 02:50:27', NULL);
 
 -- --------------------------------------------------------
 
@@ -313,7 +353,10 @@ CREATE TABLE `resep_obat` (
 
 INSERT INTO `resep_obat` (`id`, `rekam_medis_id`, `obat_id`, `jumlah`, `aturan_pakai`, `created_at`, `updated_at`) VALUES
 (5, 6, 1, 12, '3 kali sehari setelah makan', '2026-03-30 06:27:27', '2026-03-30 06:27:27'),
-(6, 7, 1, 12, '3 kali sehari setelah makan', '2026-03-30 06:40:16', '2026-03-30 06:40:16');
+(6, 7, 1, 12, '3 kali sehari setelah makan', '2026-03-30 06:40:16', '2026-03-30 06:40:16'),
+(7, 8, 1, 6, '2x sehari sesudah makan', '2026-03-31 01:05:54', '2026-03-31 01:05:54'),
+(8, 9, 1, 6, '3 x sesudah makan', '2026-03-31 07:50:18', '2026-03-31 07:50:18'),
+(9, 9, 2, 2, '1 x sesudah makan', '2026-03-31 07:50:18', '2026-03-31 07:50:18');
 
 -- --------------------------------------------------------
 
@@ -335,7 +378,29 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('MqzCMDjKclwiEc0dJ4qifTzMWEydSv7Ys2fusqM2', 4, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoibGFpSkhJTUdvR0lPWmdlSVhkRWlYbzhFWUJpS1Zmd0tZMU82TGljUCI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJuZXciO2E6MDp7fXM6Mzoib2xkIjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MzM6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9yZWthbS1tZWRpcyI7fXM6NTA6ImxvZ2luX3dlYl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjQ7fQ==', 1774879414);
+('dbGDixOnlq0wUxsoec7rBDpORAxba22tb4yfEMnn', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiREVtQlkxdllDcWRrOXNEUkd4VWhRWERGd2gzZlUwbE9nRFZsNjFBNCI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJuZXciO2E6MDp7fXM6Mzoib2xkIjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MzM6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9yZWthbS1tZWRpcyI7fXM6NTA6ImxvZ2luX3dlYl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjE7fQ==', 1775185758),
+('keYvd6fStrdCu9F1xZMPxmpYbpRVx0mQJWm5YPnO', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoicjA2RlNyOW9ldXhvNlRrMlVUanBtdmNEUTVlTVMzTUpJNGk0dTF0RiI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJuZXciO2E6MDp7fXM6Mzoib2xkIjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC91c2VycyI7fXM6NTA6ImxvZ2luX3dlYl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjE7fQ==', 1775144720);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tim_medis`
+--
+
+CREATE TABLE `tim_medis` (
+  `id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `deskripsi` text DEFAULT NULL,
+  `gambar` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tim_medis`
+--
+
+INSERT INTO `tim_medis` (`id`, `name`, `deskripsi`, `gambar`) VALUES
+(1, 'ertyuio', 'mmmm', 'tim_medis/JB0QigYc9KT2h9N7YEJK0aAqE2yStssGJigw3VGl.jpg'),
+(2, 'Devi Setyo', 'turu', 'tim_medis/omLrcR6sl1ZeZn8GBGBCdBDmjED9akbp31x4r0mG.jpg');
 
 -- --------------------------------------------------------
 
@@ -384,7 +449,8 @@ INSERT INTO `users` (`id`, `identity_id`, `name`, `username`, `email`, `email_ve
 (1, 1, 'Ahmad Fauzin', 'admin', 'admin@klinik.amikom.ac.id', '2026-02-01 22:57:38', '$2y$12$TJ/CccYWu846isemQ03OuuSCzuk.xZbgHu5RBHryZgFo1vq.5Js0m', 1, NULL, '2026-02-01 22:57:39', '2026-02-09 23:50:43', NULL),
 (2, 2, 'Dr. Siti Nurhaliza', 'dr.siti', 'siti.nurhaliza@amikom.ac.id', '2026-02-01 22:57:39', '$2y$12$vl0w5avbQYRqjKC293TibeXU1EW.dKAo14G.Rxid5hsPteDSAFi9q', 2, NULL, '2026-02-01 22:57:39', '2026-02-09 16:28:32', '2026-02-09 16:28:32'),
 (3, 3, 'drg. Budi Santoso', 'drg.budi', 'budi.santoso@amikom.ac.id', '2026-02-01 22:57:39', '$2y$12$JsmBk.kXF//Jk5nptTNG9.v8DBG0KsiaU9VPQRqkgCdpy7WHpS9eK', 2, NULL, '2026-02-01 22:57:39', '2026-02-09 16:15:44', '2026-02-09 16:15:44'),
-(4, 4, 'Apt. Dewi Lestari', 'apt.dewi', 'dewi.lestari@klinik.amikom.ac.id', '2026-02-01 22:57:39', '$2y$12$YzLgulrxkLyu68GTz7ab0O4bQ4X3d5rNxOSFh7Sjw0hfdyJdUGDAu', 3, NULL, '2026-02-01 22:57:40', '2026-02-09 16:59:43', '2026-02-09 16:59:43');
+(4, 4, 'Apt. Dewi Lestari', 'apt.dewi', 'dewi.lestari@klinik.amikom.ac.id', '2026-02-01 22:57:39', '$2y$12$YzLgulrxkLyu68GTz7ab0O4bQ4X3d5rNxOSFh7Sjw0hfdyJdUGDAu', 3, NULL, '2026-02-01 22:57:40', '2026-02-09 16:59:43', '2026-02-09 16:59:43'),
+(6, 5, 'Asya', 'admin.klinik', 'asya24@gmail.com', '2026-04-01 09:35:48', '$2y$12$9A7BeuNqiPVYZuBUBPC9nupIuEzW5x1Mh.BoJYPcjFORZswy/Qrsy', 4, NULL, '2026-04-01 23:32:11', '2026-04-01 09:38:32', NULL);
 
 --
 -- Indexes for dumped tables
@@ -468,6 +534,12 @@ ALTER TABLE `pasien`
   ADD KEY `identity_id` (`identity_id`);
 
 --
+-- Indexes for table `poli`
+--
+ALTER TABLE `poli`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `positions`
 --
 ALTER TABLE `positions`
@@ -499,6 +571,12 @@ ALTER TABLE `sessions`
   ADD PRIMARY KEY (`id`),
   ADD KEY `sessions_user_id_index` (`user_id`),
   ADD KEY `sessions_last_activity_index` (`last_activity`);
+
+--
+-- Indexes for table `tim_medis`
+--
+ALTER TABLE `tim_medis`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `transaksi`
@@ -545,7 +623,7 @@ ALTER TABLE `jobs`
 -- AUTO_INCREMENT for table `master_identity`
 --
 ALTER TABLE `master_identity`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `migrations`
@@ -557,31 +635,43 @@ ALTER TABLE `migrations`
 -- AUTO_INCREMENT for table `obat`
 --
 ALTER TABLE `obat`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `pasien`
 --
 ALTER TABLE `pasien`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=64;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=71;
+
+--
+-- AUTO_INCREMENT for table `poli`
+--
+ALTER TABLE `poli`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `positions`
 --
 ALTER TABLE `positions`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `rekam_medis`
 --
 ALTER TABLE `rekam_medis`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `resep_obat`
 --
 ALTER TABLE `resep_obat`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+
+--
+-- AUTO_INCREMENT for table `tim_medis`
+--
+ALTER TABLE `tim_medis`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `transaksi`
@@ -593,7 +683,7 @@ ALTER TABLE `transaksi`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Constraints for dumped tables

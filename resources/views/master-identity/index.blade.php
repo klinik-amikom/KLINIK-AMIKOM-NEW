@@ -21,6 +21,66 @@
         </button>
     </div>
 
+    <div class="mb-6">
+        <div class="relative max-w-md">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fas fa-search text-gray-400"></i>
+            </span>
+            <input type="text" id="search" name="search" value="{{ request('search') }}"
+                placeholder="Cari nama, NIK, atau jenis..."
+                class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg 
+                   bg-white dark:bg-gray-700 text-gray-900 dark:text-white 
+                   focus:ring-purple-500 focus:border-purple-500 text-sm">
+        </div>
+    </div>
+
+    <div class="flex flex-wrap gap-4 mb-6 items-end">
+
+        <!-- KATEGORI -->
+        <div class="flex flex-col text-sm">
+            <label class="text-gray-500 dark:text-gray-400 text-xs mb-1">Jenis</label>
+            <select id="kategori_filter"
+                class="px-2 py-1 border rounded-md text-sm w-48
+            dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+
+                <option value="">Semua</option>
+                <option value="mahasiswa" {{ request('kategori') == 'mahasiswa' ? 'selected' : '' }}>Mahasiswa</option>
+                <option value="dosen" {{ request('kategori') == 'dosen' ? 'selected' : '' }}>Dosen</option>
+                <option value="karyawan" {{ request('kategori') == 'karyawan' ? 'selected' : '' }}>Karyawan</option>
+            </select>
+        </div>
+
+        <!-- DARI -->
+        <div class="flex flex-col text-sm">
+            <label class="text-gray-500 dark:text-gray-400 text-xs mb-1">Dari</label>
+            <input type="date" id="start_date" value="{{ request('start_date') }}"
+                class="px-2 py-1 border rounded-md text-sm w-36
+            dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+        </div>
+
+        <!-- SAMPAI -->
+        <div class="flex flex-col text-sm">
+            <label class="text-gray-500 dark:text-gray-400 text-xs mb-1">Sampai</label>
+            <input type="date" id="end_date" value="{{ request('end_date') }}"
+                class="px-2 py-1 border rounded-md text-sm w-36
+            dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+        </div>
+
+        <!-- BUTTON -->
+        <div class="flex gap-2">
+            <button onclick="applyFilter()"
+                class="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-sm rounded-md">
+                Filter
+            </button>
+
+            <a href="{{ route('master-identity.index') }}"
+                class="px-3 py-1.5 bg-gray-400 hover:bg-gray-500 text-white text-sm rounded-md">
+                Reset
+            </a>
+        </div>
+
+    </div>
+
     {{-- TABLE --}}
     <div class="bg-white dark:bg-gray-800 shadow-sm rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
 
@@ -246,6 +306,59 @@
 
         function closeEditModal() {
             document.getElementById('edit-modal').classList.add('hidden');
+        }
+    </script>
+
+    <script>
+        // ================= AUTO SEARCH =================
+        const searchInput = document.getElementById('search');
+        let delayTimer;
+
+        searchInput.addEventListener('keyup', function() {
+            clearTimeout(delayTimer);
+
+            delayTimer = setTimeout(() => {
+                applyFilterURL();
+            }, 500);
+        });
+
+        // ================= AUTO KATEGORI =================
+        const kategoriSelect = document.getElementById('kategori_filter');
+
+        kategoriSelect.addEventListener('change', function() {
+            applyFilterURL();
+        });
+
+        // ================= FILTER TANGGAL (BUTTON) =================
+        function applyFilter() {
+            applyFilterURL();
+        }
+
+        // ================= FUNCTION GLOBAL =================
+        function applyFilterURL() {
+            let search = document.getElementById('search').value;
+            let kategori = document.getElementById('kategori_filter').value;
+            let start = document.getElementById('start_date').value;
+            let end = document.getElementById('end_date').value;
+
+            let url = new URL(window.location.href);
+
+            // search
+            if (search) url.searchParams.set('search', search);
+            else url.searchParams.delete('search');
+
+            // kategori (AUTO)
+            if (kategori) url.searchParams.set('kategori', kategori);
+            else url.searchParams.delete('kategori');
+
+            // tanggal (tetap ikut, tapi trigger dari button)
+            if (start) url.searchParams.set('start_date', start);
+            else url.searchParams.delete('start_date');
+
+            if (end) url.searchParams.set('end_date', end);
+            else url.searchParams.delete('end_date');
+
+            window.location.href = url.toString();
         }
     </script>
 @endpush

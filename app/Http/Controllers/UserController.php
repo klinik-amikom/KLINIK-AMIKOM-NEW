@@ -24,8 +24,7 @@ class UserController extends Controller
         $role = in_array($segment, ['admin', 'dokter', 'apoteker', 'admin_klinik']) ? $segment : 'admin';
 
         // Ambil SEMUA user (tanpa filter dulu supaya data pasti muncul)
-        $users = User::with(['position', 'identity'])
-            ->join('positions', 'users.position_id', '=', 'positions.id')
+        $users = User::with(['position', 'identity'])->get();            ->join('positions', 'users.position_id', '=', 'positions.id')
             ->orderByRaw("
                 CASE 
                     WHEN positions.position = 'Admin' THEN 1
@@ -82,12 +81,13 @@ class UserController extends Controller
 
             DB::commit();
 
-            return redirect()->route("admin.{$role}.index")->with('success', ucfirst($role) . ' berhasil ditambahkan!');
-        } catch (Exception $e) {
-            DB::rollBack();
-            return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage())->withInput();
-        }
-    }
+            return redirect()->route('users.index')
+                ->with('success', 'User berhasil ditambahkan!');
+                        } catch (Exception $e) {
+                        DB::rollBack();
+                        return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage())->withInput();
+                    }
+                }
 
     /**
      * Update user data.
@@ -140,15 +140,14 @@ class UserController extends Controller
 
             $role = strtolower($user->position->position);
 
-            return redirect()->route("admin.$role.index")
-                ->with('success', 'User berhasil diperbarui!');
-        } catch (Exception $e) {
-            DB::rollBack();
-            return redirect()->back()
-                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage())
-                ->withInput();
-        }
-    }
+            return redirect()->route('users.index')
+                ->with('success', 'User berhasil diperbarui!');        } catch (Exception $e) {
+                        DB::rollBack();
+                        return redirect()->back()
+                            ->with('error', 'Terjadi kesalahan: ' . $e->getMessage())
+                            ->withInput();
+                    }
+                }
 
 
     /**
@@ -158,7 +157,7 @@ class UserController extends Controller
     {
         try {
             $user = User::findOrFail($id);
-            $role = $user->role;
+$role = strtolower($user->position->position);
 
             // Cegah admin hapus akun sendiri
             if (auth()->id() === $user->id) {
@@ -173,9 +172,8 @@ class UserController extends Controller
 
             \DB::commit();
 
-            return redirect()->route("admin.{$role}.index")
-                ->with('success', "{$role} {$userName} berhasil dihapus permanen!");
-        } catch (\Exception $e) {
+return redirect()->route('users.index')
+    ->with('success', "User {$userName} berhasil dihapus!");        } catch (\Exception $e) {
             \DB::rollBack();
             return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }

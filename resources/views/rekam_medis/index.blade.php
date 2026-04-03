@@ -85,12 +85,11 @@
                 <select id="kategori_filter" name="kategori"
                     class="px-2 py-1 border rounded-md text-sm w-48
                     dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                    
+
                     <option value="">Semua</option>
 
                     @foreach ($kategoriList as $kategori)
-                        <option value="{{ $kategori }}"
-                            {{ request('kategori') == $kategori ? 'selected' : '' }}>
+                        <option value="{{ $kategori }}" {{ request('kategori') == $kategori ? 'selected' : '' }}>
                             {{ $kategori }}
                         </option>
                     @endforeach
@@ -170,12 +169,12 @@
                             class="rekammedis-row odd:bg-white even:bg-gray-50 dark:odd:bg-gray-800 dark:even:bg-gray-700 hover:bg-gray-100">
                             <td class="px-4 py-3 border border-gray-200">{{ $loop->iteration }}</td>
 
-                            <td class="px-4 py-3 border border-gray-200">
+                            <td class="px-4 py-3 border border-gray-200 whitespace-nowrap">
                                 {{ \Carbon\Carbon::parse($item->tanggal_periksa)->format('d-m-Y') }}
                             </td>
 
-                            <td class="px-4 py-3 border border-gray-200">
-                                {{ $item->pasien->created_at->format('H:i') }}
+                            <td class="px-4 py-3 border border-gray-200 whitespace-nowrap">
+                                {{ $item->pasien->identity->name ?? '-' }}
                             </td>
 
                             <td class="px-4 py-3 font-semibold text-purple-600">
@@ -188,7 +187,7 @@
                             </td>
 
                             {{-- Nama Pasien --}}
-                            <td class="px-4 py-3 border border-gray-200">
+                            <td class="px-4 py-3 border border-gray-200 whitespace-nowrap">
                                 {{ $item->pasien->identity->name ?? '-' }}
                             </td>
 
@@ -197,8 +196,8 @@
                                 {{ $item->pasien->identity->identity_type ?? '-' }}
                             </td>
 
-                            {{-- Nama Dosen --}}
-                            <td class="px-4 py-3 border border-gray-200">
+                            {{-- Nama Dokter --}}
+                            <td class="px-4 py-3 border border-gray-200 whitespace-nowrap">
                                 {{ $item->dokter->name ?? '-' }}
                             </td>
 
@@ -274,7 +273,8 @@
 
                                         {{-- Jika sudah diperiksa --}}
                                     @elseif($item->status == 'diperiksa')
-                                        <button class="bg-gray-400 text-white text-xs px-3 py-1 rounded cursor-not-allowed">
+                                        <button
+                                            class="bg-gray-400 text-white text-xs px-3 py-1 rounded cursor-not-allowed">
                                             Sedang
                                         </button>
 

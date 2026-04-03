@@ -7,9 +7,44 @@ use Illuminate\Http\Request;
 
 class MasterIdentityController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $data = MasterIdentity::latest()->paginate(10);
+        $search   = $request->search;
+        $kategori = $request->kategori;
+        $start    = $request->start_date;
+        $end      = $request->end_date;
+
+        $data = MasterIdentity::query()
+
+            // 🔍 SEARCH
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('identity_number', 'like', "%{$search}%")
+                        ->orWhere('identity_type', 'like', "%{$search}%");
+                });
+            })
+
+            // 📌 FILTER KATEGORI
+            ->when($kategori, function ($query) use ($kategori) {
+                $query->where('identity_type', $kategori);
+            })
+
+            // 📅 FILTER TANGGAL (pakai created_at)
+            ->when($start && $end, function ($query) use ($start, $end) {
+                $query->whereDate('created_at', '>=', $start)
+                    ->whereDate('created_at', '<=', $end);
+            })
+            ->when($start && !$end, function ($query) use ($start) {
+                $query->whereDate('created_at', '>=', $start);
+            })
+            ->when(!$start && $end, function ($query) use ($end) {
+                $query->whereDate('created_at', '<=', $end);
+            })
+
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
 
         return view('master-identity.index', compact('data'));
     }

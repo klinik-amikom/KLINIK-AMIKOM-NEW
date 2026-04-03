@@ -19,7 +19,6 @@ class MasterIdentity extends Model
         'birth_date',
         'gender',
         'no_telp',
-        'email',
         'address',
     ];
 
@@ -28,4 +27,8 @@ class MasterIdentity extends Model
         return $this->hasMany(Pasien::class, 'identity_id');
     }
 
+    public function users()
+    {
+        return $this->hasMany(User::class, 'identity_id');
+    }
 }

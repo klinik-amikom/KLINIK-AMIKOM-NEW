@@ -49,15 +49,7 @@ class RekamMedisController extends Controller
             })
 
             // 📅 FILTER TANGGAL
-            ->when(!$lihatSemua && $start && $end, function ($query) use ($start, $end) {
-                $query->whereBetween('tanggal_periksa', [$start, $end]);
-            })
-            ->when(!$lihatSemua && $start && !$end, function ($query) use ($start) {
-                $query->whereDate('tanggal_periksa', '>=', $start);
-            })
-            ->when(!$lihatSemua && !$start && !$end, function ($query) {
-                $query->whereDate('tanggal_periksa', Carbon::today());
-            })
+
 
             // ✅ FILTER STATUS
             ->when($status, function ($query, $status) {
