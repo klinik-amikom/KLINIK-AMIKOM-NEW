@@ -14,63 +14,60 @@ class RekamMedisController extends Controller
 {
 
     public function index(Request $request)
-    {
-        $search = $request->cari;
-        $status = $request->status;
+{
+    $search = $request->cari;
+    $status = $request->status;
 
-        // ✅ FORMAT TANGGAL (AMAN)
-        $start = $request->start_date
-            ? Carbon::parse($request->start_date)->format('Y-m-d')
-            : null;
+    // ✅ Ambil flag lihat semua
+    $lihatSemua = $request->lihat_semua;
 
-        $end = $request->end_date
-            ? Carbon::parse($request->end_date)->format('Y-m-d')
-            : null;
+    // ✅ FORMAT TANGGAL (AMAN)
+    $start = $request->start_date
+        ? Carbon::parse($request->start_date)->format('Y-m-d')
+        : null;
 
-        $dataRekamMedis = RekamMedis::with(['pasien.identity', 'dokter', 'resepObat.obat'])
+    $end = $request->end_date
+        ? Carbon::parse($request->end_date)->format('Y-m-d')
+        : null;
 
-        // 🔍 SEARCH (WAJIB DI GROUPING)
-            ->when($search, function ($query) use ($search) {
-                $query->where(function ($q) use ($search) {
-                    $q->where('kode_rekam_medis', 'like', "%{$search}%")
-                        ->orWhereHas('pasien.identity', function ($q2) use ($search) {
-                            $q2->where('name', 'like', "%{$search}%")
-                                ->orWhere('identity_number', 'like', "%{$search}%");
-                        })
-                        ->orWhere('diagnosis', 'like', "%{$search}%");
-                });
-            })
+    $dataRekamMedis = RekamMedis::with(['pasien.identity', 'dokter', 'resepObat.obat'])
+
+        // 🔍 SEARCH
+        ->when($search, function ($query) use ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('kode_rekam_medis', 'like', "%{$search}%")
+                  ->orWhereHas('pasien.identity', function ($q2) use ($search) {
+                      $q2->where('name', 'like', "%{$search}%")
+                         ->orWhere('identity_number', 'like', "%{$search}%");
+                  })
+                  ->orWhere('diagnosis', 'like', "%{$search}%");
+            });
+        })
 
         // 📅 FILTER TANGGAL
-            ->when($start && $end, function ($query) use ($start, $end) {
-                $query->whereBetween('tanggal_periksa', [$start, $end]);
-            })
+        ->when(!$lihatSemua && $start && $end, function ($query) use ($start, $end) {
+            $query->whereBetween('tanggal_periksa', [$start, $end]);
+        })
+        ->when(!$lihatSemua && $start && !$end, function ($query) use ($start) {
+            $query->whereDate('tanggal_periksa', '>=', $start);
+        })
+        ->when(!$lihatSemua && !$start && !$end, function ($query) {
+            $query->whereDate('tanggal_periksa', Carbon::today());
+        })
 
-            ->when($start && ! $end, function ($query) use ($start) {
-                $query->whereDate('tanggal_periksa', '>=', $start);
-            })
+        // ✅ FILTER STATUS
+        ->when($status, function ($query, $status) {
+            $query->whereHas('pasien', function ($q) use ($status) {
+                $q->where('status', $status);
+            });
+        })
 
-            // 📅 DEFAULT: HANYA HARI INI
-            ->when(! $start && ! $end, function ($query) {
-                $query->whereDate('tanggal_periksa', Carbon::today());
-            })
+        ->orderBy('tanggal_periksa', 'desc')
+        ->paginate(10)
+        ->withQueryString();
 
-        // ✅ FILTER STATUS (INI YANG DITAMBAHKAN)
-            ->when($status, function ($query, $status) {
-                $query->whereHas('pasien', function ($q) use ($status) {
-                    $q->where('status', $status);
-                });
-            })
-
-        // 🔽 SORTING
-            ->orderBy('tanggal_periksa', 'desc')
-
-        // ✅ PAGINATION + SIMPAN QUERY
-            ->paginate(10)
-            ->withQueryString();
-
-        return view('rekam_medis.index', compact('dataRekamMedis'));
-    }
+    return view('rekam_medis.index', compact('dataRekamMedis'));
+}
 
     public function store(Request $request)
     {

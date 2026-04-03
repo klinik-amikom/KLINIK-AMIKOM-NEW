@@ -75,12 +75,12 @@
         </div>
         <div class="w-full sm:w-auto">
             @auth
-               
-                    <button onclick="openCreatePasienModal()"
-                        class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg shadow-sm transition-colors duration-200">
-                        <i class="fas fa-plus mr-2"></i> Tambah Pasien
-                    </button>
-               
+
+                <button onclick="openCreatePasienModal()"
+                    class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg shadow-sm transition-colors duration-200">
+                    <i class="fas fa-plus mr-2"></i> Tambah Pasien
+                </button>
+
             @endauth
         </div>
     </div>
@@ -149,105 +149,86 @@
                 <table class="min-w-[1200px] w-full text-left whitespace-nowrap">
                     <thead>
                         <tr
-                            class="bg-gray-50 dark:bg-gray-700 text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
+                            class="bg-gray-50 dark:bg-gray-700 text-xs font-medium text-gray-500 dark:text-gray-300 uppercase text-center">
+
                             <th class="px-6 py-3">#</th>
-                            <th class="px-6 py-3">Kode Pasien</th>
                             <th class="px-6 py-3">No Antrian</th>
                             <th class="px-6 py-3">Tgl Daftar</th>
-                            <th class="px-6 py-3">Jam Daftar</th>
+                            <th class="px-6 py-3">Estimasi Kedatangan</th>
                             <th class="px-6 py-3">NIK</th>
                             <th class="px-6 py-3">Nama</th>
                             <th class="px-6 py-3">Kategori</th>
-                            <th class="px-6 py-3">TTL</th>
-                            <th class="px-6 py-3">Gender</th>
-                            <th class="px-6 py-3">No Telp</th>
-                            <th class="px-6 py-3">Alamat</th>
-                            <th class="px-6 py-3">Poli</th>
                             <th class="px-6 py-3">Status</th>
-                            <th class="px-6 py-3 text-right">Aksi</th>
+                            <th class="px-6 py-3">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                         @forelse ($data as $pasien)
-                            <tr class="pasien-row hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                                <td class="px-6 py-4 text-sm">{{ $loop->iteration }}</td>
-
-                                <td class="px-6 py-4 font-bold text-purple-600">
-                                    {{ $pasien->kode_pasien }}
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition text-center">
+                                {{-- NO --}}
+                                <td class="px-6 py-4 text-sm">
+                                    {{ $loop->iteration }}
                                 </td>
 
+                                {{-- NO ANTRIAN --}}
                                 <td class="px-6 py-4 text-sm font-semibold text-blue-600">
                                     {{ $pasien->queue_number ?? '-' }}
                                 </td>
 
+                                {{-- TANGGAL DAFTAR --}}
                                 <td class="px-6 py-4 text-sm">
                                     {{ \Carbon\Carbon::parse($pasien->created_at)->format('d-m-Y') }}
                                 </td>
 
+                                {{-- ESTIMASI KEDATANGAN --}}
                                 <td class="px-6 py-4 text-sm">
-                                    {{ \Carbon\Carbon::parse($pasien->created_at)->format('H:i') }}
+                                    {{ $pasien->estimasi_jam ? \Carbon\Carbon::parse($pasien->estimasi_jam)->format('H:i') : '-' }}
                                 </td>
 
+                                {{-- NIK --}}
                                 <td class="px-6 py-4 text-sm">
                                     {{ $pasien->identity->identity_number ?? '-' }}
                                 </td>
 
+                                {{-- NAMA --}}
                                 <td class="px-6 py-4 text-sm font-medium">
                                     {{ $pasien->identity->name ?? '-' }}
                                 </td>
 
+                                {{-- KATEGORI --}}
                                 <td class="px-6 py-4 text-sm">
                                     {{ ucfirst($pasien->identity->identity_type ?? '-') }}
                                 </td>
 
-                                <td class="px-6 py-4 text-sm">
-                                    {{ $pasien->identity->birth_date ?? '-' }}
-                                </td>
-
-                                <td class="px-6 py-4 text-sm">
-                                    {{ $pasien->identity?->gender == 'L' ? 'Laki-laki' : ($pasien->identity?->gender == 'P' ? 'Perempuan' : '-') }}
-                                </td>
-
-                                <td class="px-6 py-4 text-sm">
-                                    {{ $pasien->identity->no_telp ?? '-' }}
-                                </td>
-
-                                <td class="px-6 py-4 text-sm max-w-xs truncate">
-                                    {{ $pasien->identity->address ?? '-' }}
-                                </td>
-
-                                <td class="px-6 py-4 text-sm">
-                                    {{ $pasien->poli }}
-                                </td>
-
+                                {{-- STATUS --}}
                                 <td class="px-6 py-4">
                                     @switch($pasien->status)
                                         @case('menunggu_konfirmasi')
-                                            <span class="px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-700 rounded-full">
-                                                Menunggu Konfirmasi
+                                            <span class="px-2 py-1 text-xs bg-yellow-100 text-yellow-700 rounded-full">
+                                                Menunggu
                                             </span>
                                         @break
 
                                         @case('terdaftar')
-                                            <span class="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-700 rounded-full">
+                                            <span class="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded-full">
                                                 Terdaftar
                                             </span>
                                         @break
 
                                         @case('diperiksa')
-                                            <span class="px-2 py-1 text-xs font-medium bg-purple-100 text-purple-700 rounded-full">
+                                            <span class="px-2 py-1 text-xs bg-purple-100 text-purple-700 rounded-full">
                                                 Diperiksa
                                             </span>
                                         @break
 
                                         @case('menunggu_obat')
-                                            <span class="px-2 py-1 text-xs font-medium bg-orange-100 text-orange-700 rounded-full">
+                                            <span class="px-2 py-1 text-xs bg-orange-100 text-orange-700 rounded-full">
                                                 Menunggu Obat
                                             </span>
                                         @break
 
                                         @case('selesai')
-                                            <span class="px-2 py-1 text-xs font-medium bg-green-100 text-green-700 rounded-full">
+                                            <span class="px-2 py-1 text-xs bg-green-100 text-green-700 rounded-full">
                                                 Selesai
                                             </span>
                                         @break
@@ -258,51 +239,39 @@
                                             </span>
                                     @endswitch
                                 </td>
+
+                                {{-- AKSI --}}
                                 <td class="px-6 py-4 text-right space-x-2">
 
-                                    {{-- ADMIN ONLY --}}
-                                   
-                                        <button
-                                            onclick="editPasien({{ $pasien->id }}, {
-                identity_number: '{{ $pasien->identity?->identity_number ?? '' }}',
-                name: '{{ addslashes($pasien->identity?->name ?? '') }}',
-                birth_date: '{{ $pasien->identity->birth_date ?? ''}}',
-                no_telp: '{{ $pasien->identity->no_telp ?? ''}}',
-                identity_type: '{{ $pasien->identity->identity_type ?? '' }}',
-                gender: '{{ $pasien->identity->gender ?? ''}}',
-                address: '{{ addslashes($pasien->identity->address ?? '') }}',
-                poli: '{{ $pasien->poli ?? '' }}',
-                status: '{{ $pasien->status ?? ''}}'
-            })"
-                                            class="text-purple-600 hover:text-purple-900">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                    
+                                    {{-- EDIT --}}
+                                    <button onclick="editPasien({{ $pasien->id }}, {...})"
+                                        class="text-purple-600 hover:text-purple-900">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
 
-
-                                    {{-- SEMUA ROLE BOLEH LIHAT --}}
+                                    {{-- DETAIL --}}
                                     <a href="{{ route($prefix . '.pasien.show', $pasien->id) }}"
                                         class="text-blue-600 hover:text-blue-900">
                                         <i class="fas fa-eye"></i>
                                     </a>
 
-
-                                   
-                                        <form action="{{ route($prefix . '.pasien.destroy', $pasien->id) }}"
-                                            method="POST" class="inline" onsubmit="return confirm('Hapus data ini?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="text-red-600 hover:text-red-900">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
-                                   
+                                    {{-- DELETE --}}
+                                    <form action="{{ route($prefix . '.pasien.destroy', $pasien->id) }}" method="POST"
+                                        class="inline" onsubmit="return confirm('Hapus data ini?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="text-red-600 hover:text-red-900">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
 
                                 </td>
+
                             </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="px-6 py-10 text-center text-gray-500">Data pasien masih kosong.
+                                    <td colspan="10" class="px-6 py-10 text-center text-gray-500">
+                                        Data pasien masih kosong.
                                     </td>
                                 </tr>
                             @endforelse

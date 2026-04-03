@@ -28,6 +28,10 @@ class Pasien extends Model
         'estimasi_jam',
         'visit_date',
         'status',
+        'tensi',
+        'berat_badan',
+        'tinggi_badan',
+        'keluhan',
     ];
 
     /**

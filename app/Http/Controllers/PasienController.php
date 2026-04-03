@@ -308,7 +308,7 @@ class PasienController extends Controller
         return view('pasien.show', compact('pasien', 'role'));
     }
 
-    public function konfirmasi($id)
+    public function konfirmasi(Request $request, $id)
     {
         $pasien = Pasien::findOrFail($id);
 
@@ -317,11 +317,15 @@ class PasienController extends Controller
             return back()->with('error', 'Pasien sudah dikonfirmasi.');
         }
 
-        DB::transaction(function () use ($pasien) {
+        DB::transaction(function () use ($pasien, $request) {
 
             // 🔄 Ubah status pasien
             $pasien->update([
-                'status' => 'terdaftar',
+                'status'        => 'terdaftar',
+                'tensi'         => $request->tensi,
+                'berat_badan'   => $request->berat_badan,
+                'tinggi_badan'  => $request->tinggi_badan,
+                'keluhan'       => $request->keluhan,
             ]);
 
             // 🔢 Generate kode rekam medis
