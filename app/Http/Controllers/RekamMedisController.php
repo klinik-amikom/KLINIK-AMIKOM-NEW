@@ -5,10 +5,12 @@ use App\Exports\RekamMedisExport;
 use App\Models\Obat;
 use App\Models\RekamMedis;
 use App\Models\MasterIdentity;
+use App\Mail\RekamMedisSelesaiMail;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
 
 class RekamMedisController extends Controller
@@ -216,7 +218,16 @@ class RekamMedisController extends Controller
 
             DB::commit();
 
-            return back()->with('success', 'Obat telah diberikan, stok diperbarui.');
+            // ✅ KIRIM EMAIL DI SINI
+            $rekam->load(['pasien.identity', 'dokter', 'resepObat.obat']);
+
+            $email = $rekam->pasien->identity->email ?? null;
+
+            if ($email) {
+                Mail::to($email)->send(new RekamMedisSelesaiMail($rekam));
+            }
+
+            return back()->with('success', 'Obat telah diberikan, stok diperbarui & email terkirim.');
 
         } catch (\Exception $e) {
             DB::rollBack();

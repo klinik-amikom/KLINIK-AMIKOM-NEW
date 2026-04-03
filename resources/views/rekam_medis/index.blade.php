@@ -335,8 +335,8 @@
                                         @endif
 
                                         <a href="{{ route('rekammedis.export.pasien', $item->pasien_id) }}"
-                                            class="bg-blue-600 text-white text-xs px-3 py-1 rounded hover:bg-blue-700">
-                                            Export Pasien
+                                            class="text-blue-600 hover:text-blue-800">
+                                            <i class="fas fa-file"></i>
                                         </a>
                                     </div>
                                 </td>
