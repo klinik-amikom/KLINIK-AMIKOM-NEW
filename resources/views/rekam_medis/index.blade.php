@@ -334,6 +334,10 @@
                                             </form>
                                         @endif
 
+                                        <a href="{{ route('rekammedis.export.pasien', $item->pasien_id) }}"
+                                            class="bg-blue-600 text-white text-xs px-3 py-1 rounded hover:bg-blue-700">
+                                            Export Pasien
+                                        </a>
                                     </div>
                                 </td>
                             @endif

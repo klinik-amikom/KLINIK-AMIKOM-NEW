@@ -17,26 +17,30 @@ class PasienController extends Controller
 
     public function index(Request $request)
     {
-        $search = $request->search;
-        $start  = $request->start_date;
-        $end    = $request->end_date;
-        $poli   = $request->poli;
-        $status = $request->status; // ✅ tambahan
+        $search      = $request->search;
+        $start       = $request->start_date;
+        $end         = $request->end_date;
+        $poli        = $request->poli;
+        $status      = $request->status;
+        $lihatSemua  = $request->lihat_semua;
 
+        // Ambil data pasien dengan relasi identity
         $data = Pasien::with('identity')
-
-            // 🔍 SEARCH
+            // 🔍 FILTER SEARCH
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('kode_pasien', 'like', "%{$search}%")
-                        ->orWhereHas('identity', function ($q2) use ($search) {
-                            $q2->where('name', 'like', "%{$search}%")
-                                ->orWhere('identity_number', 'like', "%{$search}%");
-                        });
+                    ->orWhereHas('identity', function ($q2) use ($search) {
+                        $q2->where('name', 'like', "%{$search}%")
+                            ->orWhere('identity_number', 'like', "%{$search}%");
+                    });
                 });
             })
-
             // 📅 FILTER TANGGAL
+            ->when(!$lihatSemua, function($query) {
+                // jika lihat semua tidak dicentang, tampilkan pasien hari ini saja
+                $query->whereDate('visit_date', now());
+            })
             ->when($start && $end, function ($query) use ($start, $end) {
                 $query->whereDate('visit_date', '>=', $start)
                     ->whereDate('visit_date', '<=', $end);
@@ -48,19 +52,12 @@ class PasienController extends Controller
                 $query->whereDate('visit_date', '<=', $end);
             })
 
-            // 🏥 FILTER POLI
-            ->when($poli, function ($query) use ($poli) {
-                $query->where('poli', $poli);
-            })
-
             // 📌 FILTER STATUS
             ->when($status, function ($query) use ($status) {
                 $query->where('status', $status);
             })
-
-            // 🔽 SORT
+            // 🔽 SORT DESC berdasarkan tanggal kunjungan
             ->orderBy('visit_date', 'desc')
-
             // 📄 PAGINATION
             ->paginate(10)
             ->withQueryString();

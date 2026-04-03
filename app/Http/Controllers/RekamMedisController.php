@@ -255,4 +255,24 @@ class RekamMedisController extends Controller
 
         return Excel::download(new RekamMedisExport($data), 'rekam_medis.xlsx');
     }
+
+
+    public function exportPerPasien($pasienId)
+    {
+        // Ambil semua rekam medis pasien
+        $data = RekamMedis::with(['pasien.identity', 'dokter', 'resepObat.obat'])
+            ->where('pasien_id', $pasienId)
+            ->orderBy('tanggal_periksa', 'asc')
+            ->get();
+
+        if ($data->isEmpty()) {
+            return back()->with('error', 'Data tidak ditemukan');
+        }
+
+        $pasien = $data->first()->pasien;
+
+        $pdf = Pdf::loadView('rekam_medis.export_pasien', compact('data', 'pasien'));
+
+        return $pdf->download('rekam-medis-' . $pasien->identity->name . '.pdf');
+    }
 }

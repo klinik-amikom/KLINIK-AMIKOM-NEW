@@ -60,6 +60,10 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/export/excel', [RekamMedisController::class, 'exportExcel'])
             ->name('export.excel');
+
+        // ===== Export per Pasien =====
+        Route::get('/export/pasien/{pasien}', [RekamMedisController::class, 'exportPerPasien'])
+            ->name('export.pasien');
     });
 
     // Group khusus admin (opsional)

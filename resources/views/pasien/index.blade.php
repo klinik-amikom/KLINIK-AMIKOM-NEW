@@ -95,7 +95,16 @@
         </div>
     </div>
 
-    <div class="mb-2 flex flex-wrap items-end gap-2">
+    <div class="mb-2 flex flex-wrap items-end gap-4">
+        <div class="flex flex-col justify-center">
+            <label class="text-gray-500 dark:text-gray-400 text-xs mb-1">Lihat Semua</label>
+            <div class="flex items-center gap-2 mt-2">
+                <input type="checkbox" id="lihat_semua" name="lihat_semua" value="1"
+                    {{ request('lihat_semua') == 1 ? 'checked' : '' }} onchange="this.form.submit()">
+                    <span class="text-gray-700 dark:text-gray-300 text-sm">Tampilkan semua pasien</span>
+
+            </div>
+        </div>
         <!-- Filter Status -->
         <div class="flex flex-col text-sm">
             <label class="text-gray-500 dark:text-gray-400 text-xs mb-1">Status</label>
@@ -692,6 +701,16 @@
                     document.getElementById('end_date').addEventListener('change', filterTanggal);
                     document.getElementById('filter_poli').addEventListener('change', applyFilter);
                     document.getElementById('filter_status').addEventListener('change', applyFilter);
+                });
+
+                document.getElementById('lihat_semua').addEventListener('change', function() {
+                    const url = new URL(window.location.href);
+                    if (this.checked) {
+                        url.searchParams.set('lihat_semua', 1); // tambahkan parameter
+                    } else {
+                        url.searchParams.delete('lihat_semua'); // hapus parameter jika tidak dicentang
+                    }
+                    window.location.href = url.toString(); // redirect otomatis
                 });
             </script>
         @endpush
