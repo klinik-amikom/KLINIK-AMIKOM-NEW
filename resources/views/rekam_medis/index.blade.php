@@ -79,6 +79,25 @@
                 </select>
             </div>
 
+            <!-- KATEGORI -->
+            <div class="flex flex-col text-sm">
+                <label class="text-gray-500 dark:text-gray-400 text-xs mb-1">Kategori</label>
+                <select id="kategori_filter" name="kategori"
+                    class="px-2 py-1 border rounded-md text-sm w-48
+                    dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    
+                    <option value="">Semua</option>
+
+                    @foreach ($kategoriList as $kategori)
+                        <option value="{{ $kategori }}"
+                            {{ request('kategori') == $kategori ? 'selected' : '' }}>
+                            {{ $kategori }}
+                        </option>
+                    @endforeach
+
+                </select>
+            </div>
+
             <!-- DARI -->
             <div class="flex flex-col text-sm">
                 <label class="text-gray-500 dark:text-gray-400 text-xs mb-1">Dari</label>
@@ -130,7 +149,7 @@
                         <th class="px-4 py-3 text-center border border-gray-200">Kode</th>
                         <th class="px-4 py-3 text-center border border-gray-200">NIK</th>
                         <th class="px-4 py-3 text-center border border-gray-200">Nama Pasien</th>
-                        <th class="px-4 py-3 text-center border border-gray-200">Poli</th>
+                        <th class="px-4 py-3 text-center border border-gray-200">Kategori</th>
                         <th class="px-4 py-3 text-center border border-gray-200">Dokter</th>
                         <th class="px-4 py-3 text-center border border-gray-200">Obat</th>
                         <th class="px-4 py-3 text-center border border-gray-200">Diagnosis</th>
@@ -140,9 +159,7 @@
                             <th class="px-4 py-3 text-center">Periksa</th>
                         @endif
 
-                        @if (auth()->user()->role == 'dokter' || auth()->user()->role == 'apoteker')
-                            <th class="px-4 py-3 text-center">Aksi</th>
-                        @endif
+                        <th class="px-4 py-3 text-center">Aksi</th>
                     </tr>
                 </thead>
 
@@ -175,11 +192,12 @@
                                 {{ $item->pasien->identity->name ?? '-' }}
                             </td>
 
+                            {{-- Kategori --}}
                             <td class="px-4 py-3 border border-gray-200 text-center">
-                                {{ $item->pasien->poli ?? '-' }}
+                                {{ $item->pasien->identity->identity_type ?? '-' }}
                             </td>
 
-
+                            {{-- Nama Dosen --}}
                             <td class="px-4 py-3 border border-gray-200">
                                 {{ $item->dokter->name ?? '-' }}
                             </td>
@@ -404,10 +422,10 @@
                 emptyRow.style.display = 'none';
 
                 emptyRow.innerHTML = `
-        <td colspan="11" class="px-6 py-10 text-center text-gray-500">
-            Data rekam medis tidak ditemukan.
-        </td>
-    `;
+                    <td colspan="11" class="px-6 py-10 text-center text-gray-500">
+                        Data rekam medis tidak ditemukan.
+                    </td>
+                `;
 
                 tbody.appendChild(emptyRow);
 
@@ -431,6 +449,7 @@
                 document.getElementById('end_date')?.addEventListener('change', filterTanggal);
                 document.getElementById('status_filter')?.addEventListener('change', filterTanggal);
                 document.getElementById('poli_filter')?.addEventListener('change', filterTanggal);
+                document.getElementById('kategori_filter')?.addEventListener('change', filterTanggal);
 
             });
 
@@ -467,6 +486,8 @@
                     return;
                 }
 
+                let kategori = document.getElementById('kategori_filter')?.value;
+
                 let url = new URL(window.location.href);
 
                 url.searchParams.delete('page');
@@ -482,6 +503,9 @@
 
                 if (poli) url.searchParams.set('poli', poli);
                 else url.searchParams.delete('poli');
+
+                if (kategori) url.searchParams.set('kategori', kategori);
+                else url.searchParams.delete('kategori');
 
                 window.location.href = url.toString();
             }

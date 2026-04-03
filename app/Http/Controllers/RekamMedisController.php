@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Exports\RekamMedisExport;
 use App\Models\Obat;
 use App\Models\RekamMedis;
+use App\Models\MasterIdentity;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -14,60 +15,72 @@ class RekamMedisController extends Controller
 {
 
     public function index(Request $request)
-{
-    $search = $request->cari;
-    $status = $request->status;
+    {
+        $search = $request->cari;
+        $status = $request->status;
+        $kategori = $request->kategori;
 
-    // ✅ Ambil flag lihat semua
-    $lihatSemua = $request->lihat_semua;
+        // ✅ Ambil flag lihat semua
+        $lihatSemua = $request->lihat_semua;
 
-    // ✅ FORMAT TANGGAL (AMAN)
-    $start = $request->start_date
-        ? Carbon::parse($request->start_date)->format('Y-m-d')
-        : null;
+        // ✅ FORMAT TANGGAL (AMAN)
+        $start = $request->start_date
+            ? Carbon::parse($request->start_date)->format('Y-m-d')
+            : null;
 
-    $end = $request->end_date
-        ? Carbon::parse($request->end_date)->format('Y-m-d')
-        : null;
+        $end = $request->end_date
+            ? Carbon::parse($request->end_date)->format('Y-m-d')
+            : null;
 
-    $dataRekamMedis = RekamMedis::with(['pasien.identity', 'dokter', 'resepObat.obat'])
+        $dataRekamMedis = RekamMedis::with(['pasien.identity', 'dokter', 'resepObat.obat'])
 
-        // 🔍 SEARCH
-        ->when($search, function ($query) use ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('kode_rekam_medis', 'like', "%{$search}%")
-                  ->orWhereHas('pasien.identity', function ($q2) use ($search) {
-                      $q2->where('name', 'like', "%{$search}%")
-                         ->orWhere('identity_number', 'like', "%{$search}%");
-                  })
-                  ->orWhere('diagnosis', 'like', "%{$search}%");
-            });
-        })
+            // 🔍 SEARCH
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('kode_rekam_medis', 'like', "%{$search}%")
+                    ->orWhereHas('pasien.identity', function ($q2) use ($search) {
+                        $q2->where('name', 'like', "%{$search}%")
+                            ->orWhere('identity_number', 'like', "%{$search}%");
+                    })
+                    ->orWhere('diagnosis', 'like', "%{$search}%");
+                });
+            })
 
-        // 📅 FILTER TANGGAL
-        ->when(!$lihatSemua && $start && $end, function ($query) use ($start, $end) {
-            $query->whereBetween('tanggal_periksa', [$start, $end]);
-        })
-        ->when(!$lihatSemua && $start && !$end, function ($query) use ($start) {
-            $query->whereDate('tanggal_periksa', '>=', $start);
-        })
-        ->when(!$lihatSemua && !$start && !$end, function ($query) {
-            $query->whereDate('tanggal_periksa', Carbon::today());
-        })
+            // 📅 FILTER TANGGAL
+            ->when(!$lihatSemua && $start && $end, function ($query) use ($start, $end) {
+                $query->whereBetween('tanggal_periksa', [$start, $end]);
+            })
+            ->when(!$lihatSemua && $start && !$end, function ($query) use ($start) {
+                $query->whereDate('tanggal_periksa', '>=', $start);
+            })
+            ->when(!$lihatSemua && !$start && !$end, function ($query) {
+                $query->whereDate('tanggal_periksa', Carbon::today());
+            })
 
-        // ✅ FILTER STATUS
-        ->when($status, function ($query, $status) {
-            $query->whereHas('pasien', function ($q) use ($status) {
-                $q->where('status', $status);
-            });
-        })
+            // ✅ FILTER STATUS
+            ->when($status, function ($query, $status) {
+                $query->whereHas('pasien', function ($q) use ($status) {
+                    $q->where('status', $status);
+                });
+            })
 
-        ->orderBy('tanggal_periksa', 'desc')
-        ->paginate(10)
-        ->withQueryString();
+            // ✅ FILTER KATEGORI (identity_type)
+            ->when($kategori, function ($query) use ($kategori) {
+                $query->whereHas('pasien.identity', function ($q) use ($kategori) {
+                    $q->where('identity_type', $kategori);
+                });
+            })
 
-    return view('rekam_medis.index', compact('dataRekamMedis'));
-}
+            ->orderBy('tanggal_periksa', 'desc')
+            ->paginate(10)
+            ->withQueryString();
+
+            $kategoriList = \App\Models\MasterIdentity::select('identity_type')
+                ->distinct()
+                ->pluck('identity_type');
+
+        return view('rekam_medis.index', compact('dataRekamMedis', 'kategoriList'));
+    }
 
     public function store(Request $request)
     {
