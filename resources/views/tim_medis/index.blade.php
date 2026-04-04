@@ -76,16 +76,30 @@
                             <td class="px-6 py-4">{{ $item->name }}</td>
                             <td class="px-6 py-4">{{ $item->deskripsi }}</td>
 
-                            <td class="px-6 py-4 text-right">
-                                <button onclick='openEditModal(@json($item))'
-                                    class="text-yellow-500 hover:underline">Edit</button>
+                            <td class="px-6 py-4">
+                                <div class="flex justify-end items-center gap-2">
+                                    
+                                    <!-- Edit Button -->
+                                    <button 
+                                        onclick='openEditModal(@json($item))'
+                                        class="flex items-center justify-center w-7 h-7 text-purple-600 hover:text-white hover:bg-purple-600 rounded-lg transition"
+                                    >
+                                        <i class="fas fa-edit text-sm"></i>
+                                    </button>
 
-                                <form action="{{ route('tim_medis.destroy', $item->id) }}" method="POST" class="inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button onclick="return confirm('Yakin hapus?')"
-                                        class="text-red-500 hover:underline ml-2">Hapus</button>
-                                </form>
+                                    <!-- Delete Button -->
+                                    <form action="{{ route('tim_medis.destroy', $item->id) }}" method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button 
+                                            type="submit"
+                                            onclick="return confirm('Yakin hapus?')"
+                                            class="flex items-center justify-center w-7 h-7 text-red-600 hover:text-white hover:bg-red-600 rounded-lg transition">
+                                            <i class="fas fa-trash text-sm"></i>
+                                        </button>
+                                    </form>
+
+                                </div>
                             </td>
                         </tr>
                     @empty
@@ -170,6 +184,16 @@
     </div>
 
     <script>
+        document.getElementById('users-search').addEventListener('keyup', function () {
+            let keyword = this.value.toLowerCase();
+            let rows = document.querySelectorAll('tbody tr');
+
+            rows.forEach(row => {
+                let text = row.innerText.toLowerCase();
+                row.style.display = text.includes(keyword) ? '' : 'none';
+            });
+        });
+
         function openCreateUserModal() {
             document.getElementById('createModal').classList.remove('hidden');
             document.getElementById('createModal').classList.add('flex');
@@ -189,7 +213,7 @@
             document.getElementById('edit_deskripsi').value = data.deskripsi;
 
             // set action form
-            document.getElementById('editForm').action = '/tim_medis/' + data.id;
+            document.getElementById('editForm').action = `/tim_medis/${data.id}`;
         }
 
         function closeEditModal() {

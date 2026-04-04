@@ -290,7 +290,6 @@
                             @endif
 
                             {{-- AKSI --}}
-                            @if (auth()->user()->role == 'dokter' || auth()->user()->role == 'apoteker')
                                 <td class="px-4 py-3 border border-gray-200">
                                     <div class="flex justify-end space-x-3">
 
@@ -340,7 +339,6 @@
                                         </a>
                                     </div>
                                 </td>
-                            @endif
 
                         </tr>
                         @empty

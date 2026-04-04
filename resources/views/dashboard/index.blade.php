@@ -494,6 +494,22 @@
                                 Pasien</p>
                         </div>
                     </div>
+                    <!-- Merchant 4 -->
+                    <div class="flex items-center space-x-3">
+                        <div class="flex-shrink-0">
+                            <div
+                                class="w-8 h-8 bg-[#75619D] rounded-lg flex items-center justify-center text-white font-bold text-sm">
+                                <i class="fas fa-user-tie"></i> {{-- Icon untuk Staff --}}
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-sm font-medium text-gray-900 dark:text-white">Karyawan BUMA</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-sm font-semibold text-green-600 dark:text-green-400">{{ $totalKaryawanBuma }}
+                                Pasien</p>
+                        </div>
+                    </div>
                     @if ($totalLainnyaKategori > 0)
                         <div class="flex items-center space-x-3">
                             <div class="flex-shrink-0">

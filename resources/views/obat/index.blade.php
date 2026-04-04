@@ -72,22 +72,35 @@
     <div class="bg-white dark:bg-gray-800 shadow-sm rounded-xl border border-red-200 dark:border-red-800 mb-6">
 
         <!-- Header -->
-        <div class="p-4 sm:p-6 border-b border-red-200 dark:border-red-800 flex justify-between items-center">
-            <div>
-                <h3 class="text-base sm:text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                    <span class="w-7 h-7 bg-red-500 rounded-full flex items-center justify-center text-white">
-                        <i class="fas fa-exclamation-triangle text-xs"></i>
-                    </span>
-                    Obat Stok Menipis
-                </h3>
-                <p class="text-xs text-gray-500 dark:text-gray-400">
-                    Obat dengan stok ≤ 20
-                </p>
+        <div class="p-5 sm:p-6 border-b border-red-200 dark:border-red-800 flex justify-between items-center">
+
+            {{-- KIRI --}}
+            <div class="flex items-start gap-3">
+
+                {{-- ICON --}}
+                <div class="w-9 h-9 bg-red-500 rounded-full flex items-center justify-center text-white shadow-sm">
+                    <i class="fas fa-exclamation-triangle text-sm"></i>
+                </div>
+
+                {{-- TEXT --}}
+                <div class="space-y-1">
+                    <h3 class="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
+                        Obat Stok Menipis
+                    </h3>
+                    <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                        Obat dengan stok ≤ 20
+                    </p>
+                </div>
+
             </div>
 
-            <span class="text-xs px-3 py-1 bg-red-600 text-white rounded-full">
-                {{ $obatMenipis->count() }} obat
-            </span>
+            {{-- KANAN (BADGE) --}}
+            <div>
+                <span class="text-xs sm:text-sm px-3 py-1.5 bg-red-600 text-white rounded-full shadow-sm">
+                    {{ $obatMenipis->count() }} obat
+                </span>
+            </div>
+
         </div>
 
         <!-- Table -->
@@ -202,7 +215,7 @@
                                         <i class="fas fa-edit"></i>
                                     </button>
 
-                                    <form action="{{ route('admin.obat.destroy', $obat->id) }}" method="POST"
+                                    <form action="{{ route(auth()->user()->role . '.obat.destroy', $obat->id) }}" method="POST"
                                         class="inline shadow-none m-0"
                                         onsubmit="return confirm('Hapus data obat ini?')">
                                         @csrf

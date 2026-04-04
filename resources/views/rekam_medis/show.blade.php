@@ -3,13 +3,11 @@
 @section('content')
     <div class="max-w-4xl mx-auto bg-white p-6 rounded shadow">
 
-        <div class="mb-4 flex justify-between items-center">
-            <h2 class="text-xl font-bold">Detail Pasien</h2>
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-bold">Detail Rekam Medis</h2>
 
-            {{-- tombol konsisten --}}
-            <a href="{{ route(auth()->user()->role . '.pasien.index') }}"
-                class="inline-flex items-center px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white text-sm rounded transition">
-                ← Kembali ke Data Pasien
+            <a href="{{ route('rekammedis.index') }}" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+                ← Kembali
             </a>
         </div>
 
@@ -22,6 +20,70 @@
         </p>
 
         <p><strong>Tanggal:</strong> {{ $rekam->tanggal_periksa }}</p>
+
+        <hr class="my-6">
+
+        <div class="bg-gray-50 border rounded-xl p-5 shadow-sm">
+            <h3 class="text-lg font-semibold mb-4 text-gray-700">Informasi Pasien</h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-3 text-sm">
+
+                <div class="flex justify-between">
+                    <span class="text-gray-500">Kode Pasien</span>
+                    <span class="font-medium">{{ $rekam->pasien->kode_pasien ?? '-' }}</span>
+                </div>
+
+                <div class="flex justify-between">
+                    <span class="text-gray-500">Poli</span>
+                    <span class="font-medium">{{ $rekam->pasien->poli ?? '-' }}</span>
+                </div>
+
+                <div class="flex justify-between">
+                    <span class="text-gray-500">Nomor Antrian</span>
+                    <span class="font-medium">{{ $rekam->pasien->queue_number ?? '-' }}</span>
+                </div>
+
+                <div class="flex justify-between">
+                    <span class="text-gray-500">Status</span>
+                    <span class="font-medium capitalize">{{ $rekam->pasien->status ?? '-' }}</span>
+                </div>
+
+                <div class="flex justify-between">
+                    <span class="text-gray-500">Berat Badan</span>
+                    <span class="font-medium">{{ $rekam->pasien->berat_badan ?? '-' }} kg</span>
+                </div>
+
+                <div class="flex justify-between">
+                    <span class="text-gray-500">Tinggi Badan</span>
+                    <span class="font-medium">{{ $rekam->pasien->tinggi_badan ?? '-' }} cm</span>
+                </div>
+
+                <div class="flex justify-between">
+                    <span class="text-gray-500">Tensi</span>
+                    <span class="font-medium">{{ $rekam->pasien->tensi ?? '-' }}</span>
+                </div>
+
+                <div class="flex justify-between">
+                    <span class="text-gray-500">Estimasi Jam</span>
+                    <span class="font-medium">{{ $rekam->pasien->estimasi_jam ?? '-' }}</span>
+                </div>
+
+                <div class="flex justify-between md:col-span-2">
+                    <span class="text-gray-500">Tanggal Kunjungan</span>
+                    <span class="font-medium">
+                        {{ \Carbon\Carbon::parse($rekam->pasien->visit_date)->format('d M Y H:i') ?? '-' }}
+                    </span>
+                </div>
+
+                <div class="flex justify-between md:col-span-2">
+                    <span class="text-gray-500">Keluhan</span>
+                    <span class="font-medium text-right">
+                        {{ $rekam->pasien->keluhan ?? '-' }}
+                    </span>
+                </div>
+
+            </div>
+        </div>
 
         <form method="POST" action="{{ route('rekammedis.update', $rekam->id) }}">
             @csrf

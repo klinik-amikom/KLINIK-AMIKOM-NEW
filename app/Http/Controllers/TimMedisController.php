@@ -66,8 +66,10 @@ class TimMedisController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, TimMedis $timMedis)
+    public function update(Request $request, $id)
     {
+        $timMedis = TimMedis::findOrFail($id);
+
         $request->validate([
             'name' => 'required',
             'deskripsi' => 'required',
@@ -89,8 +91,9 @@ class TimMedisController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(TimMedis $timMedis)
+    public function destroy($id)
     {
+        $timMedis = TimMedis::findOrFail($id);
         $timMedis->delete();
 
         return redirect()->back()->with('success', 'Data berhasil dihapus');

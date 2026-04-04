@@ -46,11 +46,12 @@ class DashboardController extends Controller
         $totalMahasiswa = $pasienByKategori['mahasiswa'] ?? 0;
         $totalDosen     = $pasienByKategori['dosen'] ?? 0;
         $totalKaryawan  = $pasienByKategori['karyawan'] ?? 0;
+        $totalKaryawanBuma  = $pasienByKategori['karyawan_buma'] ?? 0;
 
         // Hitung kategori lainnya yang tidak termasuk dalam 3 kategori utama
         $totalLainnyaKategori = 0;
         foreach ($pasienByKategori as $kategori => $count) {
-            if (! in_array($kategori, ['mahasiswa', 'dosen', 'karyawan'])) {
+            if (! in_array($kategori, ['mahasiswa', 'dosen', 'karyawan', 'karyawan_buma'])) {
                 $totalLainnyaKategori += $count;
             }
         }
@@ -190,6 +191,7 @@ class DashboardController extends Controller
             'totalMahasiswa',
             'totalDosen',
             'totalKaryawan',
+            'totalKaryawanBuma',
             'totalLainnyaKategori',
             'totalMenungguKonfirmasi',
             'totalTerdaftar',
