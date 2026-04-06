@@ -1,10 +1,66 @@
 @extends('layouts.app')
 
-@section('title', 'Master Pasien')
-@section('page-title', 'Master Pasien')
+@section('title', 'Master Identity')
+@section('page-title', 'Master Identity')
 
 @section('content')
 
+    {{-- Alert Messages --}}
+    @if (session('success'))
+        <div class="alert-auto-hide mb-4 bg-purple-100 border border-purple-400 text-purple-700 px-4 py-3 rounded relative dark:bg-purple-900/30 dark:border-purple-600 dark:text-purple-300"
+            role="alert">
+            <strong class="font-bold">Berhasil!</strong>
+            <span class="block sm:inline">{{ session('success') }}</span>
+            <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
+                <svg onclick="this.parentElement.parentElement.remove()"
+                    class="fill-current h-6 w-6 text-purple-500 cursor-pointer" role="button"
+                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                    <title>Close</title>
+                    <path
+                        d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" />
+                </svg>
+            </span>
+        </div>
+    @endif
+
+    @if (session('error'))
+        <div class="alert-auto-hide mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative dark:bg-red-900/30 dark:border-red-600 dark:text-red-300"
+            role="alert">
+            <strong class="font-bold">Error!</strong>
+            <span class="block sm:inline">{{ session('error') }}</span>
+            <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
+                <svg onclick="this.parentElement.parentElement.remove()"
+                    class="fill-current h-6 w-6 text-red-500 cursor-pointer" role="button"
+                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                    <title>Close</title>
+                    <path
+                        d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" />
+                </svg>
+            </span>
+        </div>
+    @endif
+
+    @if ($errors->any())
+        <div class="alert-auto-hide mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative dark:bg-red-900/30 dark:border-red-600 dark:text-red-300"
+            role="alert">
+            <strong class="font-bold">Validasi Error!</strong>
+            <ul class="mt-2 list-disc list-inside">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+            <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
+                <svg onclick="this.parentElement.parentElement.remove()"
+                    class="fill-current h-6 w-6 text-red-500 cursor-pointer" role="button"
+                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                    <title>Close</title>
+                    <path
+                        d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" />
+                </svg>
+            </span>
+        </div>
+    @endif
+    
     {{-- HEADER --}}
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
         <div>
@@ -38,7 +94,7 @@
 
         <!-- KATEGORI -->
         <div class="flex flex-col text-sm">
-            <label class="text-gray-500 dark:text-gray-400 text-xs mb-1">Jenis</label>
+            <label class="text-gray-500 dark:text-gray-400 text-xs mb-1">Kategori</label>
             <select id="kategori_filter"
                 class="px-2 py-1 border rounded-md text-sm w-48
             dark:bg-gray-700 dark:border-gray-600 dark:text-white">
@@ -47,38 +103,9 @@
                 <option value="mahasiswa" {{ request('kategori') == 'mahasiswa' ? 'selected' : '' }}>Mahasiswa</option>
                 <option value="dosen" {{ request('kategori') == 'dosen' ? 'selected' : '' }}>Dosen</option>
                 <option value="karyawan" {{ request('kategori') == 'karyawan' ? 'selected' : '' }}>Karyawan</option>
+                <option value="karyawan_buma" {{ request('kategori') == 'karyawan_buma' ? 'selected' : '' }}>Karyawan BUMA</option>
             </select>
         </div>
-
-        <!-- DARI -->
-        <div class="flex flex-col text-sm">
-            <label class="text-gray-500 dark:text-gray-400 text-xs mb-1">Dari</label>
-            <input type="date" id="start_date" value="{{ request('start_date') }}"
-                class="px-2 py-1 border rounded-md text-sm w-36
-            dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-        </div>
-
-        <!-- SAMPAI -->
-        <div class="flex flex-col text-sm">
-            <label class="text-gray-500 dark:text-gray-400 text-xs mb-1">Sampai</label>
-            <input type="date" id="end_date" value="{{ request('end_date') }}"
-                class="px-2 py-1 border rounded-md text-sm w-36
-            dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-        </div>
-
-        <!-- BUTTON -->
-        <div class="flex gap-2">
-            <button onclick="applyFilter()"
-                class="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-sm rounded-md">
-                Filter
-            </button>
-
-            <a href="{{ route('master-identity.index') }}"
-                class="px-3 py-1.5 bg-gray-400 hover:bg-gray-500 text-white text-sm rounded-md">
-                Reset
-            </a>
-        </div>
-
     </div>
 
     {{-- TABLE --}}
@@ -93,9 +120,11 @@
                         <th class="px-6 py-3 text-xs uppercase">#</th>
                         <th class="px-6 py-3 text-xs uppercase">NIK</th>
                         <th class="px-6 py-3 text-xs uppercase">Nama</th>
+                        <th class="px-6 py-3 text-xs uppercase">Tanggal Lahir</th>
                         <th class="px-6 py-3 text-xs uppercase">Jenis</th>
                         <th class="px-6 py-3 text-xs uppercase">Gender</th>
                         <th class="px-6 py-3 text-xs uppercase">No Telp</th>
+                        <th class="px-6 py-3 text-xs uppercase">Email</th>
                         <th class="px-6 py-3 text-xs uppercase text-right">Aksi</th>
                     </tr>
                 </thead>
@@ -108,25 +137,36 @@
                             <td class="px-6 py-4">{{ $loop->iteration }}</td>
                             <td class="px-6 py-4">{{ $item->identity_number }}</td>
                             <td class="px-6 py-4 font-medium">{{ $item->name }}</td>
+                            <td class="px-6 py-4">{{ $item->birth_date }}</td>
                             <td class="px-6 py-4 capitalize">{{ $item->identity_type }}</td>
                             <td class="px-6 py-4">{{ $item->gender }}</td>
                             <td class="px-6 py-4">{{ $item->no_telp ?? '-' }}</td>
+                            <td class="px-6 py-4">{{ $item->email }}</td>
 
-                            <td class="px-6 py-4 text-right">
-
-                                <div class="flex justify-end space-x-3">
+                            <td class="px-6 py-4">
+                                <div class="flex justify-end">
 
                                     <button onclick='editData(@json($item))'
-                                        class="text-purple-600 hover:text-purple-800">
+                                        class="flex items-center justify-center w-6 h-6 text-purple-600 hover:text-purple-800">
                                         <i class="fas fa-edit"></i>
                                     </button>
 
-                                    <form action="{{ route('master-identity.destroy', $item->id) }}" method="POST"
-                                        onsubmit="return confirm('Yakin ingin menghapus data ini?')">
+                                    <form action="{{ route('master-identity.destroy', $item->id) }}" 
+                                        method="POST"
+                                        class="form-delete">
+
                                         @csrf
                                         @method('DELETE')
 
-                                        <button class="text-red-600 hover:text-red-800">
+                                        <button 
+                                            type="button"
+                                            data-action="{{ route('master-identity.destroy', $item->id) }}"
+                                            data-method="DELETE"
+                                            data-confirm-type="delete"
+                                            data-confirm-text="Data ini akan dihapus permanen!"
+                                            onclick="handleActionWithConfirmation(this)"
+                                            class="flex items-center justify-center w-6 h-6 text-red-600 hover:text-red-800">
+                                            
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </form>
@@ -180,11 +220,18 @@
 
             <input name="name" placeholder="Nama" class="w-full px-3 py-2 border rounded-lg">
 
+            <div>
+                <label class="text-sm text-gray-600 dark:text-gray-300">Tanggal Lahir</label>
+                <input type="date" name="birth_date"
+                    class="w-full px-3 py-2 border rounded-lg">
+            </div>
+
             <select name="identity_type" class="w-full px-3 py-2 border rounded-lg">
                 <option value="">Pilih Jenis</option>
                 <option value="mahasiswa">Mahasiswa</option>
                 <option value="dosen">Dosen</option>
                 <option value="karyawan">Karyawan</option>
+                <option value="karyawan_buma">Karyawan BUMA</option>
             </select>
 
             <select name="gender" class="w-full px-3 py-2 border rounded-lg">
@@ -210,9 +257,16 @@
                 <button type="submit" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">
                     Simpan
                 </button>
-
             </div>
-
+            @if ($errors->any())
+                <div class="bg-red-100 text-red-700 p-2 rounded text-sm">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>- {{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
         </form>
 
     </div>
@@ -242,10 +296,13 @@
 
             <input id="edit-name" name="name" class="w-full px-3 py-2 border rounded-lg">
 
+            <input type="date" id="edit-birth_date" name="birth_date" class="w-full px-3 py-2 border rounded-lg">
+
             <select id="edit-identity_type" name="identity_type" class="w-full px-3 py-2 border rounded-lg">
                 <option value="mahasiswa">Mahasiswa</option>
                 <option value="dosen">Dosen</option>
                 <option value="karyawan">Karyawan</option>
+                <option value="karyawan_buma">Karyawan BUMA</option>
             </select>
 
             <select id="edit-gender" name="gender" class="w-full px-3 py-2 border rounded-lg">
@@ -294,6 +351,7 @@
             // set value ke form
             document.getElementById('edit-identity_number').value = data.identity_number;
             document.getElementById('edit-name').value = data.name;
+            document.getElementById('edit-birth_date').value = data.birth_date;
             document.getElementById('edit-identity_type').value = data.identity_type;
             document.getElementById('edit-gender').value = data.gender;
             document.getElementById('edit-no_telp').value = data.no_telp;
@@ -338,8 +396,6 @@
         function applyFilterURL() {
             let search = document.getElementById('search').value;
             let kategori = document.getElementById('kategori_filter').value;
-            let start = document.getElementById('start_date').value;
-            let end = document.getElementById('end_date').value;
 
             let url = new URL(window.location.href);
 
@@ -350,13 +406,6 @@
             // kategori (AUTO)
             if (kategori) url.searchParams.set('kategori', kategori);
             else url.searchParams.delete('kategori');
-
-            // tanggal (tetap ikut, tapi trigger dari button)
-            if (start) url.searchParams.set('start_date', start);
-            else url.searchParams.delete('start_date');
-
-            if (end) url.searchParams.set('end_date', end);
-            else url.searchParams.delete('end_date');
 
             window.location.href = url.toString();
         }

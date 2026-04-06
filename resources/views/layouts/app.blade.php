@@ -570,62 +570,52 @@
             });
         };
 
-        window.handleActionWithConfirmation = function(element) {
-            const action = element.dataset.action;
-            const method = element.dataset.method || 'POST';
-            const confirmTitle = element.dataset.confirmTitle || 'Konfirmasi';
-            const confirmText = element.dataset.confirmText || 'Apakah Anda yakin?';
-            const confirmType = element.dataset.confirmType || 'default';
+        window.handleActionWithConfirmation = async function(element) {
+    const action = element.dataset.action;
+    const method = element.dataset.method || 'POST';
 
-            if (!action) {
-                console.error('data-action attribute is required');
-                return;
-            }
+    if (!action) return;
 
-            let confirmFunction = window.showConfirmation;
-            let confirmOptions = {
-                title: confirmTitle,
-                text: confirmText
-            };
+    const result = await Swal.fire({
+        title: 'Konfirmasi Hapus',
+        text: 'Data ini akan dihapus permanen!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, Hapus!',
+        cancelButtonText: 'Batal',
+        confirmButtonColor: '#dc2626',
+        cancelButtonColor: '#6b7280',
+        reverseButtons: true,
+        focusCancel: true
+    });
 
-            switch (confirmType) {
-                case 'delete':
-                    confirmFunction = window.confirmDelete;
-                    break;
-            }
+    // 🔥 PENTING: handle semua kondisi
+    if (!result.isConfirmed) {
+        return; // langsung keluar tanpa ngapa-ngapain
+    }
 
-            confirmFunction(confirmOptions).then((result) => {
-                if (result.isConfirmed) {
-                    const form = document.createElement('form');
-                    form.method = 'POST';
-                    form.action = action;
-                    form.style.display = 'none';
+    // lanjut delete
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = action;
 
-                    const csrfInput = document.createElement('input');
-                    csrfInput.type = 'hidden';
-                    csrfInput.name = '_token';
-                    csrfInput.value = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-                    form.appendChild(csrfInput);
+    const csrfInput = document.createElement('input');
+    csrfInput.type = 'hidden';
+    csrfInput.name = '_token';
+    csrfInput.value = document.querySelector('meta[name="csrf-token"]').content;
+    form.appendChild(csrfInput);
 
-                    if (method !== 'POST') {
-                        const methodInput = document.createElement('input');
-                        methodInput.type = 'hidden';
-                        methodInput.name = '_method';
-                        methodInput.value = method;
-                        form.appendChild(methodInput);
-                    }
+    if (method !== 'POST') {
+        const methodInput = document.createElement('input');
+        methodInput.type = 'hidden';
+        methodInput.name = '_method';
+        methodInput.value = method;
+        form.appendChild(methodInput);
+    }
 
-                    if (element.tagName === 'BUTTON') {
-                        const originalHTML = element.innerHTML;
-                        element.innerHTML = '<span class="loading-spinner mr-2"></span>Memproses...';
-                        element.disabled = true;
-                    }
-
-                    document.body.appendChild(form);
-                    form.submit();
-                }
-            });
-        };
+    document.body.appendChild(form);
+    form.submit();
+};
 
         // ==============================================
         // TOAST NOTIFICATION SYSTEM

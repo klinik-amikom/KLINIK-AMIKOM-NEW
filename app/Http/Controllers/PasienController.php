@@ -37,17 +37,18 @@ class PasienController extends Controller
                 });
             })
             // 📅 FILTER TANGGAL
-          //  ->when(!$lihatSemua, function($query) {
-                // jika lihat semua tidak dicentang, tampilkan pasien hari ini saja
-           //     $query->whereDate('visit_date', now());
-          //  })
-            ->when($start && $end, function ($query) use ($start, $end) {
-                $query->whereDate('visit_date', '>=', $start)
-                    ->whereDate('visit_date', '<=', $end);
+            ->when(!$lihatSemua, function ($query) {
+                $query->whereDate('visit_date', now());
             })
+
+            ->when($start && $end, function ($query) use ($start, $end) {
+                $query->whereBetween('visit_date', [$start, $end]);
+            })
+
             ->when($start && !$end, function ($query) use ($start) {
                 $query->whereDate('visit_date', '>=', $start);
             })
+
             ->when(!$start && $end, function ($query) use ($end) {
                 $query->whereDate('visit_date', '<=', $end);
             })
@@ -72,10 +73,10 @@ class PasienController extends Controller
             'nama_pasien'     => 'required|string|max:255',
             'tanggal_lahir'   => 'required|date',
             'no_telp'         => 'required|string|max:20',
-            'identity_type'   => 'required|in:mahasiswa,dosen,karyawan',
+            'identity_type'   => 'required|in:mahasiswa,dosen,karyawan,karyawan_buma',
             'gender'          => 'required|in:L,P',
             'alamat'          => 'required|string',
-            'poli'            => 'required|in:Poli Umum',
+            'poli'            => 'required|exists:poli,id',
         ]);
 
         // 🔎 Cek identity
@@ -94,73 +95,77 @@ class PasienController extends Controller
 
         $kodePasien = 'P' . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
 
-        // 🔢 Tentukan tanggal kunjungan (default hari ini)
-        $tanggalKunjungan = Carbon::today();
+        // ⏰ Setup
+        $now        = Carbon::now();
+        $durasi     = 15;
+        $jamBuka    = 8;
+        $jamTutup   = 15;
 
-        $now = Carbon::now();
-
-        // jam operasional (ikut tanggal hari ini)
-        $jamBuka = Carbon::today()->setTime(8, 0);
-        $jamTutup = Carbon::today()->setTime(15, 0);
-
-        // 🔴 FIX 1: Kalau daftar setelah jam tutup → langsung besok
-        if ($now->greaterThanOrEqualTo($jamTutup)) {
+        /**
+         * 🎯 Tentukan tanggal awal
+         */
+        if ($now->hour >= $jamTutup) {
             $tanggalKunjungan = Carbon::tomorrow();
         } else {
             $tanggalKunjungan = Carbon::today();
         }
 
-        // 🔎 Ambil pasien terakhir di tanggal tersebut
-        $lastPasienHariIni = Pasien::whereDate('visit_date', $tanggalKunjungan)
-            ->where('poli', $request->poli)
-            ->orderBy('estimasi_jam', 'desc')
-            ->first();
+        $foundSlot = null;
 
-        $durasi = 15;
+        /**
+         * 🔁 Cari slot kosong (maks 7 hari ke depan biar aman)
+         */
+        for ($i = 0; $i < 7; $i++) {
 
-        $menit = $now->minute;
-        $sisa = ($durasi - ($menit % $durasi)) % $durasi;
+            $tanggal = $tanggalKunjungan->copy()->addDays($i);
 
-        $nextSlot = $now->copy()->addMinutes($sisa)->second(0);
+            $start = $tanggal->copy()->setTime($jamBuka, 0);
+            $end   = $tanggal->copy()->setTime($jamTutup, 0);
 
-        // 🔎 Ambil antrian terakhir
-        if ($lastPasienHariIni) {
-            $antrianTerakhir = Carbon::parse($lastPasienHariIni->estimasi_jam)
-                ->addMinutes($durasi);
-
-            // 🔥 Ambil yang paling besar (biar tidak tabrakan)
-            $estimasiJam = $nextSlot->gt($antrianTerakhir)
-                ? $nextSlot
-                : $antrianTerakhir;
-        } else {
-            // pasien pertama
-            $estimasiJam = $nextSlot;
-        }
-
-        // 🔴 FIX 2: kalau estimasi lewat jam tutup → pindah ke besok
-        if ($estimasiJam->greaterThanOrEqualTo(
-            Carbon::parse($tanggalKunjungan)->setTime(15, 0)
-        )) {
-
-            $tanggalKunjungan = Carbon::tomorrow();
-
-            $jamBukaBesok = Carbon::parse($tanggalKunjungan)->setTime(8, 0);
-
-            $lastBesok = Pasien::whereDate('visit_date', $tanggalKunjungan)
+            // Ambil semua jam yang sudah terisi
+            $booked = Pasien::whereDate('visit_date', $tanggal)
                 ->where('poli', $request->poli)
-                ->orderBy('estimasi_jam', 'desc')
-                ->first();
+                ->pluck('estimasi_jam')
+                ->map(fn($item) => Carbon::parse($item)->format('H:i'))
+                ->toArray();
 
-            if (!$lastBesok) {
-                $estimasiJam = $jamBukaBesok;
-            } else {
-                $estimasiJam = Carbon::parse($lastBesok->estimasi_jam)
-                    ->addMinutes($durasi);
+            // Tentukan mulai dari sekarang (kalau hari ini)
+            $currentTime = $tanggal->isToday()
+                ? max($now, $start)
+                : $start;
+
+            // Bulatkan ke slot 15 menit
+            $menit = $currentTime->minute;
+            $sisa  = ($durasi - ($menit % $durasi)) % $durasi;
+
+            $slot = $currentTime->copy()->addMinutes($sisa)->second(0);
+
+            // Loop slot per 15 menit
+            while ($slot < $end) {
+
+                if (!in_array($slot->format('H:i'), $booked)) {
+                    $foundSlot = $slot;
+                    $tanggalKunjungan = $tanggal;
+                    break 2; // keluar dari 2 loop
+                }
+
+                $slot->addMinutes($durasi);
             }
         }
 
-        // 🔢 Generate nomor antrian berdasarkan tanggal kunjungan
-        $prefix = $request->poli === 'Poli Umum' ? 'PU' : 'PG';
+        /**
+         * ❌ Kalau tidak dapat slot
+         */
+        if (!$foundSlot) {
+            return back()->with('error', 'Antrian penuh untuk beberapa hari ke depan.');
+        }
+
+        $estimasiJam = $foundSlot;
+
+        /**
+         * 🔢 Generate nomor antrian
+         */
+        $prefix = $request->poli == 1 ? 'PU' : 'PG';
 
         $jumlah = Pasien::whereDate('visit_date', $tanggalKunjungan)
             ->where('poli', $request->poli)
@@ -168,25 +173,31 @@ class PasienController extends Controller
 
         $noAntrian = $prefix . '-' . str_pad($jumlah, 3, '0', STR_PAD_LEFT);
 
-        // 💾 Simpan pasien
+        /**
+         * 💾 Simpan
+         */
         $pasien = Pasien::create([
-            'identity_id'        => $identity->id,
-            'kode_pasien'        => $kodePasien,
-            'poli'               => $request->poli,
-            'queue_number'       => $noAntrian,
-            'estimasi_jam'       => $estimasiJam,
-            'visit_date'         => $tanggalKunjungan,
-            'status'             => 'menunggu_konfirmasi',
+            'identity_id'  => $identity->id,
+            'kode_pasien'  => $kodePasien,
+            'poli'         => $request->poli,
+            'queue_number' => $noAntrian,
+            'estimasi_jam' => $estimasiJam,
+            'visit_date'   => $tanggalKunjungan,
+            'status'       => 'menunggu_konfirmasi',
         ]);
 
-        // 📧 Email
+        /**
+         * 📧 Email
+         */
         if ($identity->email) {
             Mail::to($identity->email)->send(new NotifikasiAntrian($pasien));
         }
 
         $pasien->load('identity');
 
-        // 🔐 Admin
+        /**
+         * 🔐 Redirect
+         */
         if (auth()->check()) {
             $role = auth()->user()->role;
 
@@ -195,7 +206,6 @@ class PasienController extends Controller
                 ->with('success', 'Pasien berhasil ditambahkan.');
         }
 
-        // 🌐 Publik
         return redirect()
             ->route('pasien.form')
             ->with('success', 'Pendaftaran berhasil')
@@ -222,10 +232,10 @@ class PasienController extends Controller
             'nama_pasien'     => 'required|string|max:255',
             'tanggal_lahir'   => 'required|date',
             'no_telp'         => 'required|string|max:20',
-            'identity_type'   => 'required|in:mahasiswa,dosen,karyawan',
+            'identity_type'   => 'required|in:mahasiswa,dosen,karyawan,karyawan_buma',
             'gender'          => 'required|in:L,P',
             'alamat'          => 'required|string',
-            'poli'            => 'required|in:Poli Umum',
+            'poli'            => 'required|exists:poli,id',
             'status'          => 'required',
         ]);
 

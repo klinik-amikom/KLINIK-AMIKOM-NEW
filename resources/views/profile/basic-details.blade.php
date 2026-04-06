@@ -155,10 +155,10 @@
                     <div>
                         <label class="block mb-1 font-medium">Poli Tujuan</label>
 
-                        <input type="text" value="Poli Umum" class="w-full border rounded-md px-3 py-2 bg-gray-100"
+                        <input type="text" value="1" class="w-full border rounded-md px-3 py-2 bg-gray-100"
                             readonly>
 
-                        <input type="hidden" name="poli" value="Poli Umum">
+                        <input type="hidden" name="poli" value="1">
                     </div>
 
                     {{-- Submit --}}

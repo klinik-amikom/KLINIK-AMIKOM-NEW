@@ -335,10 +335,10 @@
                     <tbody>
                         @forelse($jadwal as $j)
                             <tr>
-                                <td>{{ $j->nama_dokter }}</td>
+                                <td>{{ $j->dokter->name }}</td>
                                 <td>Poli {{ $j->poli }}</td>
                                 <td>{{ $j->hari }}</td>
-                                <td>{{ $j->jam_praktik }}</td>
+                                <td>{{ $j->jam_mulai }} - {{ $j->jam_selesai }}</td>
                             </tr>
                         @empty
                             <tr>
@@ -619,7 +619,7 @@
                                 </div>
 
                                 <div class="member-info flex-grow-1">
-                                    <h4 style="color: #e3a127">{{ $item->name }}</h4>
+                                    <h4 style="color: #e3a127">{{ $item->user->name }}</h4>
                                     <span>Tim Medis</span>
                                     <p>{{ $item->deskripsi }}</p>
                                 </div>

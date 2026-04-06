@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\TimMedis;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class TimMedisController extends Controller
@@ -12,9 +13,10 @@ class TimMedisController extends Controller
      */
     public function index()
     {
-        $data = TimMedis::all(); // ambil data dari database
+        $data = TimMedis::with('user')->get();
+        $users = User::all();
 
-        return view('tim_medis.index', compact('data'));
+        return view('tim_medis.index', compact('data', 'users'));
     }
 
     /**
@@ -31,7 +33,7 @@ class TimMedisController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required',
+            'user_id' => 'required|exists:users,id',
             'deskripsi' => 'required',
             'gambar' => 'required|image'
         ]);
@@ -39,7 +41,7 @@ class TimMedisController extends Controller
         $gambar = $request->file('gambar')->store('tim_medis', 'public');
 
         TimMedis::create([
-            'name' => $request->name,
+            'user_id' => $request->user_id,
             'deskripsi' => $request->deskripsi,
             'gambar' => $gambar,
         ]);
@@ -71,7 +73,7 @@ class TimMedisController extends Controller
         $timMedis = TimMedis::findOrFail($id);
 
         $request->validate([
-            'name' => 'required',
+            'user_id' => 'required|exists:users,id',
             'deskripsi' => 'required',
         ]);
 
@@ -81,7 +83,7 @@ class TimMedisController extends Controller
         }
 
         $timMedis->update([
-            'name' => $request->name,
+            'user_id' => $request->user_id,
             'deskripsi' => $request->deskripsi,
         ]);
 

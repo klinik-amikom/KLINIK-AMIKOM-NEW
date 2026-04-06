@@ -1,12 +1,16 @@
 @extends('layouts.app')
 
+@section('title', 'Detail Rekam Medis')
+@section('page-title', 'Detail Rekam Medis')
+
 @section('content')
     <div class="max-w-4xl mx-auto bg-white p-6 rounded shadow">
 
-        <div class="flex justify-between items-center mb-4">
+        <div class="mb-4 flex justify-between items-center">
             <h2 class="text-xl font-bold">Detail Rekam Medis</h2>
 
-            <a href="{{ route('rekammedis.index') }}" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+            <a href="{{ route('rekammedis.index') }}" 
+                class="inline-flex items-center px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white text-sm rounded transition">
                 ← Kembali
             </a>
         </div>

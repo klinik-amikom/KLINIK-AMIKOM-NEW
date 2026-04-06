@@ -61,9 +61,7 @@ class RekamMedisController extends Controller
 
             // ✅ FILTER STATUS
             ->when($status, function ($query, $status) {
-                $query->whereHas('pasien', function ($q) use ($status) {
-                    $q->where('status', $status);
-                });
+                $query->where('status', $status);
             })
 
             // ✅ FILTER KATEGORI (identity_type)

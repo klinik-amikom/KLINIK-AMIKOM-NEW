@@ -24,6 +24,44 @@
         </div>
     @endif
 
+    @if (session('error'))
+        <div class="alert-auto-hide mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative dark:bg-red-900/30 dark:border-red-600 dark:text-red-300"
+            role="alert">
+            <strong class="font-bold">Error!</strong>
+            <span class="block sm:inline">{{ session('error') }}</span>
+            <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
+                <svg onclick="this.parentElement.parentElement.remove()"
+                    class="fill-current h-6 w-6 text-red-500 cursor-pointer" role="button"
+                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                    <title>Close</title>
+                    <path
+                        d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" />
+                </svg>
+            </span>
+        </div>
+    @endif
+
+    @if ($errors->any())
+        <div class="alert-auto-hide mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative dark:bg-red-900/30 dark:border-red-600 dark:text-red-300"
+            role="alert">
+            <strong class="font-bold">Validasi Error!</strong>
+            <ul class="mt-2 list-disc list-inside">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+            <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
+                <svg onclick="this.parentElement.parentElement.remove()"
+                    class="fill-current h-6 w-6 text-red-500 cursor-pointer" role="button"
+                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                    <title>Close</title>
+                    <path
+                        d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" />
+                </svg>
+            </span>
+        </div>
+    @endif
+
     <div class="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0 mb-6 sm:mb-8">
         <div>
             <h2 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-1 sm:mb-2">Kelola Obat</h2>
@@ -31,7 +69,7 @@
                 obat.</p>
         </div>
         <div class="w-full sm:w-auto">
-            @if(auth()->user()->isApoteker())
+            @if(auth()->user()->isApoteker() || auth()->user()->isAdmin())
                 <button onclick="openCreateObatModal()"
                     class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg shadow-sm transition-colors duration-200">
                     <i class="fas fa-plus mr-2"></i> Tambah Obat
@@ -179,7 +217,7 @@
                         <th class="px-6 py-4">Stok</th>
                         <th class="px-6 py-4">Deskripsi</th>
                         <th class="px-6 py-4">Kadaluarsa</th>
-                        @if(auth()->user()->isApoteker())
+                        @if(auth()->user()->isApoteker() || auth()->user()->isAdmin())
                             <th class="px-6 py-4 text-right">Aksi</th>
                         @endif
                     </tr>
@@ -209,7 +247,7 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4 text-right space-x-3">
-                                @if(auth()->user()->isApoteker())
+                                @if(auth()->user()->isApoteker() || auth()->user()->isAdmin())
                                     <button onclick="editObat({{ json_encode($obat) }})"
                                         class="text-purple-600 hover:text-purple-900">
                                         <i class="fas fa-edit"></i>
@@ -220,7 +258,15 @@
                                         onsubmit="return confirm('Hapus data obat ini?')">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="text-red-600 hover:text-red-900">
+                                        <button 
+                                            type="button"
+                                            data-action="{{ route(auth()->user()->role . '.obat.destroy', $obat->id) }}"
+                                            data-method="DELETE"
+                                            data-confirm-type="delete"
+                                            data-confirm-text="Data ini akan dihapus permanen!"
+                                            onclick="handleActionWithConfirmation(this)"
+                                            class="text-red-600 hover:text-red-800">
+                                            
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </form>

@@ -5,6 +5,62 @@
 
 @section('content')
 
+    {{-- Alert Messages --}}
+    @if (session('success'))
+        <div class="alert-auto-hide mb-4 bg-purple-100 border border-purple-400 text-purple-700 px-4 py-3 rounded relative dark:bg-purple-900/30 dark:border-purple-600 dark:text-purple-300"
+            role="alert">
+            <strong class="font-bold">Berhasil!</strong>
+            <span class="block sm:inline">{{ session('success') }}</span>
+            <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
+                <svg onclick="this.parentElement.parentElement.remove()"
+                    class="fill-current h-6 w-6 text-purple-500 cursor-pointer" role="button"
+                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                    <title>Close</title>
+                    <path
+                        d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" />
+                </svg>
+            </span>
+        </div>
+    @endif
+
+    @if (session('error'))
+        <div class="alert-auto-hide mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative dark:bg-red-900/30 dark:border-red-600 dark:text-red-300"
+            role="alert">
+            <strong class="font-bold">Error!</strong>
+            <span class="block sm:inline">{{ session('error') }}</span>
+            <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
+                <svg onclick="this.parentElement.parentElement.remove()"
+                    class="fill-current h-6 w-6 text-red-500 cursor-pointer" role="button"
+                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                    <title>Close</title>
+                    <path
+                        d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" />
+                </svg>
+            </span>
+        </div>
+    @endif
+
+    @if ($errors->any())
+        <div class="alert-auto-hide mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative dark:bg-red-900/30 dark:border-red-600 dark:text-red-300"
+            role="alert">
+            <strong class="font-bold">Validasi Error!</strong>
+            <ul class="mt-2 list-disc list-inside">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+            <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
+                <svg onclick="this.parentElement.parentElement.remove()"
+                    class="fill-current h-6 w-6 text-red-500 cursor-pointer" role="button"
+                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                    <title>Close</title>
+                    <path
+                        d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" />
+                </svg>
+            </span>
+        </div>
+    @endif
+
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
         <div>
             <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
@@ -43,7 +99,7 @@
                         <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
 
                             <td class="px-6 py-4">{{ $loop->iteration }}</td>
-                            <td class="px-6 py-4">{{ $j->nama_dokter }}</td>
+                            <td class="px-6 py-4">{{ $j->dokter->name ?? '-' }}</td>
                             <td class="px-6 py-4">{{ $j->poli }}</td>
                             <td class="px-6 py-4">{{ $j->hari }}</td>
                             <td>{{ $j->jam_mulai }} - {{ $j->jam_selesai }}</td>
@@ -53,25 +109,34 @@
 
                                     <button
                                         onclick="editJadwal(
-                                        '{{ $j->id_jadwal }}',
-                                        '{{ $j->nama_dokter }}',
+                                        '{{ $j->id }}',
+                                        '{{ $j->dokter_id }}',
                                         '{{ $j->poli }}',
                                         '{{ $j->hari }}',
                                         '{{ $j->jam_mulai }} - {{ $j->jam_selesai }}'
-                                        )"
+                                    )"
                                         class="text-purple-600 hover:text-purple-800">
 
                                         <i class="fas fa-edit"></i>
 
                                     </button>
 
+
                                     <form action="{{ route('jadwal_dokter.destroy', $j->id) }}" method="POST"
-                                        method="POST" onsubmit="return confirm('Yakin ingin menghapus jadwal ini?')">
+                                        onsubmit="return confirm('Yakin ingin menghapus jadwal ini?')">
 
                                         @csrf
                                         @method('DELETE')
 
-                                        <button class="text-red-600 hover:text-red-800">
+                                        <button 
+                                            type="button"
+                                            data-action="{{ route('jadwal_dokter.destroy', $j->id) }}"
+                                            data-method="DELETE"
+                                            data-confirm-type="delete"
+                                            data-confirm-text="Data ini akan dihapus permanen!"
+                                            onclick="handleActionWithConfirmation(this)"
+                                            class="flex items-center justify-center w-6 h-6 text-red-600 hover:text-red-800">
+                                            
                                             <i class="fas fa-trash"></i>
                                         </button>
 
@@ -120,23 +185,29 @@
 
                 <!-- NAMA DOKTER -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">
-                        Nama Dokter
-                    </label>
-
-                    <input name="nama_dokter" placeholder="Masukkan nama dokter" class="w-full px-3 py-2 border rounded-lg">
+                    <label>Dokter</label>
+                    <select name="dokter_id" class="w-full px-3 py-2 border rounded-lg" required>
+                        <option value="">-- Pilih Dokter --</option>
+                        @foreach ($dokters as $dokter)
+                            <option value="{{ $dokter->id }}">
+                                {{ $dokter->name }}
+                            </option>
+                        @endforeach
+                    </select>
                 </div>
 
 
                 <!-- POLI -->
                 <!-- kirim ke backend -->
-                <input type="hidden" name="poli" value="Umum">
-
-                <!-- tampilan -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Poli</label>
-                    <input type="text" value="Poli Umum" readonly
-                        class="w-full px-3 py-2 border rounded-lg bg-gray-100 text-gray-700">
+                    <label>Poli</label>
+                    <select name="poli" class="w-full px-3 py-2 border rounded-lg" required>
+                        @foreach ($polis as $p)
+                            <option value="{{ $p->id }}">
+                                {{ $p->nama_poli }}
+                            </option>
+                        @endforeach
+                    </select>
                 </div>
 
 
@@ -246,18 +317,23 @@
                 <!-- NAMA DOKTER -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Nama Dokter</label>
-                    <input id="edit-nama" name="nama_dokter" class="w-full px-3 py-2 border rounded-lg">
+                    <select id="edit-dokter" name="dokter_id">
+                        @foreach ($dokters as $dokter)
+                            <option value="{{ $dokter->id }}">
+                                {{ $dokter->name }}
+                            </option>
+                        @endforeach
+                    </select>
                 </div>
 
-                <!-- kirim ke backend -->
-                <input type="hidden" name="poli" value="Umum">
+                <select id="edit-poli" name="poli" class="w-full px-3 py-2 border rounded-lg">
+                    @foreach ($polis as $p)
+                        <option value="{{ $p->id }}">
+                            {{ $p->nama_poli }}
+                        </option>
+                    @endforeach
+                </select>
 
-                <!-- tampilan -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Poli</label>
-                    <input type="text" value="Poli Umum" readonly
-                        class="w-full px-3 py-2 border rounded-lg bg-gray-100 text-gray-700">
-                </div>
 
                 <!-- HARI PRAKTIK -->
                 <div>
@@ -331,29 +407,23 @@
             document.getElementById('edit-modal').classList.add('hidden');
         }
 
-    function editJadwal(id, nama, poli, hari, jam) {
-        let form = document.getElementById('edit-form');
-        form.action = "/jadwal_dokter/" + id; // route update
+        function editJadwal(id, dokter_id, poli_id, hari, jam) {
+            let form = document.getElementById('edit-form');
+            form.action = "/jadwal_dokter/" + id;
 
-        // Nama dokter
-        document.getElementById('edit-nama').value = nama;
+            document.getElementById('edit-dokter').value = dokter_id;
+            document.getElementById('edit-poli').value = poli_id;
 
-        // Poli (hidden input)
-        form.querySelector('input[name="poli"]').value = poli;
+            let hariArray = hari.split(',').map(h => h.trim());
+            document.querySelectorAll('.edit-hari').forEach(cb => {
+                cb.checked = hariArray.includes(cb.value);
+            });
 
-        // Hari checkbox
-        let hariArray = hari.split(',').map(h => h.trim());
-        document.querySelectorAll('.edit-hari').forEach(cb => {
-            cb.checked = hariArray.includes(cb.value);
-        });
+            let jamArray = jam.split(' - ');
+            document.getElementById('edit-jam-mulai').value = jamArray[0] || '';
+            document.getElementById('edit-jam-selesai').value = jamArray[1] || '';
 
-        // Jam
-        let jamArray = jam.split(' - ');
-        document.getElementById('edit-jam-mulai').value = jamArray[0] || '';
-        document.getElementById('edit-jam-selesai').value = jamArray[1] || '';
-
-        // Buka modal
-        openEditModal();
-    }
+            openEditModal();
+        }
     </script>
 @endpush

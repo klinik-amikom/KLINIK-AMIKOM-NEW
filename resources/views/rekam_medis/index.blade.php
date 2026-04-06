@@ -6,18 +6,59 @@
 
 @section('content')
 
-    {{-- ================= ALERT ================= --}}
+    {{-- Alert Messages --}}
     @if (session('success'))
-        <div class="mb-4 bg-purple-100 border border-purple-400 text-purple-700 px-4 py-3 rounded">
-            <strong>Berhasil!</strong>
-            {{ session('success') }}
+        <div class="alert-auto-hide mb-4 bg-purple-100 border border-purple-400 text-purple-700 px-4 py-3 rounded relative dark:bg-purple-900/30 dark:border-purple-600 dark:text-purple-300"
+            role="alert">
+            <strong class="font-bold">Berhasil!</strong>
+            <span class="block sm:inline">{{ session('success') }}</span>
+            <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
+                <svg onclick="this.parentElement.parentElement.remove()"
+                    class="fill-current h-6 w-6 text-purple-500 cursor-pointer" role="button"
+                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                    <title>Close</title>
+                    <path
+                        d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" />
+                </svg>
+            </span>
         </div>
     @endif
 
     @if (session('error'))
-        <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-            <strong>Error!</strong>
-            {{ session('error') }}
+        <div class="alert-auto-hide mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative dark:bg-red-900/30 dark:border-red-600 dark:text-red-300"
+            role="alert">
+            <strong class="font-bold">Error!</strong>
+            <span class="block sm:inline">{{ session('error') }}</span>
+            <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
+                <svg onclick="this.parentElement.parentElement.remove()"
+                    class="fill-current h-6 w-6 text-red-500 cursor-pointer" role="button"
+                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                    <title>Close</title>
+                    <path
+                        d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" />
+                </svg>
+            </span>
+        </div>
+    @endif
+
+    @if ($errors->any())
+        <div class="alert-auto-hide mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative dark:bg-red-900/30 dark:border-red-600 dark:text-red-300"
+            role="alert">
+            <strong class="font-bold">Validasi Error!</strong>
+            <ul class="mt-2 list-disc list-inside">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+            <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
+                <svg onclick="this.parentElement.parentElement.remove()"
+                    class="fill-current h-6 w-6 text-red-500 cursor-pointer" role="button"
+                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                    <title>Close</title>
+                    <path
+                        d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" />
+                </svg>
+            </span>
         </div>
     @endif
 
@@ -100,7 +141,7 @@
             <!-- DARI -->
             <div class="flex flex-col text-sm">
                 <label class="text-gray-500 dark:text-gray-400 text-xs mb-1">Dari</label>
-                <input type="date" id="start_date" value="{{ request('start_date') }}"
+                <input type="date" id="start_date" name="start_date" value="{{ request('start_date') }}"
                     class="px-2 py-1 border rounded-md text-sm w-36
             dark:bg-gray-700 dark:border-gray-600 dark:text-white">
             </div>
@@ -108,7 +149,7 @@
             <!-- SAMPAI -->
             <div class="flex flex-col text-sm">
                 <label class="text-gray-500 dark:text-gray-400 text-xs mb-1">Sampai</label>
-                <input type="date" id="end_date" value="{{ request('end_date') }}"
+                <input type="date" id="end_date" name="end_date" value="{{ request('end_date') }}"
                     class="px-2 py-1 border rounded-md text-sm w-36
             dark:bg-gray-700 dark:border-gray-600 dark:text-white">
             </div>
@@ -316,8 +357,6 @@
                                             @endif
                                         @endif
 
-                                        {{-- ✅ KHUSUS DOKTER --}}
-                                        @if (auth()->user()->role == 'dokter')
                                             <a href="{{ route('rekammedis.show', $item->id) }}"
                                                 class="text-blue-600 hover:text-blue-800">
                                                 <i class="fas fa-eye"></i>
@@ -327,11 +366,18 @@
                                                 onsubmit="return confirm('Yakin ingin menghapus data ini?')">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="text-red-600 hover:text-red-800">
+                                                <button 
+                                                    type="button"
+                                                    data-action="{{ route('rekammedis.destroy', $item->id) }}"
+                                                    data-method="DELETE"
+                                                    data-confirm-type="delete"
+                                                    data-confirm-text="Data ini akan dihapus permanen!"
+                                                    onclick="handleActionWithConfirmation(this)"
+                                                    class="text-red-600 hover:text-red-800">
+                                                    
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
-                                        @endif
 
                                         <a href="{{ route('rekammedis.export.pasien', $item->pasien_id) }}"
                                             class="text-blue-600 hover:text-blue-800">
@@ -450,7 +496,6 @@
                 document.getElementById('start_date')?.addEventListener('change', filterTanggal);
                 document.getElementById('end_date')?.addEventListener('change', filterTanggal);
                 document.getElementById('status_filter')?.addEventListener('change', filterTanggal);
-                document.getElementById('poli_filter')?.addEventListener('change', filterTanggal);
                 document.getElementById('kategori_filter')?.addEventListener('change', filterTanggal);
 
             });
@@ -481,7 +526,6 @@
                 let start = document.getElementById('start_date')?.value;
                 let end = document.getElementById('end_date')?.value;
                 let status = document.getElementById('status_filter')?.value;
-                let poli = document.getElementById('poli_filter')?.value;
 
                 if (start && end && start > end) {
                     alert('Tanggal mulai tidak boleh lebih besar dari tanggal akhir');
@@ -500,11 +544,12 @@
                 if (end) url.searchParams.set('end_date', end);
                 else url.searchParams.delete('end_date');
 
+                if (start || end) {
+                    url.searchParams.delete('lihat_semua');
+                }
+
                 if (status) url.searchParams.set('status', status);
                 else url.searchParams.delete('status');
-
-                if (poli) url.searchParams.set('poli', poli);
-                else url.searchParams.delete('poli');
 
                 if (kategori) url.searchParams.set('kategori', kategori);
                 else url.searchParams.delete('kategori');

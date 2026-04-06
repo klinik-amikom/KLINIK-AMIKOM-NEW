@@ -7,10 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 class TimMedis extends Model
 {
     protected $fillable = [
-        'name',
+        'user_id',
         'deskripsi',
         'gambar'
     ];
 
     public $timestamps = false;
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }

@@ -23,11 +23,6 @@ class ObatController extends Controller
     /**
      * Helper untuk redirect kembali ke index sesuai role.
      */
-    private function redirectIndex()
-    {
-        $role = auth()->user()->level;
-        return redirect()->route($role . '.obat.index');
-    }
 
     public function index(Request $request)
     {
@@ -84,7 +79,7 @@ class ObatController extends Controller
 
             DB::commit();
 
-            return $this->redirectIndex()->with('success', 'Data obat berhasil ditambahkan.');
+            return redirect()->back()->with('success', 'Data obat berhasil ditambahkan.');
 
         } catch (ValidationException $e) {
             DB::rollBack();
@@ -125,7 +120,7 @@ class ObatController extends Controller
 
             DB::commit();
 
-            return $this->redirectIndex()->with('success', 'Data obat berhasil diperbarui.');
+            return redirect()->back()->with('success', 'Data obat berhasil diperbarui.');
 
         } catch (ValidationException $e) {
             DB::rollBack();
@@ -145,7 +140,7 @@ class ObatController extends Controller
             $obat->forceDelete();
             DB::commit();
 
-            return $this->redirectIndex()->with('success', 'Data obat berhasil dihapus.');
+            return redirect()->back()->with('success', 'Data obat berhasil dihapus.');
 
         } catch (Exception $e) {
             DB::rollBack();

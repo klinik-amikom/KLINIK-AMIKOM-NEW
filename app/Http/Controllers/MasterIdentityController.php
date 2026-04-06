@@ -30,18 +30,6 @@ class MasterIdentityController extends Controller
                 $query->where('identity_type', $kategori);
             })
 
-            // 📅 FILTER TANGGAL (pakai created_at)
-            ->when($start && $end, function ($query) use ($start, $end) {
-                $query->whereDate('created_at', '>=', $start)
-                    ->whereDate('created_at', '<=', $end);
-            })
-            ->when($start && !$end, function ($query) use ($start) {
-                $query->whereDate('created_at', '>=', $start);
-            })
-            ->when(!$start && $end, function ($query) use ($end) {
-                $query->whereDate('created_at', '<=', $end);
-            })
-
             ->latest()
             ->paginate(10)
             ->withQueryString();
@@ -52,8 +40,8 @@ class MasterIdentityController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'identity_number' => 'required|unique:master_identity',
-            'identity_type'   => 'required|in:mahasiswa,dosen,karyawan',
+            'identity_number' => 'required|unique:master_identity,identity_number,NULL,id,deleted_at,NULL',
+            'identity_type'   => 'required|in:mahasiswa,dosen,karyawan,karyawan_buma',
             'name'            => 'required',
             'birth_date'      => 'nullable|date',
             'gender'          => 'required|in:L,P',
@@ -64,7 +52,7 @@ class MasterIdentityController extends Controller
 
         MasterIdentity::create($request->all());
 
-        return back()->with('success', 'Data berhasil ditambahkan');
+        return redirect()->back()->with('success', 'Data berhasil ditambahkan');
     }
 
     public function update(Request $request, $id)
@@ -72,8 +60,8 @@ class MasterIdentityController extends Controller
         $data = MasterIdentity::findOrFail($id);
 
         $request->validate([
-            'identity_number' => 'required|unique:master_identity,identity_number,' . $id,
-            'identity_type'   => 'required|in:mahasiswa,dosen,karyawan',
+            'identity_number' => 'required|unique:master_identity,identity_number,' . $id . ',id,deleted_at,NULL',
+            'identity_type'   => 'required|in:mahasiswa,dosen,karyawan,karyawan_buma',
             'name'            => 'required',
             'birth_date'      => 'nullable|date',
             'gender'          => 'required|in:L,P',

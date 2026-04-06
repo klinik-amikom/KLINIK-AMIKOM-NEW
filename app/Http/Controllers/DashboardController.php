@@ -33,9 +33,9 @@ class DashboardController extends Controller
         $jumlahKunjunganHariIni = RekamMedis::whereDate('tanggal_periksa', now()->toDateString())->count();
 
         // 4. Statistik Pasien berdasarkan identity_type dari master_identity
-        $pasienByKategori = RekamMedis::join('pasien', 'rekam_medis.pasien_id', '=', 'pasien.id')
-            ->join('master_identity', 'pasien.identity_id', '=', 'master_identity.id')
-            ->select('master_identity.identity_type', DB::raw('COUNT(DISTINCT pasien.id) as total'))
+        $pasienByKategori = RekamMedis::join('pasien_periksa', 'rekam_medis.pasien_id', '=', 'pasien_periksa.id')
+            ->join('master_identity', 'pasien_periksa.identity_id', '=', 'master_identity.id')
+            ->select('master_identity.identity_type', DB::raw('COUNT(DISTINCT pasien_periksa.id) as total'))
             ->groupBy('master_identity.identity_type')
             ->pluck('total', 'identity_type')
             ->toArray();

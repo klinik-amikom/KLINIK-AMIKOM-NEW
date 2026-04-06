@@ -1,19 +1,27 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
 class JadwalDokter extends Model
 {
-    protected $table = 'jadwal_dokter';
-    protected $primaryKey = 'id_jadwal';
+    protected $table      = 'jadwal_dokter';
 
-    protected $fillable = [
-        'nama_dokter',
+    protected $fillable   = [
+        'dokter_id',
         'poli',
         'hari',
         'jam_mulai',
         'jam_selesai',
     ];
+
+    public function dokter()
+    {
+        return $this->belongsTo(User::class, 'dokter_id');
+    }
+
+    public function poli()
+    {
+        return $this->belongsTo(Poli::class);
+    }
 }

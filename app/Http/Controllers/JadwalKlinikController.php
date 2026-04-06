@@ -20,12 +20,16 @@ class JadwalKlinikController extends Controller
 
     public function store(Request $request)
     {
-        // Ambil array hari, default kosong
-        $hari = $request->input('hari', []);
-        $hariString = implode(', ', (array) $hari); // pastikan selalu array
+        $request->validate([
+            'hari' => 'required|array|min:1',
+            'hari.*' => 'in:Senin,Selasa,Rabu,Kamis,Jumat,Sabtu,Minggu',
+            'jam_mulai' => 'required_without:tutup',
+            'jam_selesai' => 'required_without:tutup',
+        ]);
 
-        // Jam praktik
-        if ($request->tutup ?? false) {
+        $hariString = implode(', ', $request->hari);
+
+        if ($request->tutup) {
             $jam = 'TUTUP';
         } else {
             $jam = $request->jam_mulai . ' - ' . $request->jam_selesai;
@@ -36,7 +40,8 @@ class JadwalKlinikController extends Controller
             'jam_buka' => $jam
         ]);
 
-        return redirect()->route('jadwal_klinik.index');
+        return redirect()->route('jadwal_klinik.index')
+            ->with('success', 'Jadwal berhasil ditambahkan');
     }
 
     public function edit($id)
@@ -68,7 +73,8 @@ class JadwalKlinikController extends Controller
     public function destroy($id)
     {
         JadwalKlinik::destroy($id);
-        return redirect()->route('jadwal_klinik.index');
+        return redirect()->route('jadwal_klinik.index')
+            ->with('success', 'Data berhasil dihapus');
     }
 
 }
