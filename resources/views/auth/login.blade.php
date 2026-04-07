@@ -16,6 +16,8 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
         // Tailwind configuration
         tailwind.config = {
@@ -268,22 +270,31 @@
     <script src="{{ asset('js/toast-notification.js') }}"></script>
     <!-- Toast Notification System -->
     <script>
-        window.toast = new ToastNotification();
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes progress {
-                from { width: 100%; }
-                to { width: 0%; }
-            }
-        `;
-        document.head.appendChild(style);
-        @if (session('success'))
-            window.toast.success('{{ session('
-                                    success ') }}');
-        @endif
-        @if (session('error'))
-            window.toast.error('{{ session('
-                                    error ') }}');
+    @if (session('error'))
+        Swal.fire({
+            icon: 'error',
+            title: 'Login Gagal',
+            text: '{{ session('error') }}',
+            confirmButtonColor: '#76508e'
+        });
+    @endif
+
+    @if ($errors->any())
+        Swal.fire({
+            icon: 'error',
+            title: 'Login Gagal',
+            text: '{{ $errors->first() }}',
+            confirmButtonColor: '#76508e'
+        });
+    @endif
+
+    @if (session('success'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil',
+            text: '{{ session('success') }}',
+            confirmButtonColor: '#76508e'
+            });
         @endif
     </script>
 

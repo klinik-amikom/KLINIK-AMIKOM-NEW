@@ -44,7 +44,12 @@ class PositionSeeder extends Seeder
             ],
         ];
 
-        DB::table('positions')->insert($positions);
+        foreach ($positions as $pos) {
+            DB::table('positions')->updateOrInsert(
+                ['code' => $pos['code']], // key unik
+                $pos
+            );
+        }
 
         $this->command->info('✅ Positions seeded successfully!');
         $this->command->info('   - Admin (ADM)');

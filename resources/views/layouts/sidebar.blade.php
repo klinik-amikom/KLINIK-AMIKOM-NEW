@@ -72,7 +72,7 @@
             </a>
         @endif
 
-        @if (in_array(auth()->user()->position_id, [1,2,3]))
+        @if (in_array(auth()->user()->position_id, [1,3]))
         <a href="{{ route($prefix . '.obat.index') }}"
             class="nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200
             {{ Request::routeIs($prefix . '.obat.*')
@@ -83,10 +83,21 @@
         </a>
         @endif
 
+        @if (in_array(auth()->user()->position_id, [2]))
+        <a href="{{ route($prefix . '.obat.index') }}"
+            class="nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200
+            {{ Request::routeIs($prefix . '.obat.*')
+                ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 border-r-2 border-purple-500'
+                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
+            <i class="fas fa- fa-capsules mr-3 text-gray-400 group-hover:text-gray-500"></i>
+            <span>Data Obat</span>
+        </a>
+        @endif
+
         <!-- Rekam Medis -->
         <a href="{{ route('rekammedis.index') }}"
             class="nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200
-            {{ Request::routeIs($prefix . 'rekammedis.*')
+            {{ Request::routeIs('rekammedis.*')
                 ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 border-r-2 border-purple-500'
                 : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
             <i class="fas fa-notes-medical mr-3 text-gray-400 group-hover:text-gray-500"></i>
@@ -96,7 +107,7 @@
         @if (auth()->user()->position_id == 1)
        <a href="{{ route('master-identity.index') }}"
             class="nav-item group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200
-            {{ Request::routeIs($prefix . '.master-identity.*')
+            {{ Request::routeIs('master-identity.*')
                 ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 border-r-2 border-purple-500'
                 : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white' }}">
             <i class="fas fa-users mr-3 text-gray-400 group-hover:text-gray-500"></i>

@@ -1,8 +1,20 @@
 @extends('layouts.app')
 
-@section('title', 'Kelola Obat')
+@if (in_array(auth()->user()->position_id, [1,3]))
+    @section('title', 'Master Obat')
+@endif
 
-@section('page-title', 'Kelola Obat')
+@if (in_array(auth()->user()->position_id, [2]))
+    @section('title', 'Data Obat')
+@endif
+
+@if (in_array(auth()->user()->position_id, [1,3]))
+    @section('page-title', 'Master Obat')
+@endif
+
+@if (in_array(auth()->user()->position_id, [2]))
+    @section('page-title', 'Data Obat')
+@endif
 
 @section('content')
 

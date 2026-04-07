@@ -7,18 +7,57 @@
 
     {{-- Alert Messages --}}
     @if (session('success'))
-        <div
-            class="alert-auto-hide mb-4 bg-purple-100 border border-purple-400 text-purple-700 px-4 py-3 rounded relative dark:bg-purple-900/30 dark:border-purple-600 dark:text-purple-300">
+        <div class="alert-auto-hide mb-4 bg-purple-100 border border-purple-400 text-purple-700 px-4 py-3 rounded relative dark:bg-purple-900/30 dark:border-purple-600 dark:text-purple-300"
+            role="alert">
             <strong class="font-bold">Berhasil!</strong>
             <span class="block sm:inline">{{ session('success') }}</span>
+            <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
+                <svg onclick="this.parentElement.parentElement.remove()"
+                    class="fill-current h-6 w-6 text-purple-500 cursor-pointer" role="button"
+                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                    <title>Close</title>
+                    <path
+                        d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" />
+                </svg>
+            </span>
         </div>
     @endif
 
     @if (session('error'))
-        <div
-            class="alert-auto-hide mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative dark:bg-red-900/30 dark:border-red-600 dark:text-red-300">
+        <div class="alert-auto-hide mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative dark:bg-red-900/30 dark:border-red-600 dark:text-red-300"
+            role="alert">
             <strong class="font-bold">Error!</strong>
             <span class="block sm:inline">{{ session('error') }}</span>
+            <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
+                <svg onclick="this.parentElement.parentElement.remove()"
+                    class="fill-current h-6 w-6 text-red-500 cursor-pointer" role="button"
+                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                    <title>Close</title>
+                    <path
+                        d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" />
+                </svg>
+            </span>
+        </div>
+    @endif
+
+    @if ($errors->any())
+        <div class="alert-auto-hide mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative dark:bg-red-900/30 dark:border-red-600 dark:text-red-300"
+            role="alert">
+            <strong class="font-bold">Validasi Error!</strong>
+            <ul class="mt-2 list-disc list-inside">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+            <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
+                <svg onclick="this.parentElement.parentElement.remove()"
+                    class="fill-current h-6 w-6 text-red-500 cursor-pointer" role="button"
+                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                    <title>Close</title>
+                    <path
+                        d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" />
+                </svg>
+            </span>
         </div>
     @endif
 
@@ -112,7 +151,7 @@
                                         '{{ $user->name }}',
                                         '{{ $user->username }}',
                                         '{{ $user->email }}',
-                                        '{{ $user->position_id }}'
+                                        '{{ $user->identity_id }}'
                                         )"
                                         class="text-purple-600 hover:text-purple-800">
 
@@ -123,7 +162,15 @@
                                         onsubmit="return confirm('Yakin ingin menghapus user ini?')">
                                         @csrf
                                         @method('DELETE')
-                                        <button class="text-red-600 hover:text-red-800">
+                                        <button 
+                                            type="button"
+                                            data-action="{{ route('users.destroy', $user->id) }}"
+                                            data-method="DELETE"
+                                            data-confirm-type="delete"
+                                            data-confirm-text="Data ini akan dihapus permanen!"
+                                            onclick="handleActionWithConfirmation(this)"
+                                            class="text-red-600 hover:text-red-800">
+                                            
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </form>
@@ -177,16 +224,17 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Identity *</label>
-                    <select name="positions"
-                        class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white text-sm focus:ring-purple-500">
-
+                    <label class="block text-xs font-medium mb-1">Identity *</label>
+                    <select name="identity_id" required
+                        class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white text-sm">
+                        
                         <option value="">Pilih Identity</option>
-                        <option value="1">Admin</option>
-                        <option value="2">Dokter</option>
-                        <option value="3">Apoteker</option>
-                        <option value="4">Admin Klinik</option>
 
+                        @foreach($identities as $identity)
+                            <option value="{{ $identity->id }}">
+                                {{ $identity->name }}
+                            </option>
+                        @endforeach
                     </select>
                 </div>
 
@@ -256,15 +304,16 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Posisi</label>
+                    <label class="block text-xs font-medium mb-1">Identity</label>
 
-                    <select name="position_id" id="edit-position"
+                    <select name="identity_id" id="edit-identity"
                         class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white text-sm">
 
-                        <option value="1">Admin</option>
-                        <option value="2">Dokter</option>
-                        <option value="3">Apoteker</option>
-                        <option value="4">Admin Klinik</option>
+                        @foreach($identities as $identity)
+                            <option value="{{ $identity->id }}">
+                                {{ $identity->name }}
+                            </option>
+                        @endforeach
 
                     </select>
                 </div>
@@ -354,17 +403,16 @@
             modal.classList.remove('flex');
         }
 
-        function editUser(id, name, username, email, position_id) {
+        function editUser(id, name, username, email, identity_id) {
 
             const form = document.getElementById('edit-user-form');
 
-            // route update
-            form.action = `/admin/admin/${id}`;
+            form.action = `/users/${id}`;
 
             document.getElementById('edit-name').value = name;
             document.getElementById('edit-username').value = username;
             document.getElementById('edit-email').value = email;
-            document.getElementById('edit-position').value = position_id;
+            document.getElementById('edit-identity').value = identity_id;
 
             openEditUserModal();
         }

@@ -39,7 +39,7 @@
   ======================================================== -->
     <style>
         body {
-            font-family: 'Roboto', sans-serif;
+            font-family: 'Raleway', sans-serif;
             font-weight: 400;
             line-height: 1.6;
         }
@@ -60,7 +60,7 @@
         }
 
         p {
-            font-family: 'Roboto', sans-serif;
+            font-family: 'Raleway', sans-serif;
         }
 
         .btn,
@@ -75,7 +75,7 @@
         }
 
         table {
-            font-family: 'Roboto', sans-serif;
+            font-family: 'Raleway', sans-serif;
         }
 
         th {
@@ -516,27 +516,6 @@
                                     <div class="col-lg-4 d-none d-lg-block">
                                         <div class="featured-img-wrapper">
                                             <img src="{{ asset('landingpage/img/person/kruk.jpg') }}"
-                                                class="featured-img" alt="">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Kartu Status Pasien -->
-                        <div class="swiper-slide">
-                            <div class="testimonial-item">
-                                <div class="row">
-                                    <div class="col-lg-8">
-                                        <h2>Kartu Status Pasien</h2>
-                                        <p>
-                                            Setiap pasien memiliki kartu status yang digunakan untuk mencatat riwayat
-                                            pemeriksaan dan mempermudah proses pelayanan di kunjungan berikutnya.
-                                        </p>
-                                    </div>
-                                    <div class="col-lg-4 d-none d-lg-block">
-                                        <div class="featured-img-wrapper">
-                                            <img src="{{ asset('landingpage/img/person/kartuStatusPasien.jpg') }}"
                                                 class="featured-img" alt="">
                                         </div>
                                     </div>

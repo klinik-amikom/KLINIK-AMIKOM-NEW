@@ -24,7 +24,8 @@ class UserController extends Controller
         $role = in_array($segment, ['admin', 'dokter', 'apoteker', 'admin_klinik']) ? $segment : 'admin';
 
         // Ambil SEMUA user (tanpa filter dulu supaya data pasti muncul)
-        $users = User::with(['position', 'identity'])->get();            ->join('positions', 'users.position_id', '=', 'positions.id')
+        $users = User::with(['position', 'identity'])->get() 
+            ->join('positions', 'users.position_id', '=', 'positions.id')
             ->orderByRaw("
                 CASE 
                     WHEN positions.position = 'Admin' THEN 1
