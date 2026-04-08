@@ -24,6 +24,11 @@ class MasterIdentity extends Model
         return $this->hasMany(Pasien::class, 'identity_id');
     }
 
+        public function user()
+    {
+        return $this->hasOne(User::class, 'identity_id');
+    }
+
     public function users()
     {
         return $this->hasMany(User::class, 'identity_id');

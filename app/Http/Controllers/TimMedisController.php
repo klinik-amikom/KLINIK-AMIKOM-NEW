@@ -14,7 +14,7 @@ class TimMedisController extends Controller
     public function index()
     {
         $data = TimMedis::with('user')->get();
-        $users = User::all();
+        $users = User::whereIn('position_id', [2, 3])->get();
 
         return view('tim_medis.index', compact('data', 'users'));
     }
@@ -38,10 +38,15 @@ class TimMedisController extends Controller
             'gambar' => 'required|image'
         ]);
 
+        // 🔥 Validasi user harus dokter/apoteker
+        $user = User::where('id', $request->user_id)
+            ->whereIn('position_id', [2, 3])
+            ->firstOrFail();
+
         $gambar = $request->file('gambar')->store('tim_medis', 'public');
 
         TimMedis::create([
-            'user_id' => $request->user_id,
+            'user_id' => $user->id,
             'deskripsi' => $request->deskripsi,
             'gambar' => $gambar,
         ]);
@@ -77,13 +82,18 @@ class TimMedisController extends Controller
             'deskripsi' => 'required',
         ]);
 
+        // 🔥 Validasi hanya dokter/apoteker
+        $user = User::where('id', $request->user_id)
+            ->whereIn('position_id', [2, 3])
+            ->firstOrFail();
+
         if ($request->hasFile('gambar')) {
             $gambar = $request->file('gambar')->store('tim_medis', 'public');
             $timMedis->gambar = $gambar;
         }
 
         $timMedis->update([
-            'user_id' => $request->user_id,
+            'user_id' => $user->id,
             'deskripsi' => $request->deskripsi,
         ]);
 

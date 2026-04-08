@@ -82,4 +82,11 @@ class MasterIdentityController extends Controller
 
         return back()->with('success', 'Data berhasil dihapus');
     }
+
+    public function show($id)
+    {
+        $identity = MasterIdentity::findOrFail($id);
+
+        return view('master-identity.show', compact('identity'));
+    }
 }

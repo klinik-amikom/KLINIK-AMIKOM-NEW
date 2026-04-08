@@ -10,13 +10,15 @@ use Illuminate\Support\Facades\Hash;
 
 class ManageUserController extends Controller
 {
+
     public function index()
     {
         $users = User::with('position', 'identity')
             ->orderBy('name', 'asc')
             ->get();
 
-        $identities = MasterIdentity::all();
+        // 🔥 Hanya ambil identity dengan status karyawan
+        $identities = MasterIdentity::where('identity_type', 'karyawan')->get();
         $positions  = Position::all();
 
         return view('users.index', compact('users', 'identities', 'positions'));
@@ -33,11 +35,13 @@ class ManageUserController extends Controller
         ]);
 
         // ambil data identity
-        $identity = MasterIdentity::findOrFail($request->identity_id);
+        $identity = MasterIdentity::where('id', $request->identity_id)
+            ->where('identity_type', 'karyawan')
+            ->firstOrFail();
 
         User::create([
-            'name'        => $identity->name,      
-            'identity_id' => $identity->id,        
+            'name'        => $identity->name,
+            'identity_id' => $identity->id,
             'position_id' => $request->position_id,
             'username'    => $request->username,
             'email'       => $request->email,
@@ -61,7 +65,9 @@ class ManageUserController extends Controller
         ]);
 
         // ambil identity
-        $identity = MasterIdentity::findOrFail($request->identity_id);
+        $identity = MasterIdentity::where('id', $request->identity_id)
+            ->where('identity_type', 'karyawan')
+            ->firstOrFail();
 
         // update data
         $user->name        = $identity->name; // ✅ dari master_identity

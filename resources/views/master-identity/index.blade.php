@@ -60,7 +60,7 @@
             </span>
         </div>
     @endif
-    
+
     {{-- HEADER --}}
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
         <div>
@@ -79,31 +79,32 @@
 
     <div class="mb-6 flex flex-wrap items-end gap-4">
 
-    <!-- SEARCH -->
-    <div class="relative w-full sm:w-64">
-        <label class="text-gray-500 dark:text-gray-400 text-xs mb-1 block">Cari</label>
-        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none mt-5">
-            <i class="fas fa-search text-gray-400"></i>
-        </span>
-        <input type="text" id="search" name="search" value="{{ request('search') }}"
-            placeholder="Cari nama, NIK, atau jenis..."
-            class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg 
+        <!-- SEARCH -->
+        <div class="relative w-full sm:w-64">
+            <label class="text-gray-500 dark:text-gray-400 text-xs mb-1 block">Cari</label>
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none mt-5">
+                <i class="fas fa-search text-gray-400"></i>
+            </span>
+            <input type="text" id="search" name="search" value="{{ request('search') }}"
+                placeholder="Cari nama, NIK, atau jenis..."
+                class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg 
                    bg-white dark:bg-gray-700 text-gray-900 dark:text-white 
                    focus:ring-purple-500 focus:border-purple-500 text-sm">
-    </div>
+        </div>
 
-    <!-- KATEGORI -->
-    <div class="flex flex-col text-sm w-full sm:w-48">
-        <label class="text-gray-500 dark:text-gray-400 text-xs mb-1">Kategori</label>
-        <select id="kategori_filter"
-            class="px-2 py-2 border rounded-lg text-sm
+        <!-- KATEGORI -->
+        <div class="flex flex-col text-sm w-full sm:w-48">
+            <label class="text-gray-500 dark:text-gray-400 text-xs mb-1">Kategori</label>
+            <select id="kategori_filter"
+                class="px-2 py-2 border rounded-lg text-sm
                    dark:bg-gray-700 dark:border-gray-600 dark:text-white">
 
-            <option value="">Semua</option>
-            <option value="mahasiswa" {{ request('kategori') == 'mahasiswa' ? 'selected' : '' }}>Mahasiswa</option>
-            <option value="dosen" {{ request('kategori') == 'dosen' ? 'selected' : '' }}>Dosen</option>
-            <option value="karyawan" {{ request('kategori') == 'karyawan' ? 'selected' : '' }}>Karyawan</option>
-            <option value="karyawan_buma" {{ request('kategori') == 'karyawan_buma' ? 'selected' : '' }}>Karyawan BUMA</option>
+                <option value="">Semua</option>
+                <option value="mahasiswa" {{ request('kategori') == 'mahasiswa' ? 'selected' : '' }}>Mahasiswa</option>
+                <option value="dosen" {{ request('kategori') == 'dosen' ? 'selected' : '' }}>Dosen</option>
+                <option value="karyawan" {{ request('kategori') == 'karyawan' ? 'selected' : '' }}>Karyawan</option>
+                <option value="karyawan_buma" {{ request('kategori') == 'karyawan_buma' ? 'selected' : '' }}>Karyawan BUMA
+                </option>
             </select>
         </div>
 
@@ -154,22 +155,19 @@
                                         <i class="fas fa-edit"></i>
                                     </button>
 
-                                    <form action="{{ route('master-identity.destroy', $item->id) }}" 
-                                        method="POST"
+                                    <form action="{{ route('master-identity.destroy', $item->id) }}" method="POST"
                                         class="form-delete">
 
                                         @csrf
                                         @method('DELETE')
 
-                                        <button 
-                                            type="button"
+                                        <button type="button"
                                             data-action="{{ route('master-identity.destroy', $item->id) }}"
-                                            data-method="DELETE"
-                                            data-confirm-type="delete"
+                                            data-method="DELETE" data-confirm-type="delete"
                                             data-confirm-text="Data ini akan dihapus permanen!"
                                             onclick="handleActionWithConfirmation(this)"
                                             class="flex items-center justify-center w-6 h-6 text-red-600 hover:text-red-800">
-                                            
+
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </form>
@@ -191,6 +189,26 @@
                 </tbody>
 
             </table>
+
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between px-6 py-4 border-t">
+
+                {{-- Showing text --}}
+                <div class="text-sm text-gray-600 dark:text-gray-400">
+                    Showing
+                    <span class="font-medium">{{ $data->firstItem() }}</span>
+                    to
+                    <span class="font-medium">{{ $data->lastItem() }}</span>
+                    of
+                    <span class="font-medium">{{ $data->total() }}</span>
+                    results
+                </div>
+
+                {{-- Pagination links --}}
+                <div class="mt-3 sm:mt-0">
+                    {{ $data->links() }}
+                </div>
+
+            </div>
 
         </div>
     </div>
@@ -225,8 +243,7 @@
 
             <div>
                 <label class="text-sm text-gray-600 dark:text-gray-300">Tanggal Lahir</label>
-                <input type="date" name="birth_date"
-                    class="w-full px-3 py-2 border rounded-lg">
+                <input type="date" name="birth_date" class="w-full px-3 py-2 border rounded-lg">
             </div>
 
             <select name="identity_type" class="w-full px-3 py-2 border rounded-lg">

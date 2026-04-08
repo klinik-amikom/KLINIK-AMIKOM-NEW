@@ -203,7 +203,7 @@
                     <select name="identity_id" required
                         class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white text-sm">
 
-                        <option value="">Pilih Nama</option>
+                        <option value="">Pilih Karyawan</option>
 
                         @foreach($identities as $identity)
                             <option value="{{ $identity->id }}">
@@ -295,7 +295,7 @@
                     <select name="identity_id" id="edit-identity" required
                         class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white text-sm">
 
-                        <option value="">Pilih Nama</option>
+                        <option value="">Pilih Karyawan</option>
 
                         @foreach($identities as $identity)
                             <option value="{{ $identity->id }}">
