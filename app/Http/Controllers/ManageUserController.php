@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\MasterIdentity;
+use App\Models\Position;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -16,33 +17,35 @@ class ManageUserController extends Controller
             ->get();
 
         $identities = MasterIdentity::all();
+        $positions  = Position::all();
 
-        return view('users.index', compact('users', 'identities'));
+        return view('users.index', compact('users', 'identities', 'positions'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'name'        => 'required|string|max:255',
+            'identity_id' => 'required|exists:master_identity,id',
+            'position_id' => 'required|exists:positions,id',
             'username'    => 'required|string|max:255|unique:users,username',
             'email'       => 'required|email|unique:users,email',
-            'identity_id' => 'required|exists:master_identity,id',
             'password'    => 'required|string|confirmed|min:6',
         ]);
 
-        // ambil identity
+        // ambil data identity
         $identity = MasterIdentity::findOrFail($request->identity_id);
 
         User::create([
-            'name'        => $request->name,
+            'name'        => $identity->name,      
+            'identity_id' => $identity->id,        
+            'position_id' => $request->position_id,
             'username'    => $request->username,
             'email'       => $request->email,
-            'identity_id' => $identity->id,
-            'position_id' => $identity->position_id, // otomatis
             'password'    => Hash::make($request->password),
         ]);
 
-        return redirect()->route('users.index')->with('success', 'User berhasil dibuat');
+        return redirect()->route('users.index')
+            ->with('success', 'User berhasil dibuat');
     }
 
     public function update(Request $request, $id)
@@ -50,28 +53,32 @@ class ManageUserController extends Controller
         $user = User::findOrFail($id);
 
         $request->validate([
-            'name'        => 'required|string|max:255',
+            'identity_id' => 'required|exists:master_identity,id',
+            'position_id' => 'required|exists:positions,id',
             'username'    => 'required|string|max:255|unique:users,username,' . $user->id,
             'email'       => 'required|email|unique:users,email,' . $user->id,
-            'identity_id' => 'required|exists:identities,id',
             'password'    => 'nullable|string|min:6|confirmed',
         ]);
 
+        // ambil identity
         $identity = MasterIdentity::findOrFail($request->identity_id);
 
-        $user->name        = $request->name;
+        // update data
+        $user->name        = $identity->name; // ✅ dari master_identity
         $user->username    = $request->username;
         $user->email       = $request->email;
         $user->identity_id = $identity->id;
-        $user->position_id = $identity->position_id; // otomatis update
+        $user->position_id = $request->position_id; // ✅ dari select
 
-        if ($request->password) {
+        // update password jika diisi
+        if ($request->filled('password')) {
             $user->password = Hash::make($request->password);
         }
 
         $user->save();
 
-        return redirect()->route('users.index')->with('success', 'User berhasil diperbarui');
+        return redirect()->route('users.index')
+            ->with('success', 'User berhasil diperbarui');
     }
 
     public function destroy($id)

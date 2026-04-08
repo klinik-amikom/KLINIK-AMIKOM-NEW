@@ -41,7 +41,7 @@ class AuthController extends Controller
         }
         
 
-        return back()->with('error', 'Email or password is incorrect.')->withInput($request->only('email'));
+        return back()->with('error', 'Nama pengguna atau kata sandi salah.')->withInput($request->only('email'));
     }
 
     public function logout(Request $request)
@@ -53,7 +53,7 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/')->with('success', 'You have been logged out successfully.');
+        return redirect('/')->with('success', 'Anda telah berhasil keluar.');
     }
 
     private function redirectBasedOnRole()
@@ -80,7 +80,7 @@ class AuthController extends Controller
             }
         }
         // Fallback if no position found
-        return redirect('/')->with('error', 'No role assigned to your account.');
+        return redirect('/')->with('error', 'Tidak ada peran yang ditugaskan ke akun Anda.');
     }
 
 }

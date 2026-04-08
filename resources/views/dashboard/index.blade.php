@@ -172,9 +172,7 @@
                             $c = $config[$item->status] ?? $config['menunggu_konfirmasi'];
                         @endphp
 
-                        <div
-                            class="flex items-center space-x-3 p-3 
-            bg-{{ $c['color'] }}-50 dark:bg-{{ $c['color'] }}-900/20 rounded-lg">
+                        <div class="flex items-center space-x-3 p-3 bg-{{ $c['color'] }}-50 dark:bg-{{ $c['color'] }}-900/20 rounded-lg">
 
                             <div class="flex-shrink-0">
                                 <div
@@ -317,6 +315,7 @@
 
                 </div>
             </div>
+
             <!-- Pending Actions -->
             <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
@@ -324,50 +323,75 @@
                 </h3>
 
                 <div class="space-y-3">
+                    @if (in_array(auth()->user()->position_id, [1,4]))
+                        <!-- Menunggu Konfirmasi -->
+                        <div
+                            class="flex items-center justify-between p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center text-white">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-900 dark:text-white">
+                                        Menunggu Konfirmasi
+                                    </p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">
+                                        {{ $totalMenungguKonfirmasi }} pasien menunggu
+                                    </p>
+                                </div>
+                            </div>
+                            <a href="{{ route(auth()->user()->role . '.pasien.index', ['status' => 'menunggu_konfirmasi']) }}"
+                                class="text-xs px-3 py-1 bg-yellow-600 hover:bg-yellow-700 text-white rounded-md transition">
+                                Cek
+                            </a>
+                        </div>
+                    @endif
 
-                    <!-- Menunggu Konfirmasi -->
+                    <!-- Menunggu Pemeriksaan -->
                     <div
                         class="flex items-center justify-between p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
                         <div class="flex items-center space-x-3">
-                            <div class="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center text-white">
+                            <div class="w-8 h-8 bg-pink-500 rounded-full flex items-center justify-center text-white">
                                 <i class="fas fa-clock"></i>
                             </div>
                             <div>
                                 <p class="text-sm font-medium text-gray-900 dark:text-white">
-                                    Menunggu Konfirmasi
+                                    Menunggu Pemeriksaan
                                 </p>
                                 <p class="text-xs text-gray-500 dark:text-gray-400">
-                                    {{ $totalMenungguKonfirmasi }} pasien menunggu
+                                    {{ $totalMenungguPemeriksaan }} pasien menunggu
                                 </p>
                             </div>
                         </div>
-                        <a href="{{ route('rekammedis.index', ['status' => 'menunggu_konfirmasi']) }}"
+                        <a href="{{ route('rekammedis.index', ['status' => 'menunggu_pemeriksaan']) }}"
                             class="text-xs px-3 py-1 bg-yellow-600 hover:bg-yellow-700 text-white rounded-md transition">
                             Cek
                         </a>
                     </div>
 
-                    <!-- Terdaftar -->
-                    <div
-                        class="flex items-center justify-between p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white">
-                                <i class="fas fa-user-plus"></i>
+                    @if (in_array(auth()->user()->position_id, [1,4]))
+                        <!-- Terdaftar -->
+                        <div
+                            class="flex items-center justify-between p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white">
+                                    <i class="fas fa-user-plus"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-900 dark:text-white">
+                                        Terdaftar
+                                    </p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">
+                                        {{ $totalTerdaftar }} pasien terdaftar
+                                    </p>
+                                </div>
                             </div>
-                            <div>
-                                <p class="text-sm font-medium text-gray-900 dark:text-white">
-                                    Terdaftar
-                                </p>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">
-                                    {{ $totalTerdaftar }} pasien terdaftar
-                                </p>
-                            </div>
+                            <a href="{{ route(auth()->user()->role . '.pasien.index', ['status' => 'terdaftar']) }}"
+                                class="text-xs px-3 py-1 bg-green-600 hover:bg-green-700 text-white rounded-md transition">
+                                Cek
+                            </a>
                         </div>
-                        <a href="{{ route('rekammedis.index', ['status' => 'terdaftar']) }}"
-                            class="text-xs px-3 py-1 bg-green-600 hover:bg-green-700 text-white rounded-md transition">
-                            Cek
-                        </a>
-                    </div>
+                    @endif
 
                     <!-- Diperiksa -->
                     <div

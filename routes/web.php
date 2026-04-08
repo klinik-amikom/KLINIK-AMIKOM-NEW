@@ -117,6 +117,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('pasien/identity/{number}', [PasienController::class, 'getIdentity'])
             ->name('pasien.getIdentity');
 
+        Route::post('/pasien/{id}/periksa', [PasienController::class, 'periksa'])
+        ->name('pasien.periksa');
+        
         Route::resource('pasien', PasienController::class);
         Route::resource('obat', ObatController::class);
     });
@@ -141,6 +144,9 @@ Route::middleware(['auth'])->group(function () {
         '/pasien/{id}/konfirmasi',
         [PasienController::class, 'konfirmasi']
     )->name('pasien.konfirmasi');
+
+    Route::post('/pasien/{id}/periksa', [PasienController::class, 'periksa'])
+    ->name('pasien.periksa');
 
     Route::post('/rekammedis/{id}/mulai', [RekamMedisController::class, 'mulaiPeriksa'])
         ->name('rekammedis.mulai');

@@ -253,8 +253,12 @@
                                 <td class="px-6 py-4 text-right space-x-2">
 
                                     {{-- EDIT --}}
-                                    <button data-pasien='@json($pasien)'onclick="editPasienFromButton(this)"
+                                    <button 
+                                        data-pasien='@json($pasien)'
+                                        data-identity='@json($pasien->identity)'
+                                        onclick="editPasienFromButton(this)"
                                         class="text-purple-600 hover:text-purple-900">
+                                        
                                         <i class="fas fa-edit"></i>
                                     </button>
 
@@ -371,7 +375,7 @@
                             <div class="sm:col-span-2">
                                 <label class="block text-sm font-medium">Poli *</label>
 
-                                <input type="text" value="1"
+                                <input type="text" value="Poli Umum"
                                     class="w-full px-3 py-2 border rounded-lg bg-gray-100" readonly>
 
                                 <input type="hidden" name="poli" value="1">
@@ -456,7 +460,7 @@
                                 <label class="block text-sm font-medium">Poli *</label>
                                 <select name="poli" id="edit-poli"
                                     class="w-full px-3 py-2 border rounded-lg bg-gray-100 cursor-not-allowed" disabled>
-                                    <option value="1" selected>1</option>
+                                    <option value="1" selected>Poli Umum</option>
                                 </select>
 
                                 <!-- supaya tetap terkirim -->
@@ -497,9 +501,9 @@
                     notif.className = "mb-4 px-4 py-3 rounded-lg bg-red-100 text-red-700 text-sm";
 
                     notif.innerHTML = `
-        <strong>NIK tidak ditemukan!</strong><br>
-        Silakan tambahkan data pasien di <b>Kelola Civitas Akademik</b>.
-    `;
+                        <strong>NIK tidak ditemukan!</strong><br>
+                        Silakan tambahkan data pasien di <b>Kelola Civitas Akademik</b>.
+                    `;
 
                     const form = document.getElementById('create-pasien-form');
                     form.prepend(notif);
@@ -585,25 +589,34 @@
                 }
 
                 function editPasienFromButton(btn) {
-                    let data = JSON.parse(btn.dataset.pasien);
-                    editPasien(data.id, data);
+                    let pasien = JSON.parse(btn.dataset.pasien);
+                    let identity = JSON.parse(btn.dataset.identity);
+
+                    editPasien(pasien, identity);
                 }
 
-                function editPasien(id, data) {
+                function editPasien(pasien, identity) {
 
+                    // SET ACTION FORM
                     document.getElementById('edit-pasien-form')
-                        .action = `{{ url($prefix . '/pasien') }}/${id}`;
+                        .action = `{{ url($prefix . '/pasien') }}/${pasien.id}`;
 
-                    document.getElementById('edit-identity-number').value = data.identity_number ?? '';
-                    document.getElementById('edit-name').value = data.name ?? '';
-                    document.getElementById('edit-birth-date').value = data.birth_date ?? '';
-                    document.getElementById('edit-no-telp').value = data.no_telp ?? '';
-                    document.getElementById('edit-identity-type').value = data.identity_type ?? '';
-                    document.getElementById('edit-gender').value = data.gender ?? '';
-                    document.getElementById('edit-address').value = data.address ?? '';
-                    document.getElementById('edit-poli').value = data.poli ?? '';
-                    document.getElementById('edit-status').value = data.status ?? '';
+                    // 🔥 ISI DATA DARI RELASI IDENTITY
+                    document.getElementById('edit-identity-number').value = identity?.identity_number ?? '';
+                    document.getElementById('edit-name').value = identity?.name ?? '';
+                    document.getElementById('edit-birth-date').value = identity?.birth_date ?? '';
+                    document.getElementById('edit-no-telp').value = identity?.no_telp ?? '';
+                    document.getElementById('edit-identity-type').value = identity?.identity_type ?? '';
+                    document.getElementById('edit-gender').value = identity?.gender ?? '';
+                    document.getElementById('edit-address').value = identity?.address ?? '';
 
+                    // 🔥 DATA DARI PASIEN
+                    document.getElementById('edit-status').value = pasien?.status ?? '';
+
+                    // poli default (karena kamu hardcode 1)
+                    document.getElementById('edit-poli').value = 1;
+
+                    // tampilkan modal
                     document.getElementById('edit-pasien-modal')
                         .classList.remove('hidden');
                 }
@@ -618,10 +631,10 @@
                     emptyRow.style.display = 'none';
 
                     emptyRow.innerHTML = `
-        <td colspan="12" class="px-6 py-10 text-center text-gray-500">
-            Data pasien tidak ditemukan.
-        </td>
-    `;
+                        <td colspan="12" class="px-6 py-10 text-center text-gray-500">
+                            Data pasien tidak ditemukan.
+                        </td>
+                    `;
 
                     tbody.appendChild(emptyRow);
 
@@ -652,10 +665,7 @@
 
                 function filterTanggal() {
                     let start = document.getElementById('start_date').value;
-                    let end = document.getElementById('end_date').value;
-
-                    if (start) start = formatTanggal(start);
-                    if (end) end = formatTanggal(end);
+                    let end   = document.getElementById('end_date').value;
 
                     if (start && end && start > end) {
                         alert('Tanggal mulai tidak boleh lebih besar dari tanggal akhir');
@@ -664,8 +674,10 @@
 
                     let url = new URL(window.location.href);
 
+                    // reset pagination
                     url.searchParams.delete('page');
 
+                    // set tanggal
                     if (start) {
                         url.searchParams.set('start_date', start);
                     } else {
@@ -676,6 +688,11 @@
                         url.searchParams.set('end_date', end);
                     } else {
                         url.searchParams.delete('end_date');
+                    }
+
+                    // 🔥 penting: kalau pakai filter tanggal → matikan lihat semua
+                    if (start || end) {
+                        url.searchParams.delete('lihat_semua');
                     }
 
                     window.location.href = url.toString();

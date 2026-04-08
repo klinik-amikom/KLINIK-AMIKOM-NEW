@@ -40,7 +40,11 @@
                             <table width="100%" cellpadding="8" cellspacing="0" style="margin-top:15px; border-collapse:collapse;">
                                 <tr>
                                     <td width="40%" style="border-bottom:1px solid #ddd;"><strong>Poli</strong></td>
-                                    <td style="border-bottom:1px solid #ddd;">{{ $pasien->poli }}</td>
+                                    <td style="border-bottom:1px solid #ddd;">
+                                        @if($pasien->poli == 1)
+                                            Poli Umum
+                                        @endif    
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td style="border-bottom:1px solid #ddd;"><strong>Nomor Antrian</strong></td>
@@ -55,7 +59,7 @@
                                 <tr>
                                     <td style="border-bottom:1px solid #ddd;"><strong>Tanggal Kunjungan</strong></td>
                                     <td style="border-bottom:1px solid #ddd;">
-                                        {{ \Carbon\Carbon::parse($pasien->tanggal_kunjungan)->translatedFormat('d F Y') }}
+                                        {{ \Carbon\Carbon::parse($pasien->visit_date)->translatedFormat('d F Y') }}
                                     </td>
                                 </tr>
                                 <tr>

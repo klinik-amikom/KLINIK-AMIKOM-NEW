@@ -336,9 +336,16 @@
                         @forelse($jadwal as $j)
                             <tr>
                                 <td>{{ $j->dokter->name }}</td>
-                                <td>Poli {{ $j->poli }}</td>
+                                <td>
+                                    @if($j->poli == 1)
+                                        Poli Umum
+                                    @endif
+                                </td>
                                 <td>{{ $j->hari }}</td>
-                                <td>{{ $j->jam_mulai }} - {{ $j->jam_selesai }}</td>
+                                <td>
+                                    {{ \Carbon\Carbon::parse($j->jam_mulai)->format('H:i') }} - 
+                                    {{ \Carbon\Carbon::parse($j->jam_selesai)->format('H:i') }}
+                                </td>
                             </tr>
                         @empty
                             <tr>

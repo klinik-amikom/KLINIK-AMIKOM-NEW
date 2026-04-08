@@ -304,9 +304,10 @@
 
                                     {{-- Jika masih menunggu --}}
                                     @if ($item->status == 'menunggu_pemeriksaan')
-                                        <form action="{{ route('rekammedis.mulai', $item->id) }}" method="POST">
+                                        <form id="form-mulai-{{ $item->id }}" action="{{ route(auth()->user()->role . '.pasien.periksa', $item->pasien_id) }}" method="POST">
                                             @csrf
-                                            <button type="submit"
+                                            <button type="button"
+                                                onclick="confirmMulai({{ $item->id }})"
                                                 class="bg-yellow-500 text-white text-xs px-3 py-1 rounded hover:bg-yellow-600">
                                                 Mulai
                                             </button>
@@ -337,10 +338,11 @@
                                         {{-- ✅ KHUSUS APOTEKER --}}
                                         @if (auth()->user()->role == 'apoteker')
                                             @if ($item->status == 'menunggu_obat')
-                                                <form action="{{ route('rekammedis.selesai', $item->id) }}"
+                                                <form id="form-obat-{{ $item->id }}" action="{{ route('rekammedis.selesai', $item->id) }}"
                                                     method="POST">
                                                     @csrf
-                                                    <button type="submit"
+                                                    <button type="button"
+                                                        onclick="confirmObatApoteker({{ $item->id }})"
                                                         class="bg-green-600 text-white text-xs px-3 py-1 rounded hover:bg-green-700">
                                                         Konfirmasi Obat
                                                     </button>
@@ -405,19 +407,20 @@
 
 
         {{-- ================= EXPORT ================= --}}
-        <div class="flex justify-end mt-4 space-x-2">
+        @if (in_array(auth()->user()->role, ['admin', 'dokter', 'admin_klinik']))
+            <div class="flex justify-end mt-4 space-x-2">
 
-            <button onclick="openExportModal('pdf')" class="bg-red-600 text-white px-4 py-2 text-sm rounded hover:bg-red-700">
-                Export PDF
-            </button>
+                <button onclick="openExportModal('pdf')" class="bg-red-600 text-white px-4 py-2 text-sm rounded hover:bg-red-700">
+                    Export PDF
+                </button>
 
-            <button onclick="openExportModal('excel')"
-                class="bg-green-600 text-white px-4 py-2 text-sm rounded hover:bg-green-700">
-                Export Excel
-            </button>
+                <button onclick="openExportModal('excel')"
+                    class="bg-green-600 text-white px-4 py-2 text-sm rounded hover:bg-green-700">
+                    Export Excel
+                </button>
 
-        </div>
-
+            </div>
+        @endif
         {{-- ================= MODAL EXPORT ================= --}}
         <div id="export-modal" class="fixed inset-0 bg-black bg-opacity-40 hidden items-center justify-center z-50">
 
@@ -569,5 +572,49 @@
                 // reload halaman dengan query baru
                 window.location.search = params.toString();
             });
+
+            function confirmMulai(id) {
+                Swal.fire({
+                    title: 'Mulai Pemeriksaan?',
+                    text: "Apakah benar ingin melanjutkan ke tahap pemeriksaan?",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#f59e0b',
+                    cancelButtonColor: '#6b7280',
+                    confirmButtonText: 'Ya, mulai!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        document.getElementById('form-mulai-' + id).submit();
+                    }
+                });
+            }
+
+            function confirmObatApoteker(id) {
+                Swal.fire({
+                    title: 'Konfirmasi Penyerahan Obat',
+                    html: `
+                        <div style="text-align:left">
+                            <p>Apakah Anda yakin obat sudah diberikan kepada pasien?</p>
+                            <br>
+                            <ul style="font-size:14px; color:#555">
+                                <li>• Pastikan obat sesuai resep dokter</li>
+                                <li>• Pastikan jumlah dan aturan pakai sudah dijelaskan</li>
+                                <li>• Tindakan ini akan menyelesaikan proses pelayanan</li>
+                            </ul>
+                        </div>
+                    `,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#16a34a',
+                    cancelButtonColor: '#6b7280',
+                    confirmButtonText: 'Ya, sudah diberikan',
+                    cancelButtonText: 'Periksa kembali'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        document.getElementById('form-obat-' + id).submit();
+                    }
+                });
+            }
         </script>
     @endsection

@@ -24,8 +24,8 @@ class PasienController extends Controller
         $status      = $request->status;
         $lihatSemua  = $request->lihat_semua;
 
-        // Ambil data pasien dengan relasi identity
         $data = Pasien::with('identity')
+
             // 🔍 FILTER SEARCH
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($q) use ($search) {
@@ -36,11 +36,8 @@ class PasienController extends Controller
                     });
                 });
             })
-            // 📅 FILTER TANGGAL
-            ->when(!$lihatSemua, function ($query) {
-                $query->whereDate('visit_date', now());
-            })
 
+            // 📅 FILTER TANGGAL (TIDAK TERGANTUNG lihatSemua)
             ->when($start && $end, function ($query) use ($start, $end) {
                 $query->whereBetween('visit_date', [$start, $end]);
             })
@@ -53,19 +50,23 @@ class PasienController extends Controller
                 $query->whereDate('visit_date', '<=', $end);
             })
 
+            // 🧠 DEFAULT (HANYA JIKA TIDAK ADA FILTER TANGGAL & TIDAK LIHAT SEMUA)
+            ->when(!$start && !$end && !$lihatSemua, function ($query) {
+                $query->whereDate('visit_date', Carbon::today());
+            })
+
             // 📌 FILTER STATUS
             ->when($status, function ($query) use ($status) {
                 $query->where('status', $status);
             })
-            // 🔽 SORT DESC berdasarkan tanggal kunjungan
+
             ->orderBy('visit_date', 'desc')
-            // 📄 PAGINATION
             ->paginate(10)
             ->withQueryString();
 
         return view('pasien.index', compact('data'));
     }
-
+    
     public function store(Request $request)
     {
         $request->validate([
@@ -346,15 +347,22 @@ class PasienController extends Controller
 
             $kodeRekam = 'RM' . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
 
-            // 💾 Insert ke rekam medis
-            RekamMedis::create([
-                'kode_rekam_medis' => $kodeRekam,
-                'pasien_id'        => $pasien->id,
-                'dokter_id'        => 1, // sementara default (nanti bisa dinamis)
-                'tanggal_periksa'  => Carbon::today(),
-                'diagnosis'        => '-',
-                'status'           => 'menunggu_pemeriksaan',
-            ]);
+            // 🔥 CEK BIAR TIDAK DOUBLE INSERT (opsional tapi aman)
+            $exists = RekamMedis::where('pasien_id', $pasien->id)
+                ->whereDate('tanggal_periksa', today())
+                ->exists();
+
+            if (!$exists) {
+                // 💾 Insert ke rekam medis
+                RekamMedis::create([
+                    'kode_rekam_medis' => $kodeRekam,
+                    'pasien_id'        => $pasien->id,
+                    'dokter_id'        => null,
+                    'tanggal_periksa'  => Carbon::today(),
+                    'diagnosis'        => '-',
+                    'status'           => 'menunggu_pemeriksaan',
+                ]);
+            }
         });
 
         $role = auth()->user()->role;
@@ -362,5 +370,37 @@ class PasienController extends Controller
         return redirect()
             ->route($role . '.pasien.index')
             ->with('success', 'Pasien berhasil dikonfirmasi dan masuk ke rekam medis.');
+    }
+
+    public function periksa($id)
+    {
+        $pasien = Pasien::findOrFail($id);
+
+        // ❌ hanya bisa kalau sudah terdaftar
+        if ($pasien->status !== 'terdaftar') {
+            return back()->with('error', 'Pasien belum siap diperiksa.');
+        }
+
+        DB::transaction(function () use ($pasien) {
+
+            // 🔄 update status pasien
+            $pasien->update([
+                'status' => 'diperiksa'
+            ]);
+
+            // 🔥 ambil rekam medis hari ini
+            $rekam = RekamMedis::where('pasien_id', $pasien->id)
+                ->whereDate('tanggal_periksa', today())
+                ->first();
+
+            if ($rekam) {
+                $rekam->update([
+                    'dokter_id' => auth()->id(), // ✅ dokter login
+                    'status'    => 'diperiksa'
+                ]);
+            }
+        });
+
+        return back()->with('success', 'Pasien sedang diperiksa.');
     }
 }

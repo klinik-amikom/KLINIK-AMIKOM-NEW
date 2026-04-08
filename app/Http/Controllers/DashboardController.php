@@ -7,32 +7,55 @@ use App\Models\User;
 use App\Models\Obat;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
     /**
      * Menampilkan dashboard utama sesuai dengan role user yang login.
      */
-    public function index()
+    public function index(Request $request)
     {
+        // ===============================
+        // 🔥 FILTER STATUS (TAMBAHAN)
+        // ===============================
+        $statusFilter = $request->status;
+
         // 1. Ambil data rekam medis untuk chart kunjungan (1 tahun terakhir)
-        $rekamMedisData = RekamMedis::where('tanggal_periksa', '>=', now()->subYear())
+        $rekamMedisQuery = RekamMedis::where('tanggal_periksa', '>=', now()->subYear());
+
+        if ($statusFilter && $statusFilter != 'menunggu_konfirmasi') {
+            $rekamMedisQuery->whereHas('pasien', function ($q) use ($statusFilter) {
+                $q->where('status', $statusFilter);
+            });
+        }
+
+        $rekamMedisData = $rekamMedisQuery
             ->orderBy('tanggal_periksa', 'asc')
             ->get();
+
+        // ===============================
+        // 🔥 KHUSUS MENUNGGU KONFIRMASI (DARI PASIEN)
+        // ===============================
+        if (in_array($statusFilter, ['menunggu_konfirmasi', 'terdaftar'])) {
+            $dataPasien = Pasien::where('status', $statusFilter)->get();
+
+            return view('pasien.index', compact('dataPasien'));
+        }
 
         // Total pasien (unique dari rekam medis)
         $totalPasien = RekamMedis::distinct('pasien_id')->count('pasien_id');
 
-        // Pasien baru bulan ini (berdasarkan rekam medis bulan ini)
+        // Pasien baru bulan ini
         $pasienBaruBulanIni = RekamMedis::whereYear('tanggal_periksa', now()->year)
             ->whereMonth('tanggal_periksa', now()->month)
             ->distinct('pasien_id')
             ->count('pasien_id');
 
-        // Statistik Kunjungan Hari Ini (dari rekam medis)
+        // Statistik Kunjungan Hari Ini
         $jumlahKunjunganHariIni = RekamMedis::whereDate('tanggal_periksa', now()->toDateString())->count();
 
-        // 4. Statistik Pasien berdasarkan identity_type dari master_identity
+        // Statistik kategori pasien
         $pasienByKategori = RekamMedis::join('pasien_periksa', 'rekam_medis.pasien_id', '=', 'pasien_periksa.id')
             ->join('master_identity', 'pasien_periksa.identity_id', '=', 'master_identity.id')
             ->select('master_identity.identity_type', DB::raw('COUNT(DISTINCT pasien_periksa.id) as total'))
@@ -40,7 +63,6 @@ class DashboardController extends Controller
             ->pluck('total', 'identity_type')
             ->toArray();
 
-        // Normalisasi nama key kategori (mengubah ke lowercase untuk konsistensi pengecekan)
         $pasienByKategori = array_change_key_case($pasienByKategori, CASE_LOWER);
 
         $totalMahasiswa = $pasienByKategori['mahasiswa'] ?? 0;
@@ -48,7 +70,6 @@ class DashboardController extends Controller
         $totalKaryawan  = $pasienByKategori['karyawan'] ?? 0;
         $totalKaryawanBuma  = $pasienByKategori['karyawan_buma'] ?? 0;
 
-        // Hitung kategori lainnya yang tidak termasuk dalam 3 kategori utama
         $totalLainnyaKategori = 0;
         foreach ($pasienByKategori as $kategori => $count) {
             if (! in_array($kategori, ['mahasiswa', 'dosen', 'karyawan', 'karyawan_buma'])) {
@@ -56,39 +77,34 @@ class DashboardController extends Controller
             }
         }
 
-                                       // 5. Tentukan View berdasarkan role dari position
-        $role  = auth()->user()->role; // Uses getRoleAttribute() from User model
+        $role  = auth()->user()->role;
 
         $statusHariIni = Pasien::select('status', DB::raw('COUNT(*) as total'))
-            ->whereDate('created_at', today()) // ✅ lebih clean
+            ->whereDate('updated_at', today())
             ->groupBy('status')
             ->pluck('total', 'status')
             ->toArray();
-        // Mapping biar aman
-        $totalMenungguKonfirmasi = $statusHariIni['menunggu_konfirmasi'] ?? 0;
-        $totalTerdaftar          = $statusHariIni['terdaftar'] ?? 0;
-        $totalDiperiksa          = $statusHariIni['diperiksa'] ?? 0;
-        $totalMenungguObat       = $statusHariIni['menunggu_obat'] ?? 0;
-        $totalSelesai            = $statusHariIni['selesai'] ?? 0;
 
-        // 🔥 Pasien Aktif Hari Ini (selain status selesai)
+        $totalMenungguKonfirmasi    = $statusHariIni['menunggu_konfirmasi'] ?? 0;
+        $totalMenungguPemeriksaan   = $statusHariIni['menunggu_pemeriksaan'] ?? 0;
+        $totalTerdaftar             = $statusHariIni['terdaftar'] ?? 0;
+        $totalDiperiksa             = $statusHariIni['diperiksa'] ?? 0;
+        $totalMenungguObat          = $statusHariIni['menunggu_obat'] ?? 0;
+        $totalSelesai               = $statusHariIni['selesai'] ?? 0;
+
         $pasienAktif = Pasien::whereDate('created_at', today())
             ->where('status', '!=', 'selesai')
             ->count();
 
-        // 🔥 Hari ini
         $pasienAktifHariIni = Pasien::whereDate('created_at', today())
             ->where('status', '!=', 'selesai')
             ->count();
 
-        // 🔥 Kemarin
         $pasienAktifKemarin = Pasien::whereDate('created_at', today()->subDay())
             ->where('status', '!=', 'selesai')
             ->count();
 
-        // 🔥 Hitung persentase
         $persenPerubahan = 0;
-
         if ($pasienAktifKemarin > 0) {
             $persenPerubahan = (($pasienAktifHariIni - $pasienAktifKemarin) / $pasienAktifKemarin) * 100;
         }
@@ -132,16 +148,12 @@ class DashboardController extends Controller
             ? round($rataWaktu->avg())
             : 0;
 
-        // 🔥 Ambil aktivitas terbaru per status (hari ini)
         $aktivitas = Pasien::with('identity')
             ->whereDate('created_at', today())
             ->latest()
-            ->take(10) // ambil 10 terbaru saja
+            ->take(10)
             ->get();
 
-        // ===============================
-        // 🔥 KUNJUNGAN HARI INI VS KEMARIN
-        // ===============================
         $kunjunganHariIni = RekamMedis::whereDate('tanggal_periksa', today())->count();
         $kunjunganKemarin = RekamMedis::whereDate('tanggal_periksa', today()->subDay())->count();
 
@@ -150,17 +162,11 @@ class DashboardController extends Controller
             $persenKunjungan = (($kunjunganHariIni - $kunjunganKemarin) / $kunjunganKemarin) * 100;
         }
 
-        // ===============================
-        // 🔥 RATA-RATA WAKTU HARI INI
-        // ===============================
         $rataHariIni = Pasien::whereDate('created_at', today())
             ->where('status', 'selesai')
             ->get()
             ->map(fn($p) => Carbon::parse($p->created_at)->diffInMinutes($p->updated_at));
 
-        // ===============================
-        // 🔥 RATA-RATA WAKTU KEMARIN
-        // ===============================
         $rataKemarin = Pasien::whereDate('created_at', today()->subDay())
             ->where('status', 'selesai')
             ->get()
@@ -169,20 +175,15 @@ class DashboardController extends Controller
         $rataRataHariIni = $rataHariIni->count() ? round($rataHariIni->avg()) : 0;
         $rataRataKemarin = $rataKemarin->count() ? round($rataKemarin->avg()) : 0;
 
-        // ===============================
-        // 🔥 PERSEN PERUBAHAN WAKTU
-        // ===============================
         $persenWaktu = 0;
         if ($rataRataKemarin > 0) {
             $persenWaktu = (($rataRataHariIni - $rataRataKemarin) / $rataRataKemarin) * 100;
         }
 
-        // 🔥 WAJIB ADA INI
         $obatMenipis = Obat::where('stok', '<=', 20)
             ->orderBy('stok', 'asc')
             ->get();
 
-        // Pastikan view tersedia di folder: resources/views/{role}/dashboard/index.blade.php
         return view('.dashboard.index', compact(
             'rekamMedisData',
             'totalPasien',
@@ -194,6 +195,7 @@ class DashboardController extends Controller
             'totalKaryawanBuma',
             'totalLainnyaKategori',
             'totalMenungguKonfirmasi',
+            'totalMenungguPemeriksaan',
             'totalTerdaftar',
             'totalDiperiksa',
             'totalMenungguObat',
@@ -212,7 +214,5 @@ class DashboardController extends Controller
             'persenWaktu',
             'obatMenipis',
         ));
-    }
-
-    
+    } 
 }

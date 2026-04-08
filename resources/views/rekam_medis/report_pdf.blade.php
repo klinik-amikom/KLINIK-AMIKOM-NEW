@@ -93,8 +93,8 @@
                 <th>Pasien</th>
                 <th>Poli</th>
                 <th>Dokter</th>
-                <th>Obat</th>
                 <th>Diagnosis</th>
+                <th>Obat</th>
                 <th>Resep</th>
                 <th>Jumlah Obat</th>
             </tr>
@@ -105,17 +105,19 @@
                     <td>{{ $rekam->kode_rekam_medis }}</td>
                     <td>{{ $rekam->tanggal_periksa }}</td>
                     <td>{{ $rekam->pasien->identity->name ?? '-' }}</td>
-                    <td>{{ $rekam->pasien->poli ?? '-' }}</td> 
+                    <td>
+                        @if($rekam->pasien->poli == 1)
+                            Poli Umum
+                        @endif    
+                    </td> 
 
                     <td>{{ $rekam->dokter->name ?? '-' }}</td>
-
+                    <td>{{ $rekam->diagnosis ?? '-' }}</td>
                     <td>
                         @foreach ($rekam->resepObat as $resep)
                             {{ $resep->obat->nama_obat ?? '-' }}<br>
                         @endforeach
                     </td>
-
-                    <td>{{ $rekam->diagnosis ?? '-' }}</td>
 
                     <td>
                         @foreach ($rekam->resepObat as $resep)

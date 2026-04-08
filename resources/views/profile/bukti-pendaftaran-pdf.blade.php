@@ -149,10 +149,7 @@
                     <td class="label">Estimasi Kedatangan</td>
                     <td>
                         <strong style="color:#0d6efd;">
-                            {{ $pasien->estimasi_jam 
-                                ? \Carbon\Carbon::parse($pasien->estimasi_jam)->format('H:i') . ' WIB'
-                                : '-' 
-                            }}
+                            {{ $pasien->estimasi_jam ? \Carbon\Carbon::parse($pasien->estimasi_jam)->format('H:i') . ' WIB' : '-' }}
                         </strong>
                     </td>
                 </tr>

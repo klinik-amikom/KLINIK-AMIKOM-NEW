@@ -120,7 +120,7 @@
                         <th class="px-6 py-3 text-xs font-medium uppercase">Nama</th>
                         <th class="px-6 py-3 text-xs font-medium uppercase">Username</th>
                         <th class="px-6 py-3 text-xs font-medium uppercase">Email</th>
-                        <th class="px-6 py-3 text-xs font-medium uppercase">Identitas</th>
+                        <th class="px-6 py-3 text-xs font-medium uppercase">Posisi</th>
                         <th class="px-6 py-3 text-xs font-medium uppercase text-right">Aksi</th>
                     </tr>
                 </thead>
@@ -142,19 +142,12 @@
 
                             <td class="px-6 py-4">{{ $user->username }}</td>
                             <td class="px-6 py-4">{{ $user->email }}</td>
-                            <td>{{ $user->position?->position ?? '-' }}</td>
+                            <td>{{ $user->position->position ?? '-' }}</td>
                             <td class="px-6 py-4 text-right">
                                 <div class="flex justify-end space-x-3">
                                     <button
-                                        onclick="editUser(
-                                        '{{ $user->id }}',
-                                        '{{ $user->name }}',
-                                        '{{ $user->username }}',
-                                        '{{ $user->email }}',
-                                        '{{ $user->identity_id }}'
-                                        )"
+                                        onclick='editUser(@json($user))'
                                         class="text-purple-600 hover:text-purple-800">
-
                                         <i class="fas fa-edit"></i>
                                     </button>
 
@@ -206,9 +199,19 @@
                 @csrf
 
                 <div>
-                    <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Nama Lengkap *</label>
-                    <input type="text" name="name" required
-                        class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white text-sm focus:ring-purple-500">
+                    <label class="block text-xs font-medium mb-1">Nama (Identity) *</label>
+                    <select name="identity_id" required
+                        class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white text-sm">
+
+                        <option value="">Pilih Nama</option>
+
+                        @foreach($identities as $identity)
+                            <option value="{{ $identity->id }}">
+                                {{ $identity->id }} - {{ $identity->name }}
+                            </option>
+                        @endforeach
+
+                    </select>
                 </div>
 
                 <div>
@@ -224,17 +227,18 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-medium mb-1">Identity *</label>
-                    <select name="identity_id" required
+                    <label class="block text-xs font-medium mb-1">Posisi *</label>
+                    <select name="position_id" required
                         class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white text-sm">
                         
-                        <option value="">Pilih Identity</option>
+                        <option value="">Pilih Posisi</option>
 
-                        @foreach($identities as $identity)
-                            <option value="{{ $identity->id }}">
-                                {{ $identity->name }}
+                        @foreach($positions as $position)
+                            <option value="{{ $position->id }}">
+                                {{ $position->position }}
                             </option>
                         @endforeach
+
                     </select>
                 </div>
 
@@ -285,10 +289,20 @@
                 @csrf
                 @method('PUT')
 
+                <!-- Identity (Nama) -->
                 <div>
-                    <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Nama Lengkap</label>
-                    <input type="text" name="name" id="edit-name" required
+                    <label class="block text-xs font-medium mb-1">Nama *</label>
+                    <select name="identity_id" id="edit-identity" required
                         class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white text-sm">
+
+                        <option value="">Pilih Nama</option>
+
+                        @foreach($identities as $identity)
+                            <option value="{{ $identity->id }}">
+                                {{ $identity->id }} - {{ $identity->name }}
+                            </option>
+                        @endforeach
+                    </select>
                 </div>
 
                 <div>
@@ -304,14 +318,14 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-medium mb-1">Identity</label>
+                    <label class="block text-xs font-medium mb-1">Posisi</label>
 
-                    <select name="identity_id" id="edit-identity"
+                    <select name="position_id" id="edit-position"
                         class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white text-sm">
 
-                        @foreach($identities as $identity)
-                            <option value="{{ $identity->id }}">
-                                {{ $identity->name }}
+                        @foreach($positions as $position)
+                            <option value="{{ $position->id }}">
+                                {{ $position->position }}
                             </option>
                         @endforeach
 
@@ -383,6 +397,8 @@
             const modal = document.getElementById('create-user-modal');
             modal.classList.remove('hidden');
             modal.classList.add('flex');
+
+            modal.querySelector('form').reset(); // 🔥 reset input
         }
 
         function closeCreateUserModal() {
@@ -403,16 +419,16 @@
             modal.classList.remove('flex');
         }
 
-        function editUser(id, name, username, email, identity_id) {
+        function editUser(user) {
 
             const form = document.getElementById('edit-user-form');
 
-            form.action = `/users/${id}`;
+            form.action = `/users/${user.id}`;
 
-            document.getElementById('edit-name').value = name;
-            document.getElementById('edit-username').value = username;
-            document.getElementById('edit-email').value = email;
-            document.getElementById('edit-identity').value = identity_id;
+            document.getElementById('edit-identity').value = user.identity_id;
+            document.getElementById('edit-username').value = user.username;
+            document.getElementById('edit-email').value = user.email;
+            document.getElementById('edit-position').value = user.position_id;
 
             openEditUserModal();
         }

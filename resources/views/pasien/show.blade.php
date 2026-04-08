@@ -103,7 +103,11 @@
 
                 <div class="flex">
                     <span class="w-40 font-semibold">Poli</span>
-                    <span>: {{ $pasien->poli }}</span>
+                    <span>: 
+                        @if($pasien->poli == 1)
+                            Poli Umum
+                        @endif
+                    </span>
                 </div>
 
                 <div class="flex">

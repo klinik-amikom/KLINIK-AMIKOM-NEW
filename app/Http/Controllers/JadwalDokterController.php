@@ -7,6 +7,7 @@ use App\Models\JadwalKlinik;
 use App\Models\TimMedis;
 use App\Models\User;
 use App\Models\Poli;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class JadwalDokterController extends Controller
@@ -31,13 +32,25 @@ class JadwalDokterController extends Controller
 
     public function store(Request $request)
     {
+        $request->validate([
+            'dokter_id'   => 'required|exists:users,id',
+            'poli'        => 'required|exists:poli,id',
+            'hari'        => 'required|array|min:1',
+            'jam_mulai'   => 'required',
+            'jam_selesai' => 'required',
+        ]);
+
+        // Format jam tanpa detik
+        $jamMulai = \Carbon\Carbon::parse($request->jam_mulai)->format('H:i');
+        $jamSelesai = \Carbon\Carbon::parse($request->jam_selesai)->format('H:i');
+
         foreach ($request->hari as $hari) {
             JadwalDokter::create([
-                'dokter_id' => $request->dokter_id,
-                'poli' => $request->poli,
-                'hari' => $hari,
-                'jam_mulai' => $request->jam_mulai,
-                'jam_selesai' => $request->jam_selesai,
+                'dokter_id'   => $request->dokter_id,
+                'poli'        => $request->poli,
+                'hari'        => $hari,
+                'jam_mulai'   => $jamMulai,
+                'jam_selesai' => $jamSelesai,
             ]);
         }
 
@@ -65,12 +78,16 @@ class JadwalDokterController extends Controller
             'jam_selesai' => 'required',
         ]);
 
+        // Format jam tanpa detik
+        $jamMulai = \Carbon\Carbon::parse($request->jam_mulai)->format('H:i');
+        $jamSelesai = \Carbon\Carbon::parse($request->jam_selesai)->format('H:i');
+
         $jadwal->update([
             'dokter_id'   => $request->dokter_id,
             'poli'        => $request->poli,
             'hari'        => implode(', ', $request->hari),
-            'jam_mulai'   => $request->jam_mulai,
-            'jam_selesai' => $request->jam_selesai,
+            'jam_mulai'   => $jamMulai,
+            'jam_selesai' => $jamSelesai,
         ]);
 
         return redirect()->route('jadwal_dokter.index')

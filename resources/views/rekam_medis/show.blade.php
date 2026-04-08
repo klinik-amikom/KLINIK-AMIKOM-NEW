@@ -39,7 +39,11 @@
 
                 <div class="flex justify-between">
                     <span class="text-gray-500">Poli</span>
-                    <span class="font-medium">{{ $rekam->pasien->poli ?? '-' }}</span>
+                    <span class="font-medium">
+                        @if($rekam->pasien->poli == 1)
+                            Poli Umum
+                        @endif
+                    </span>
                 </div>
 
                 <div class="flex justify-between">
@@ -69,13 +73,14 @@
 
                 <div class="flex justify-between">
                     <span class="text-gray-500">Estimasi Jam</span>
-                    <span class="font-medium">{{ $rekam->pasien->estimasi_jam ?? '-' }}</span>
+                    <span class="font-medium">
+                        {{ \Carbon\Carbon::parse($rekam->pasien->estimasi_jam)->format('H:i') }} WIB
                 </div>
 
                 <div class="flex justify-between md:col-span-2">
                     <span class="text-gray-500">Tanggal Kunjungan</span>
                     <span class="font-medium">
-                        {{ \Carbon\Carbon::parse($rekam->pasien->visit_date)->format('d M Y H:i') ?? '-' }}
+                        {{ \Carbon\Carbon::parse($rekam->pasien->visit_date)->format('d M Y') ?? '-' }}
                     </span>
                 </div>
 
@@ -89,7 +94,7 @@
             </div>
         </div>
 
-        <form method="POST" action="{{ route('rekammedis.update', $rekam->id) }}">
+        <form id="form-konfirmasi-obat" method="POST" action="{{ route('rekammedis.update', $rekam->id) }}">
             @csrf
             @method('PUT')
 
@@ -147,7 +152,8 @@
                 </button>
             </div>
 
-            <button type="submit" class="mt-6 bg-purple-600 text-white px-4 py-2 rounded">
+            <button type="button" onclick="confirmObat()" 
+                class="mt-6 bg-purple-600 text-white px-4 py-2 rounded">
                 Simpan & Konfirmasi
             </button>
         </form>
@@ -171,6 +177,33 @@
             if (container.children.length > 1) {
                 button.closest('.resep-item').remove();
             }
+        }
+
+        function confirmObat() {
+            Swal.fire({
+                title: 'Konfirmasi Pemeriksaan',
+                html: `
+                    <div style="text-align:left">
+                        <p>Apakah Anda yakin ingin menyimpan diagnosis dan resep obat ini?</p>
+                        <br>
+                        <ul style="font-size:14px; color:#555">
+                            <li>• Pastikan diagnosis sudah benar</li>
+                            <li>• Pastikan obat dan dosis sesuai</li>
+                            <li>• Data yang disimpan tidak dapat diubah sembarangan</li>
+                        </ul>
+                    </div>
+                `,
+                icon: 'warning',
+                showCancelButton: true,
+                cancelButtonColor: '#6b7280',
+                confirmButtonColor: '#0c1881',
+                cancelButtonText: 'Periksa kembali'
+                
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('form-konfirmasi-obat').submit();
+                }
+            });
         }
     </script>
 @endsection

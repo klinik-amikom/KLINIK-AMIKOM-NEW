@@ -51,14 +51,14 @@
                     <p class="text-sm text-gray-700 mb-2">
                         Tanggal Kunjungan:
                         <strong>
-                            {{ \Carbon\Carbon::parse($pasien->tanggal_kunjungan)->translatedFormat('d F Y') }}
+                            {{ \Carbon\Carbon::parse($pasien->visit_date)->format('d-m-Y') }}
                         </strong>
                     </p>
 
                     <p class="text-sm text-gray-700 mb-4">
                         Estimasi Jam Pemeriksaan:
                         <strong class="text-blue-600">
-                            {{ \Carbon\Carbon::parse($pasien->estimasi_jam)->format('H:i') }} WIB
+                            {{ $pasien->estimasi_jam ? \Carbon\Carbon::parse($pasien->estimasi_jam)->format('H:i') . ' WIB' : '-' }}
                         </strong>
                     </p>
                     <hr class="my-4">
@@ -73,7 +73,9 @@
                         <li><strong>Alamat:</strong> {{ $pasien->identity->address }}</li>
                         <li><strong>No Telepon:</strong> {{ $pasien->identity->no_telp }}</li>
                         <li><strong>Kategori:</strong> {{ ucfirst($pasien->identity->identity_type) }}</li>
-                        <li><strong>Poli:</strong> {{ $pasien->poli }}</li>
+                        <li><strong>Poli:</strong> @if($pasien->poli == 1)
+                                                        Poli Umum
+                                                    @endif</li>
                     </ul>
                 </div>
                 <div class="mt-4">
@@ -118,7 +120,7 @@
                     <div>
                         <label for="no_telp" class="block mb-1 font-medium">Nomor Telepon</label>
                         <div class="flex">
-                            <input type="tel" id="no_telp" name="no_telp"
+                            <input type="tel" id="no_telp" name="no_telp" placeholder="Nomor Telepon"
                                 class="w-full border rounded-r-md px-3 py-2"
                                 style="background-color:#e5e7eb; cursor:not-allowed;" readonly>
                         </div>
@@ -155,8 +157,7 @@
                     <div>
                         <label class="block mb-1 font-medium">Poli Tujuan</label>
 
-                        <input type="text" value="1" class="w-full border rounded-md px-3 py-2 bg-gray-100"
-                            readonly>
+                        <input type="text" value="Poli Umum" style="background-color:#e5e7eb; cursor:not-allowed;" class="w-full border rounded-md px-3 py-2 bg-gray-100" readonly>
 
                         <input type="hidden" name="poli" value="1">
                     </div>
